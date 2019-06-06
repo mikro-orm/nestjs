@@ -1,0 +1,25 @@
+{
+  "name": "nestjs-mikro-orm",
+  "version": "0.1.1",
+  "license": "MIT",
+  "author": {
+    "name": "Dario Mancuso",
+    "email": "dario@ewide.eu"
+  },
+  "keywords": ["nestjs", "mikro-orm", "orm", "datamapper", "mysql", "postgresql", "sqlite", "mongodb"],
+  "description": "NestJS module for MikroORM",
+  "homepage": "https://github.com/dario1985/nestjs-mikro-orm/blob/master/libs/nestjs-mikro-orm/README.md",
+  "repository": { "type": "git", "url": "https://github.com/dario1985/nestjs-mikro-orm"},
+  "readme": "./README.md",
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.json && cp package.json README.md dist/"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^6.0.0",
+    "@nestjs/core": "^6.0.0",
+    "mikro-orm": "^2.6.0"
+  },
+  "devDependencies": {
+    "typescript": "^3.5.1"
+  }
+}
