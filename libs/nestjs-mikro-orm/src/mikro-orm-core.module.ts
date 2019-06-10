@@ -1,36 +1,46 @@
 import { Module, DynamicModule, Global } from '@nestjs/common';
+import { MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
 import {
-  EntityManager,
-  MikroORM,
-  Options,
-  EntityValidator,
-} from 'mikro-orm';
-import { Entity, logger } from './mikro-orm.utils';
-import { createMikroOrmRepositoryProviders } from './mikro-orm.providers';
+  MikroOrmModuleOptions,
+  MikroOrmModuleAsyncOptions,
+} from './mikro-orm-options.interface';
+import {
+  createMikroOrmProvider,
+  createMikroOrmEntityManagerProvider,
+  createAsyncProviders,
+} from './mikro-orm.providers';
+import { EntityManager, MikroORM } from 'mikro-orm';
 
 @Global()
 @Module({})
 export class MikroOrmCoreModule {
-  static forRoot(options: Options): DynamicModule {
-    const mikroOrmProvider = {
-      provide: MikroORM,
-      useFactory: async () => {
-        return MikroORM.init({
-          logger: logger.log.bind(logger),
-          ...options,
-        });
-      },
-    };
-
-    const entityManagerProvider = {
-      provide: EntityManager,
-      useFactory: (orm: MikroORM) => orm.em,
-      inject: [MikroORM],
+  static forRoot(options: MikroOrmModuleOptions): DynamicModule {
+    const mikroOrmModuleOptions = {
+      provide: MIKRO_ORM_MODULE_OPTIONS,
+      useValue: options,
     };
 
     return {
       module: MikroOrmCoreModule,
-      providers: [mikroOrmProvider, entityManagerProvider],
+      providers: [
+        mikroOrmModuleOptions,
+        createMikroOrmProvider(),
+        createMikroOrmEntityManagerProvider(),
+      ],
+      exports: [MikroORM, EntityManager],
+    };
+  }
+
+  static forRootAsync(options: MikroOrmModuleAsyncOptions): DynamicModule {
+    return {
+      module: MikroOrmCoreModule,
+      imports: options.imports || [],
+      providers: [
+        ...(options.providers || []),
+        ...createAsyncProviders(options),
+        createMikroOrmProvider(),
+        createMikroOrmEntityManagerProvider(),
+      ],
       exports: [MikroORM, EntityManager],
     };
   }

@@ -1,4 +1,4 @@
-import { Entity, PrimaryKey, Property } from 'mikro-orm';
+import { Entity, PrimaryKey, Property, IEntity } from 'mikro-orm';
 
 @Entity()
 export class Foo {
@@ -8,3 +8,6 @@ export class Foo {
   @Property()
   title: string;
 }
+
+// tslint:disable-next-line:no-empty-interface
+export interface Foo extends IEntity {}

@@ -9,7 +9,7 @@ export class AppService {
   constructor(
     private readonly em: EntityManager,
     @InjectRepository(Foo)
-    private readonly fooRepository: EntityRepository<IEntityType<Foo>>,
+    private readonly fooRepository: EntityRepository<Foo>,
   ) {}
 
   private async initTable() {
@@ -26,6 +26,6 @@ export class AppService {
     await this.fooRepository.persist(foo);
     await this.fooRepository.flush();
 
-    return ((await this.fooRepository.findOne(foo.id)) as Foo).title;
+    return (await this.fooRepository.findOne(foo.id)).title;
   }
 }

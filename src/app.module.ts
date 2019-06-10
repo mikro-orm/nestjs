@@ -11,6 +11,7 @@ import { Foo } from './entities/foo.entity';
       entitiesDirsTs: ['../src/entities'],
       dbName: 'my-db-name.sqlite3',
       type: 'sqlite',
+      autoFlush: false,
       baseDir: __dirname,
     }),
     MikroOrmModule.forFeature({ entities: [Foo] }),
