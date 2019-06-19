@@ -1,15 +1,9 @@
-import {
-  Module,
-  DynamicModule,
-  MiddlewareConsumer,
-  RequestMethod,
-} from '@nestjs/common';
+import { Module, DynamicModule } from '@nestjs/common';
 import { Entity } from './mikro-orm.common';
 import { createMikroOrmRepositoryProviders } from './mikro-orm.providers';
 import { MikroOrmCoreModule } from './mikro-orm-core.module';
 import { MikroOrmModuleOptions } from './mikro-orm-options.interface';
 import { MikroOrmModuleAsyncOptions } from './mikro-orm-options.interface';
-import { MikroOrmMiddleware } from './mikro-orm.middleware';
 
 @Module({})
 export class MikroOrmModule {
@@ -37,11 +31,5 @@ export class MikroOrmModule {
       providers: [...providers],
       exports: [...providers],
     };
-  }
-
-  configure(consumer: MiddlewareConsumer): void {
-    consumer
-      .apply(MikroOrmMiddleware)
-      .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }

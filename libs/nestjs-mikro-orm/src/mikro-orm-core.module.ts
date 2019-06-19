@@ -1,4 +1,10 @@
-import { Module, DynamicModule, Global } from '@nestjs/common';
+import {
+  Module,
+  DynamicModule,
+  Global,
+  MiddlewareConsumer,
+  RequestMethod,
+} from '@nestjs/common';
 import { MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
 import {
   MikroOrmModuleOptions,
@@ -10,6 +16,7 @@ import {
   createAsyncProviders,
 } from './mikro-orm.providers';
 import { EntityManager, MikroORM } from 'mikro-orm';
+import { MikroOrmMiddleware } from './mikro-orm.middleware';
 
 @Global()
 @Module({})
@@ -43,5 +50,13 @@ export class MikroOrmCoreModule {
       ],
       exports: [MikroORM, EntityManager],
     };
+  }
+
+  configure(consumer: MiddlewareConsumer): void {
+    consumer
+      .apply(
+        MikroOrmMiddleware,
+      ) /* Needed to keep a different identity mapper on each request */
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }
