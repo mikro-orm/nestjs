@@ -1,6 +1,6 @@
 {
   "name": "nestjs-mikro-orm",
-  "version": "0.1.8",
+  "version": "1.0.1",
   "license": "MIT",
   "author": {
     "name": "Dario Mancuso",
@@ -23,7 +23,8 @@
     "identity-map"
   ],
   "description": "NestJS module for MikroORM",
-  "homepage": "https://github.com/dario1985/nestjs-mikro-orm/blob/master/libs/nestjs-mikro-orm/README.md",
+  "homepage": "https://github.com/dario1985/nestjs-mikro-orm#readme",
+  "bugs": "https://github.com/dario1985/nestjs-mikro-orm/issues",
   "repository": {
     "type": "git",
     "url": "https://github.com/dario1985/nestjs-mikro-orm"
@@ -36,15 +37,16 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "@nestjs/common": "^6.6.3",
-    "@nestjs/core": "^6.6.3",
-    "mikro-orm": "^2.7.6"
+    "@nestjs/common": "^6.11.1",
+    "@nestjs/core": "^6.11.1",
+    "mikro-orm": "^3.0.1"
   },
   "devDependencies": {
-    "jest": "^24.9.0",
-    "prettier": "^1.18.2",
-    "tslint": "^5.19.0",
-    "typescript": "^3.6.2"
+    "jest": "^25.1.0",
+    "prettier": "^1.19.1",
+    "sqlite3": "^4.1.1",
+    "tslint": "^6.0.0",
+    "typescript": "^3.7.5"
   },
   "jest": {
     "moduleFileExtensions": [

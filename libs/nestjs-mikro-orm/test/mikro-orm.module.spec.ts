@@ -34,8 +34,10 @@ describe('MikroORM Module', () => {
       imports: [MikroOrmModule.forRoot(testOptions)],
     }).compile();
 
-    expect(module.get<MikroORM>(MikroORM)).toBeDefined();
+    const orm = module.get<MikroORM>(MikroORM);
+    expect(orm).toBeDefined();
     expect(module.get<EntityManager>(EntityManager)).toBeDefined();
+    await orm.close();
   });
 
   it('forRootAsync :useClass', async () => {
@@ -46,8 +48,10 @@ describe('MikroORM Module', () => {
       })],
     }).compile();
 
-    expect(module.get<MikroORM>(MikroORM)).toBeDefined();
+    const orm = module.get<MikroORM>(MikroORM);
+    expect(orm).toBeDefined();
     expect(module.get<EntityManager>(EntityManager)).toBeDefined();
+    await orm.close();
   });
 
   it('forRootAsync :useExisting', async () => {
@@ -58,8 +62,10 @@ describe('MikroORM Module', () => {
       })],
     }).compile();
 
-    expect(module.get<MikroORM>(MikroORM)).toBeDefined();
+    const orm = module.get<MikroORM>(MikroORM);
+    expect(orm).toBeDefined();
     expect(module.get<EntityManager>(EntityManager)).toBeDefined();
+    await orm.close();
   });
 
   it('forRootAsync :useFactory', async () => {
@@ -74,7 +80,9 @@ describe('MikroORM Module', () => {
       })],
     }).compile();
 
-    expect(module.get<MikroORM>(MikroORM)).toBeDefined();
+    const orm = module.get<MikroORM>(MikroORM);
+    expect(orm).toBeDefined();
     expect(module.get<EntityManager>(EntityManager)).toBeDefined();
+    await orm.close();
   });
 });

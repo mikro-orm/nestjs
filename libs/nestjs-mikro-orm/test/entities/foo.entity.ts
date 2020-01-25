@@ -1,10 +1,7 @@
-import { PrimaryKey, Entity, IEntity } from 'mikro-orm';
+import { PrimaryKey, Entity, IdEntity } from 'mikro-orm';
 
 @Entity()
-export class Foo {
+export class Foo implements IdEntity<Foo> {
   @PrimaryKey()
   id!: number;
 }
-
-// tslint:disable no-empty-interface
-export interface Foo extends IEntity {}

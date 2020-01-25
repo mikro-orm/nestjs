@@ -1,6 +1,12 @@
 <p align="center" style="vertical-align:middle">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="200" alt="Nest Logo" /></a><br /><img src="https://raw.githubusercontent.com/b4nan/mikro-orm/master/docs/assets/img/logo-readme.svg?sanitize=true" width="200" alt="MikroORM">
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="200" alt="Nest Logo" /></a><br />
+  <img src="https://raw.githubusercontent.com/mikro-orm/mikro-orm/master/docs/static/img/logo-readme.svg?sanitize=true" width="200" alt="MikroORM"><br />
 </p>
+<hr />
+
+[![NPM version][npm-image]][npm-url]
+[![Open issues][issues-image]][issues-url]
+[![Downloads][downloads-image]][downloads-url]
 
 ## Description
 
@@ -96,3 +102,10 @@ Please make sure to update tests as appropriate.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
+
+[issues-image]: https://img.shields.io/github/issues-raw/dario1985/nestjs-mikro-orm
+[issues-url]: "https://github.com/dario1985/nestjs-mikro-orm/issues"
+[npm-image]: https://img.shields.io/npm/v/nestjs-mikro-orm.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/nestjs-mikro-orm
+[downloads-image]: https://img.shields.io/npm/dm/nestjs-mikro-orm.svg?style=flat-square
+[downloads-url]: https://npmjs.org/package/nestjs-mikro-orm

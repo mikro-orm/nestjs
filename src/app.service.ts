@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from 'nestjs-mikro-orm';
 import { Foo } from './entities/foo.entity';
 import { EntityRepository, EntityManager } from 'mikro-orm';
-import { IEntityType } from 'mikro-orm/dist/decorators';
 
 @Injectable()
 export class AppService {
