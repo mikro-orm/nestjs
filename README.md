@@ -1,6 +1,10 @@
 <p align="center" style="vertical-align:middle">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="200" alt="Nest Logo" /></a><br /><img src="https://raw.githubusercontent.com/mikro-orm/mikro-orm/master/docs/static/img/logo-readme.svg?sanitize=true" width="200" alt="MikroORM">
 </p>
+<hr/>
+
+[![NPM version][npm-image]][npm-url]
+[![Downloads][downloads-image]][downloads-url]
 
 ## Description
 
@@ -37,3 +41,8 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+
+[npm-image]: https://img.shields.io/npm/v/nestjs-mikro-orm.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/nestjs-mikro-orm
+[downloads-image]: https://img.shields.io/npm/dm/nestjs-mikro-orm.svg?style=flat-square
+[downloads-url]: https://npmjs.org/package/nestjs-mikro-orm
