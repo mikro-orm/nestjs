@@ -48,7 +48,7 @@ To define which repositories shall be registered in the current scope you can us
 // photo.module.ts
 
 @Module({
-  imports: [MikroOrmModule.forFeature([Photo])],
+  imports: [MikroOrmModule.forFeature({ entities: [Photo] })],
   providers: [PhotoService],
   controllers: [PhotoController],
 })
