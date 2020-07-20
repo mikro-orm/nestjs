@@ -1,14 +1,14 @@
-import { AnyEntity, EntityName } from '@mikro-orm/core';
-import { Module, DynamicModule } from '@nestjs/common';
+import { AnyEntity, EntityName, Options } from '@mikro-orm/core';
+import { DynamicModule, Module } from '@nestjs/common';
 
 import { createMikroOrmRepositoryProviders } from './mikro-orm.providers';
 import { MikroOrmCoreModule } from './mikro-orm-core.module';
-import { MikroOrmModuleAsyncOptions, MikroOrmModuleOptions } from './typings';
+import { MikroOrmModuleAsyncOptions } from './typings';
 
 @Module({})
 export class MikroOrmModule {
 
-  static forRoot(options: MikroOrmModuleOptions): DynamicModule {
+  static forRoot(options?: Options): DynamicModule {
     return {
       module: MikroOrmModule,
       imports: [MikroOrmCoreModule.forRoot(options)],

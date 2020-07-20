@@ -1,8 +1,8 @@
-import { EntityManager, MikroORM } from '@mikro-orm/core';
+import { EntityManager, MikroORM, Options } from '@mikro-orm/core';
 import { DynamicModule, Global, MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 
 import { MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
-import { MikroOrmModuleAsyncOptions, MikroOrmModuleOptions } from './typings';
+import { MikroOrmModuleAsyncOptions } from './typings';
 import { createAsyncProviders, createMikroOrmEntityManagerProvider, createMikroOrmProvider } from './mikro-orm.providers';
 import { MikroOrmMiddleware } from './mikro-orm.middleware';
 
@@ -10,7 +10,7 @@ import { MikroOrmMiddleware } from './mikro-orm.middleware';
 @Module({})
 export class MikroOrmCoreModule {
 
-  static forRoot(options: MikroOrmModuleOptions): DynamicModule {
+  static forRoot(options?: Options): DynamicModule {
     return {
       module: MikroOrmCoreModule,
       providers: [

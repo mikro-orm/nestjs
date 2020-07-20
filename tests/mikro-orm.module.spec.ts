@@ -1,9 +1,9 @@
-import { EntityManager, MikroORM } from '@mikro-orm/core';
-import { Logger, Inject, Module } from '@nestjs/common';
+import { EntityManager, MikroORM, Options } from '@mikro-orm/core';
+import { Inject, Logger, Module } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { MikroOrmModule, MikroOrmOptionsFactory, MikroOrmModuleOptions } from '../src';
+import { MikroOrmModule, MikroOrmOptionsFactory } from '../src';
 
-const testOptions: MikroOrmModuleOptions = {
+const testOptions: Options = {
   dbName: 'test.sqlite3',
   type: 'sqlite',
   baseDir: __dirname,
@@ -13,19 +13,23 @@ const testOptions: MikroOrmModuleOptions = {
 const myLoggerProvider = { provide: 'my-logger', useValue: new Logger() };
 
 class ConfigService implements MikroOrmOptionsFactory {
-  constructor(@Inject('my-logger') private readonly logger: Logger) {}
-  createMikroOrmOptions(): MikroOrmModuleOptions {
+
+  constructor(@Inject('my-logger') private readonly logger: Logger) { }
+
+  createMikroOrmOptions(): Options {
     return {
       ...testOptions,
       logger: this.logger.log.bind(this.logger),
     };
   }
+
 }
 
-@Module({ providers: [ConfigService, myLoggerProvider], exports: [ConfigService]})
-class ConfigModule {}
+@Module({ providers: [ConfigService, myLoggerProvider], exports: [ConfigService] })
+class ConfigModule { }
 
 describe('MikroORM Module', () => {
+
   it('forRoot', async () => {
     const module = await Test.createTestingModule({
       imports: [MikroOrmModule.forRoot(testOptions)],
@@ -82,4 +86,5 @@ describe('MikroORM Module', () => {
     expect(module.get<EntityManager>(EntityManager)).toBeDefined();
     await orm.close();
   });
+
 });

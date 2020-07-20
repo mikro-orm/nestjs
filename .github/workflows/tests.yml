@@ -1,0 +1,54 @@
+name: tests
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 13.x, 14.x]
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: EditorConfig Lint
+      uses: docker://mstruebing/editorconfig-checker:2.0.3
+
+    - name: Install libkrb5-dev (for run-rs)
+      run: sudo apt install libkrb5-dev
+
+    - name: Install
+      run: |
+        yarn config set ignore-engines true
+        yarn
+      env:
+        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+
+    - name: Build
+      run: yarn build
+
+    - name: Lint
+      run: yarn lint
+
+    - name: Test
+      run: |
+        yarn run-rs-in-background
+        yarn coverage > COVERAGE_RESULT
+        echo "$(cat COVERAGE_RESULT)"
+
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Codeclimate
+      uses: paambaati/codeclimate-action@v2.5.3
+      env:
+        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+      with:
+        coverageCommand: echo "$(cat COVERAGE_RESULT)"

@@ -1,34 +1,23 @@
 import { getRepositoryToken, logger, MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
-import { AnyEntity, EntityManager, EntityName, MikroORM } from '@mikro-orm/core';
+import { AnyEntity, Configuration, ConfigurationLoader, EntityManager, EntityName, MikroORM, Options } from '@mikro-orm/core';
 
-import { MikroOrmModuleOptions, MikroOrmModuleAsyncOptions, MikroOrmOptionsFactory } from './typings';
+import { MikroOrmModuleAsyncOptions, MikroOrmOptionsFactory } from './typings';
 import { Provider } from '@nestjs/common';
 
 export const createMikroOrmProvider = (): Provider => ({
   provide: MikroORM,
-  useFactory: async (opts: MikroOrmModuleOptions) => {
+  useFactory: async (options?: Options | Configuration) => {
+    if (!options) {
+      options = await ConfigurationLoader.getConfiguration();
+    }
+
     return MikroORM.init({
       logger: logger.log.bind(logger),
-      ...opts,
+      ...options,
     });
   },
   inject: [MIKRO_ORM_MODULE_OPTIONS],
 });
-
-export const createAsyncProviders = (options: MikroOrmModuleAsyncOptions): Provider[] => {
-  if (options.useExisting || options.useFactory) {
-    return [createMikroOrmAsyncOptionsProvider(options)];
-  }
-
-  if (options.useClass) {
-    return [
-      createMikroOrmAsyncOptionsProvider(options),
-      { provide: options.useClass, useClass: options.useClass },
-    ];
-  }
-
-  throw new Error('Invalid MikroORM async options: one of `useClass`, `useExisting` or `useFactory` should be defined.');
-};
 
 export const createMikroOrmEntityManagerProvider = (alias?: string): Provider => ({
   provide: alias ?? EntityManager,
@@ -56,6 +45,21 @@ export const createMikroOrmAsyncOptionsProvider = (options: MikroOrmModuleAsyncO
     useFactory: async (optionsFactory: MikroOrmOptionsFactory) => await optionsFactory.createMikroOrmOptions(),
     inject,
   };
+};
+
+export const createAsyncProviders = (options: MikroOrmModuleAsyncOptions): Provider[] => {
+  if (options.useExisting || options.useFactory) {
+    return [createMikroOrmAsyncOptionsProvider(options)];
+  }
+
+  if (options.useClass) {
+    return [
+      createMikroOrmAsyncOptionsProvider(options),
+      { provide: options.useClass, useClass: options.useClass },
+    ];
+  }
+
+  throw new Error('Invalid MikroORM async options: one of `useClass`, `useExisting` or `useFactory` should be defined.');
 };
 
 export const createMikroOrmRepositoryProviders = (entities: EntityName<AnyEntity>[]): Provider[] => {
