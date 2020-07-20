@@ -1,12 +1,13 @@
+import { AnyEntity, EntityName } from '@mikro-orm/core';
 import { Module, DynamicModule } from '@nestjs/common';
-import { Entity } from './mikro-orm.common';
+
 import { createMikroOrmRepositoryProviders } from './mikro-orm.providers';
 import { MikroOrmCoreModule } from './mikro-orm-core.module';
-import { MikroOrmModuleOptions } from './mikro-orm-options.interface';
-import { MikroOrmModuleAsyncOptions } from './mikro-orm-options.interface';
+import { MikroOrmModuleAsyncOptions, MikroOrmModuleOptions } from './typings';
 
 @Module({})
 export class MikroOrmModule {
+
   static forRoot(options: MikroOrmModuleOptions): DynamicModule {
     return {
       module: MikroOrmModule,
@@ -21,10 +22,9 @@ export class MikroOrmModule {
     };
   }
 
-  static forFeature(options: { entities?: Entity[] }): DynamicModule {
-    const providers = createMikroOrmRepositoryProviders(
-      (options && options.entities) || [],
-    );
+  static forFeature(options: EntityName<AnyEntity>[] | { entities?: EntityName<AnyEntity>[] }): DynamicModule {
+    const entities = Array.isArray(options) ? options : (options.entities || []);
+    const providers = createMikroOrmRepositoryProviders(entities);
 
     return {
       module: MikroOrmModule,
@@ -32,4 +32,5 @@ export class MikroOrmModule {
       exports: [...providers],
     };
   }
+
 }

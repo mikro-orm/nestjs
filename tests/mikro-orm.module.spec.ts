@@ -1,20 +1,17 @@
-import { Test } from '@nestjs/testing';
-import { MikroOrmModule } from '../src/mikro-orm.module';
-import { EntityManager, MikroORM } from 'mikro-orm';
-import { MikroOrmOptionsFactory, MikroOrmModuleOptions } from '../src/mikro-orm-options.interface';
+import { EntityManager, MikroORM } from '@mikro-orm/core';
 import { Logger, Inject, Module } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import { MikroOrmModule, MikroOrmOptionsFactory, MikroOrmModuleOptions } from '../src';
 
 const testOptions: MikroOrmModuleOptions = {
   dbName: 'test.sqlite3',
   type: 'sqlite',
   baseDir: __dirname,
-  autoFlush: false,
-  entitiesDirs: ['entities'],
+  entities: ['entities'],
 };
 
 const myLoggerProvider = { provide: 'my-logger', useValue: new Logger() };
 
-// tslint:disable max-classes-per-file
 class ConfigService implements MikroOrmOptionsFactory {
   constructor(@Inject('my-logger') private readonly logger: Logger) {}
   createMikroOrmOptions(): MikroOrmModuleOptions {

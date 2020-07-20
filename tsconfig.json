@@ -1,15 +1,20 @@
 {
   "compilerOptions": {
     "module": "commonjs",
+    "target": "es2017",
+    "moduleResolution": "node",
     "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
+    "sourceMap": false,
+    "strict": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "esModuleInterop": true,
     "experimentalDecorators": true,
-    "target": "es6",
-    "sourceMap": true,
+    "emitDecoratorMetadata": true,
     "outDir": "./dist",
-    "baseUrl": "./",
-    "incremental": true
+    "baseUrl": "."
   },
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
