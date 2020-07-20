@@ -4,7 +4,7 @@ import { Test } from '@nestjs/testing';
 import { MikroOrmModule, MikroOrmOptionsFactory } from '../src';
 
 const testOptions: Options = {
-  dbName: 'test.sqlite3',
+  dbName: 'mikro_orm_test.db',
   type: 'sqlite',
   baseDir: __dirname,
   entities: ['entities'],

@@ -19,9 +19,6 @@ jobs:
     - name: EditorConfig Lint
       uses: docker://mstruebing/editorconfig-checker:2.0.3
 
-    - name: Install libkrb5-dev (for run-rs)
-      run: sudo apt install libkrb5-dev
-
     - name: Install
       run: |
         yarn config set ignore-engines true
@@ -37,7 +34,6 @@ jobs:
 
     - name: Test
       run: |
-        yarn run-rs-in-background
         yarn coverage > COVERAGE_RESULT
         echo "$(cat COVERAGE_RESULT)"
 
