@@ -89,7 +89,7 @@ In this way we can inject the `PhotoRepository` to the `PhotoService` using the 
 export class PhotoService {
   constructor(
     @InjectRepository(Photo)
-    private readonly photoRepository: EntityRepository<IEntityType<Photo>>
+    private readonly photoRepository: EntityRepository<Photo>
   ) {}
 
   // ...
