@@ -1,5 +1,6 @@
 import { EntityManager, MikroORM, Options } from '@mikro-orm/core';
-import { DynamicModule, Global, MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
+import { DynamicModule, Global, MiddlewareConsumer, Module, OnApplicationShutdown, RequestMethod } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 
 import { MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
 import { MikroOrmModuleAsyncOptions } from './typings';
@@ -8,7 +9,9 @@ import { MikroOrmMiddleware } from './mikro-orm.middleware';
 
 @Global()
 @Module({})
-export class MikroOrmCoreModule {
+export class MikroOrmCoreModule implements OnApplicationShutdown {
+
+  constructor(private readonly moduleRef: ModuleRef) { }
 
   static forRoot(options?: Options): DynamicModule {
     return {
@@ -38,6 +41,14 @@ export class MikroOrmCoreModule {
       ],
       exports: [MikroORM, EntityManager, 'SqlEntityManager', 'MongoEntityManager'],
     };
+  }
+
+  async onApplicationShutdown() {
+    const orm = this.moduleRef.get(MikroORM);
+
+    if (orm) {
+      await orm.close();
+    }
   }
 
   configure(consumer: MiddlewareConsumer): void {
