@@ -37,10 +37,10 @@ jobs:
         yarn coverage > COVERAGE_RESULT
         echo "$(cat COVERAGE_RESULT)"
 
-    - name: Coveralls
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+#    - name: Coveralls
+#      uses: coverallsapp/github-action@master
+#      with:
+#        github-token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Codeclimate
       uses: paambaati/codeclimate-action@v2.5.3

@@ -1,32 +1,48 @@
 <p align="center" style="vertical-align:middle">
   <a href="https://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="200" alt="Nest Logo" /></a><br /><a href="https://mikro-orm.io/" target="blank"><img src="https://raw.githubusercontent.com/mikro-orm/mikro-orm/master/docs/static/img/logo-readme.svg?sanitize=true" width="200" alt="MikroORM"></a>
 </p>
-<hr/>
 
-[![NPM version][npm-image]][npm-url]
-[![Open issues][issues-image]][issues-url]
-[![Downloads][downloads-image]][downloads-url]
+> Based on [dario1985/nestjs-mikro-orm](https://github.com/dario1985/nestjs-mikro-orm).
+
+[![NPM version](https://img.shields.io/npm/v/@mikro-orm/nestjs.svg)](https://www.npmjs.com/package/@mikro-orm/nestjs)
+[![Chat on slack](https://img.shields.io/badge/chat-on%20slack-blue.svg)](https://join.slack.com/t/mikroorm/shared_invite/enQtNTM1ODYzMzM4MDk3LWM4ZDExMjU5ZDhmNjA2MmM3MWMwZmExNjhhNDdiYTMwNWM0MGY5ZTE3ZjkyZTMzOWExNDgyYmMzNDE1NDI5NjA)
+[![Downloads](https://img.shields.io/npm/dm/@mikro-orm/nestjs.svg)](https://www.npmjs.com/package/@mikro-orm/nestjs)
+[![Build Status](https://github.com/mikro-orm/nestjs/workflows/tests/badge.svg?branch=master)](https://github.com/mikro-orm/nestjs/actions?workflow=tests)
 
 ## Description
 
-The [MikroORM](https://mikro-orm.io) module for [Nest](https://github.com/nestjs/nest).
+The [MikroORM](https://github.com/mikro-orm/mikro-orm) module for [NestJS](https://github.com/nestjs/nest).
 
-## Installation
+## 🚀 Quick Start
+
+First install the module via `yarn` or `npm` and do not forget to install the database driver as well:
 
 ```bash
-$ npm i --save @mikro-orm/core @mikro-orm/nestjs
+$ yarn add @mikro-orm/core @mikro-orm/nestjs @mikro-orm/mongodb     # for mongo
+$ yarn add @mikro-orm/core @mikro-orm/nestjs @mikro-orm/mysql       # for mysql/mariadb
+$ yarn add @mikro-orm/core @mikro-orm/nestjs @mikro-orm/mariadb     # for mysql/mariadb
+$ yarn add @mikro-orm/core @mikro-orm/nestjs @mikro-orm/postgresql  # for postgresql
+$ yarn add @mikro-orm/core @mikro-orm/nestjs @mikro-orm/sqlite      # for sqlite
 ```
 
-## Quick Start
+or
 
-Once the installation process is completed, we can import the `MikroOrmModule` into the root `ApplicationModule`.
+```bash
+$ npm i -s @mikro-orm/core @mikro-orm/nestjs @mikro-orm/mongodb     # for mongo
+$ npm i -s @mikro-orm/core @mikro-orm/nestjs @mikro-orm/mysql       # for mysql/mariadb
+$ npm i -s @mikro-orm/core @mikro-orm/nestjs @mikro-orm/mariadb     # for mysql/mariadb
+$ npm i -s @mikro-orm/core @mikro-orm/nestjs @mikro-orm/postgresql  # for postgresql
+$ npm i -s @mikro-orm/core @mikro-orm/nestjs @mikro-orm/sqlite      # for sqlite
+```
+
+Once the installation process is completed, we can import the `MikroOrmModule` into the root `AppModule`.
 
 ```typescript
 @Module({
   imports: [
     MikroOrmModule.forRoot({
-      entitiesDirs: ['../dist/entities'],
-      entitiesDirsTs: ['../src/entities'],
+      entities: ['../dist/entities'],
+      entitiesTs: ['../src/entities'],
       dbName: 'my-db-name.sqlite3',
       type: 'sqlite',
       baseDir: __dirname,
@@ -39,6 +55,7 @@ export class AppModule {}
 ```
 
 The `forRoot()` method accepts the same configuration object as `init()` from the MikroORM package. 
+You can also omit the parameter to use the CLI config.
 
 Afterward, the `EntityManager` will be available to inject across entire project (without importing any module elsewhere).
 
@@ -48,7 +65,7 @@ To define which repositories shall be registered in the current scope you can us
 // photo.module.ts
 
 @Module({
-  imports: [MikroOrmModule.forFeature({ entities: [Photo] })],
+  imports: [MikroOrmModule.forFeature([Photo])],
   providers: [PhotoService],
   controllers: [PhotoController],
 })
@@ -74,7 +91,10 @@ export class PhotoService {
     @InjectRepository(Photo)
     private readonly photoRepository: EntityRepository<IEntityType<Photo>>
   ) {}
-...
+
+  // ...
+
+}
 ```
 
 ## Testing
@@ -94,19 +114,31 @@ The `nestjs-mikro-orm` package exposes `getRepositoryToken()` function that retu
 export class PhotoModule {}
 ```
 
-## Contributing
+## 🤝 Contributing
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+Contributions, issues and feature requests are welcome. Please read 
+[CONTRIBUTING.md](CONTRIBUTING.md) 
+for details on the process for submitting pull requests to us.
 
-Please make sure to update tests as appropriate.
+## Authors
 
-## License
+👤 **Dario**
 
-[MIT](https://choosealicense.com/licenses/mit/)
+- Github: [@dario1985](https://github.com/dario1985)
 
-[issues-image]: https://img.shields.io/github/issues-raw/dario1985/nestjs-mikro-orm
-[issues-url]: "https://github.com/dario1985/nestjs-mikro-orm/issues"
-[npm-image]: https://img.shields.io/npm/v/nestjs-mikro-orm.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/nestjs-mikro-orm
-[downloads-image]: https://img.shields.io/npm/dm/nestjs-mikro-orm.svg?style=flat-square
-[downloads-url]: https://npmjs.org/package/nestjs-mikro-orm
+👤 **Martin Adámek**
+
+- Twitter: [@B4nan](https://twitter.com/B4nan)
+- Github: [@b4nan](https://github.com/b4nan)
+
+See also the list of contributors who [participated](https://github.com/mikro-orm/nestjs/contributors) in this project.
+
+## Show Your Support
+
+Please ⭐️ this repository if this project helped you!
+
+## 📝 License
+
+Copyright © 2018 [Martin Adámek](https://github.com/b4nan).
+
+This project is licensed under the MIT License - see the [LICENSE file](LICENSE) for details.
