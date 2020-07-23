@@ -122,7 +122,7 @@ for details on the process for submitting pull requests to us.
 
 ## Authors
 
-👤 **Dario**
+👤 **Dario Mancuso**
 
 - Github: [@dario1985](https://github.com/dario1985)
 
