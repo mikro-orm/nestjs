@@ -7,14 +7,18 @@ import { Provider } from '@nestjs/common';
 export const createMikroOrmProvider = (): Provider => ({
   provide: MikroORM,
   useFactory: async (options?: Options | Configuration) => {
-    if (!options) {
+    if (!options || Object.keys(options).length === 0) {
+      const settings = await ConfigurationLoader.getSettings();
+
+      if (settings.useTsNode) {
+        await ConfigurationLoader.registerTsNode(settings.tsConfigPath);
+      }
+
       options = await ConfigurationLoader.getConfiguration();
+      options.set('logger', logger.log.bind(logger));
     }
 
-    return MikroORM.init({
-      logger: logger.log.bind(logger),
-      ...options,
-    });
+    return MikroORM.init(options);
   },
   inject: [MIKRO_ORM_MODULE_OPTIONS],
 });

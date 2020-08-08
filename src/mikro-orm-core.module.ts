@@ -1,9 +1,9 @@
 import { EntityManager, MikroORM, Options } from '@mikro-orm/core';
-import { DynamicModule, Global, MiddlewareConsumer, Module, OnApplicationShutdown, RequestMethod } from '@nestjs/common';
+import { DynamicModule, Global, Inject, MiddlewareConsumer, Module, OnApplicationShutdown, RequestMethod } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 
 import { MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
-import { MikroOrmModuleAsyncOptions } from './typings';
+import { MikroOrmModuleAsyncOptions, MikroOrmModuleOptions } from './typings';
 import { createAsyncProviders, createMikroOrmEntityManagerProvider, createMikroOrmProvider } from './mikro-orm.providers';
 import { MikroOrmMiddleware } from './mikro-orm.middleware';
 
@@ -11,13 +11,15 @@ import { MikroOrmMiddleware } from './mikro-orm.middleware';
 @Module({})
 export class MikroOrmCoreModule implements OnApplicationShutdown {
 
-  constructor(private readonly moduleRef: ModuleRef) { }
+  constructor(@Inject(MIKRO_ORM_MODULE_OPTIONS)
+              private readonly options: MikroOrmModuleOptions,
+              private readonly moduleRef: ModuleRef) { }
 
   static forRoot(options?: Options): DynamicModule {
     return {
       module: MikroOrmCoreModule,
       providers: [
-        { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options },
+        { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options || {} },
         createMikroOrmProvider(),
         createMikroOrmEntityManagerProvider(),
         createMikroOrmEntityManagerProvider('SqlEntityManager'),
@@ -52,6 +54,10 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
   }
 
   configure(consumer: MiddlewareConsumer): void {
+    if (this.options.registerRequestContext === false) {
+      return;
+    }
+
     consumer
       .apply(MikroOrmMiddleware) // register request context automatically
       .forRoutes({ path: '*', method: RequestMethod.ALL });
