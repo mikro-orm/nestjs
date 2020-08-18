@@ -2,7 +2,7 @@ import { Options, IDatabaseDriver } from '@mikro-orm/core';
 import { MiddlewareConsumer, ModuleMetadata, Type } from '@nestjs/common';
 
 export interface FastifyMiddlewareConsumer extends MiddlewareConsumer {
-  httpAdapter: object;
+  httpAdapter: Record<string, unknown>;
 }
 
 export type MikroOrmModuleOptions<D extends IDatabaseDriver = IDatabaseDriver> = {

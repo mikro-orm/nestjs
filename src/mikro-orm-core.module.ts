@@ -73,4 +73,5 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
       .apply(MikroOrmMiddleware) // register request context automatically
       .forRoutes({ path: forRoutesPath, method: RequestMethod.ALL });
   }
+
 }
