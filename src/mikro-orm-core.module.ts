@@ -62,14 +62,14 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
     const isNestMiddleware = (
       consumer: MiddlewareConsumer
     ): consumer is NestMiddlewareConsumer =>
-      typeof (consumer as any).httpAdapter === "object";
+      typeof (consumer as any).httpAdapter === 'object';
 
     const usingFastify = (consumer: NestMiddlewareConsumer) =>
-      consumer.httpAdapter.constructor.name.toLowerCase().startsWith("fastify");
+      consumer.httpAdapter.constructor.name.toLowerCase().startsWith('fastify');
 
     const forRoutesPath =
       this.options.forRoutesPath ??
-      (isNestMiddleware(consumer) && usingFastify(consumer) ? "(.*)" : "*");
+      (isNestMiddleware(consumer) && usingFastify(consumer) ? '(.*)' : '*');
 
     consumer
       .apply(MikroOrmMiddleware) // register request context automatically
