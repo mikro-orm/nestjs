@@ -1,8 +1,9 @@
-import { Options, IDatabaseDriver } from '@mikro-orm/core';
+import { IDatabaseDriver, Options } from '@mikro-orm/core';
 import { MiddlewareConsumer, ModuleMetadata, Type } from '@nestjs/common';
+import { AbstractHttpAdapter } from '@nestjs/core';
 
-export interface FastifyMiddlewareConsumer extends MiddlewareConsumer {
-  httpAdapter: Record<string, unknown>;
+export interface NestMiddlewareConsumer extends MiddlewareConsumer {
+  httpAdapter: AbstractHttpAdapter;
 }
 
 export type MikroOrmModuleOptions<D extends IDatabaseDriver = IDatabaseDriver> = {
