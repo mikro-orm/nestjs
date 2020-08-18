@@ -10,9 +10,9 @@ export type MikroOrmModuleOptions<D extends IDatabaseDriver = IDatabaseDriver> =
   /**
    * Routes to apply the middleware.
    *
-   * For Fastify, the middleware applies to all routes using the RegExp `"(.*)"`.
+   * For Fastify, the middleware applies to all routes using `(.*)`.
    *
-   * For all other frameworks including Express, the middleware applies to all routes using the RegExp `"*"`.
+   * For all other frameworks including Express, the middleware applies to all routes using `*`.
    */
   forRoutesPath?: string;
 } & Options<D>;
