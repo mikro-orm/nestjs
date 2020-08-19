@@ -1,17 +1,30 @@
-import { Options } from '@mikro-orm/core';
-import { ModuleMetadata, Type } from '@nestjs/common';
+import { IDatabaseDriver, Options } from '@mikro-orm/core';
+import { MiddlewareConsumer, ModuleMetadata, Type } from '@nestjs/common';
+import { AbstractHttpAdapter } from '@nestjs/core';
 
-export type MikroOrmModuleOptions = {
-  registerRequestContext?: boolean;
-} & Options;
-
-export interface MikroOrmOptionsFactory {
-  createMikroOrmOptions(): Promise<MikroOrmModuleOptions> | MikroOrmModuleOptions;
+export interface NestMiddlewareConsumer extends MiddlewareConsumer {
+  httpAdapter: AbstractHttpAdapter;
 }
 
-export interface MikroOrmModuleAsyncOptions extends Pick<ModuleMetadata, 'imports' | 'providers'> {
-  useExisting?: Type<MikroOrmOptionsFactory>;
-  useClass?: Type<MikroOrmOptionsFactory>;
-  useFactory?: (...args: any[]) => Promise<MikroOrmModuleOptions> | MikroOrmModuleOptions;
+export type MikroOrmModuleOptions<D extends IDatabaseDriver = IDatabaseDriver> = {
+  registerRequestContext?: boolean;
+  /**
+   * Routes to apply the middleware.
+   *
+   * For Fastify, the middleware applies to all routes using `(.*)`.
+   *
+   * For all other frameworks including Express, the middleware applies to all routes using `*`.
+   */
+  forRoutesPath?: string;
+} & Options<D>;
+
+export interface MikroOrmOptionsFactory<D extends IDatabaseDriver = IDatabaseDriver> {
+  createMikroOrmOptions(): Promise<MikroOrmModuleOptions<D>> | MikroOrmModuleOptions<D>;
+}
+
+export interface MikroOrmModuleAsyncOptions<D extends IDatabaseDriver = IDatabaseDriver> extends Pick<ModuleMetadata, 'imports' | 'providers'> {
+  useExisting?: Type<MikroOrmOptionsFactory<D>>;
+  useClass?: Type<MikroOrmOptionsFactory<D>>;
+  useFactory?: (...args: any[]) => Promise<MikroOrmModuleOptions<D>> | MikroOrmModuleOptions<D>;
   inject?: any[];
 }

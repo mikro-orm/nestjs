@@ -3,9 +3,9 @@ import { DynamicModule, Global, Inject, MiddlewareConsumer, Module, OnApplicatio
 import { ModuleRef } from '@nestjs/core';
 
 import { MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
-import { MikroOrmModuleAsyncOptions, MikroOrmModuleOptions } from './typings';
-import { createAsyncProviders, createMikroOrmEntityManagerProvider, createMikroOrmProvider } from './mikro-orm.providers';
 import { MikroOrmMiddleware } from './mikro-orm.middleware';
+import { createAsyncProviders, createMikroOrmEntityManagerProvider, createMikroOrmProvider } from './mikro-orm.providers';
+import { MikroOrmModuleAsyncOptions, MikroOrmModuleOptions, NestMiddlewareConsumer } from './typings';
 
 @Global()
 @Module({})
@@ -58,9 +58,22 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
       return;
     }
 
+
+    const isNestMiddleware = (
+      consumer: MiddlewareConsumer
+    ): consumer is NestMiddlewareConsumer =>
+      typeof (consumer as any).httpAdapter === 'object';
+
+    const usingFastify = (consumer: NestMiddlewareConsumer) =>
+      consumer.httpAdapter.constructor.name.toLowerCase().startsWith('fastify');
+
+    const forRoutesPath =
+      this.options.forRoutesPath ??
+      (isNestMiddleware(consumer) && usingFastify(consumer) ? '(.*)' : '*');
+
     consumer
       .apply(MikroOrmMiddleware) // register request context automatically
-      .forRoutes({ path: '*', method: RequestMethod.ALL });
+      .forRoutes({ path: forRoutesPath, method: RequestMethod.ALL });
   }
 
 }
