@@ -8,12 +8,6 @@ export const createMikroOrmProvider = (): Provider => ({
   provide: MikroORM,
   useFactory: async (options?: Options | Configuration) => {
     if (!options || Object.keys(options).length === 0) {
-      const settings = await ConfigurationLoader.getSettings();
-
-      if (settings.useTsNode) {
-        await ConfigurationLoader.registerTsNode(settings.tsConfigPath);
-      }
-
       options = await ConfigurationLoader.getConfiguration();
       options.set('logger', logger.log.bind(logger));
     }

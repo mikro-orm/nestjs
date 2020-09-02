@@ -1,6 +1,6 @@
 {
   "name": "@mikro-orm/nestjs",
-  "version": "4.0.0-alpha.3",
+  "version": "4.0.0-alpha.4",
   "license": "MIT",
   "author": {
     "name": "Dario Mancuso",
@@ -41,13 +41,13 @@
     "lint": "eslint src/**/*.ts"
   },
   "peerDependencies": {
-    "@mikro-orm/core": "^4.0.0-rc.1",
+    "@mikro-orm/core": "^4.0.0-rc.6",
     "@nestjs/common": "^7.0.0",
     "@nestjs/core": "^7.0.0"
   },
   "devDependencies": {
-    "@mikro-orm/core": "^4.0.0-rc.1",
-    "@mikro-orm/sqlite": "^4.0.0-rc.1",
+    "@mikro-orm/core": "^4.0.0-rc.6",
+    "@mikro-orm/sqlite": "^4.0.0-rc.6",
     "@nestjs/common": "^7.4.2",
     "@nestjs/core": "^7.4.2",
     "@nestjs/testing": "^7.4.2",
