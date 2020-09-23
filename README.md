@@ -148,6 +148,34 @@ object.
 > still need CLI config with the full list of entities. On the other hand, we can
 > use globs there, as the CLI won't go thru webpack.
 
+## Request scoped handlers in queues
+
+As mentioned in the docs, we need a clean state for each request. That is handled
+automatically thanks to the `RequestContext` helper registered via middleware. 
+
+But middlewares are executed only for regular HTTP request handles, what if we need
+a request scoped method outside of that? One example of that is queue handlers or 
+scheduled tasks. 
+
+We can use the `@UseRequestContext()` decorator. It requires you to first inject the
+`MikroORM` instance to current context, it will be then used to create the context 
+for you. Under the hood, the decorator will register new request context for your 
+method and execute it inside the context. 
+
+```ts
+@Injectable()
+export class MyService {
+
+  constructor(private readonly orm: MikroORM) { }
+
+  @UseRequestContext()
+  async doSomething() {
+    // this will be executed in a separate context
+  }
+
+}
+```
+
 ## Using `AsyncLocalStorage` for request context
 
 By default, `domain` api use used in the `RequestContext` helper. Since `@mikro-orm/core@4.0.3`,
