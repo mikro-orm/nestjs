@@ -59,7 +59,21 @@ You can also omit the parameter to use the CLI config.
 
 Afterward, the `EntityManager` will be available to inject across entire project (without importing any module elsewhere).
 
+```ts
+@Injectable()
+export class MyService {
+
+  constructor(private readonly orm: MikroORM,
+              private readonly em: EntityManager) { }
+
+}
+```
+
 To define which repositories shall be registered in the current scope you can use the `forFeature()` method. For example, in this way:
+
+> You should **not** register your base entities via `forFeature()`, as there are no
+> repositories for those. On the other hand, base entities need to be part of the list
+> in `forRoot()` (or in the ORM config in general).
 
 ```typescript
 // photo.module.ts
@@ -93,6 +107,54 @@ export class PhotoService {
   ) {}
 
   // ...
+
+}
+```
+
+## Using custom repositories
+
+When using custom repositories, we can get around the need for `@InjectRepository()`
+decorator by naming our repositories the same way as `getRepositoryToken()` method do:
+
+```ts
+export const getRepositoryToken = <T> (entity: EntityName<T>) => `${Utils.className(entity)}Repository`;
+```
+
+In other words, as long as we name the repository same was as the entity is called, 
+appending `Repository` suffix, the repository will be registered automatically in 
+the Nest.js DI container.
+
+`**./author.entity.ts**`
+
+```ts
+@Entity()
+export class Author {
+
+  // to allow inference in `em.getRepository()`
+  [EntityRepositoryType]?: AuthorRepository;
+
+}
+```
+
+`**./author.repository.ts**`
+
+```ts
+@Repository(Author)
+export class AuthorRepository extends EntityRepository<Author> {
+
+  // your custom methods...
+
+}
+```
+
+As the custom repository name is the same as what `getRepositoryToken()` would
+return, we do not need the `@InjectRepository()` decorator anymore:
+
+```ts
+@Injectable()
+export class MyService {
+
+  constructor(private readonly repo: AuthorRepository) { }
 
 }
 ```
