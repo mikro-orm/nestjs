@@ -8,6 +8,7 @@ export interface NestMiddlewareConsumer extends MiddlewareConsumer {
 
 export type MikroOrmModuleOptions<D extends IDatabaseDriver = IDatabaseDriver> = {
   registerRequestContext?: boolean;
+  autoLoadEntities?: boolean;
   /**
    * Routes to apply the middleware.
    *

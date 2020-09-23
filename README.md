@@ -111,6 +111,43 @@ export class PhotoService {
 }
 ```
 
+## Auto entities automatically
+
+Manually adding entities to the entities array of the connection options can be 
+tedious. In addition, referencing entities from the root module breaks application 
+domain boundaries and causes leaking implementation details to other parts of the 
+application. To solve this issue, static glob paths can be used.
+
+Note, however, that glob paths are not supported by webpack, so if you are building 
+your application within a monorepo, you won't be able to use them. To address this 
+issue, an alternative solution is provided. To automatically load entities, set the 
+`autoLoadEntities` property of the configuration object (passed into the `forRoot()` 
+method) to `true`, as shown below: 
+
+```ts
+@Module({
+  imports: [
+    MikroOrmModule.forRoot({
+      ...
+      autoLoadEntities: true,
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+With that option specified, every entity registered through the `forFeature()` 
+method will be automatically added to the entities array of the configuration 
+object.
+
+> Note that entities that aren't registered through the `forFeature()` method, but 
+> are only referenced from the entity (via a relationship), won't be included by 
+> way of the `autoLoadEntities` setting.
+
+> Using `autoLoadEntities` also has no effect on the MikroORM CLI - for that we 
+> still need CLI config with the full list of entities. On the other hand, we can
+> use globs there, as the CLI won't go thru webpack.
+
 ## Using `AsyncLocalStorage` for request context
 
 By default, `domain` api use used in the `RequestContext` helper. Since `@mikro-orm/core@4.0.3`,

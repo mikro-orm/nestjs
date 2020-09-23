@@ -1,15 +1,24 @@
-import { getRepositoryToken, logger, MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
-import { AnyEntity, Configuration, ConfigurationLoader, EntityManager, EntityName, MikroORM, Options } from '@mikro-orm/core';
+import { getRepositoryToken, logger, MIKRO_ORM_MODULE_OPTIONS, REGISTERED_ENTITIES } from './mikro-orm.common';
+import { AnyEntity, ConfigurationLoader, EntityManager, EntityName, MikroORM } from '@mikro-orm/core';
 
-import { MikroOrmModuleAsyncOptions, MikroOrmOptionsFactory } from './typings';
+import { MikroOrmModuleAsyncOptions, MikroOrmModuleOptions, MikroOrmOptionsFactory } from './typings';
 import { Provider } from '@nestjs/common';
 
 export const createMikroOrmProvider = (): Provider => ({
   provide: MikroORM,
-  useFactory: async (options?: Options | Configuration) => {
+  useFactory: async (options?: MikroOrmModuleOptions) => {
+    if (options?.autoLoadEntities) {
+      options.entities = [...(options.entities || []), ...REGISTERED_ENTITIES.values()];
+      options.entitiesTs = [...(options.entitiesTs || []), ...REGISTERED_ENTITIES.values()];
+      delete options.autoLoadEntities;
+    }
+
+    REGISTERED_ENTITIES.clear();
+
     if (!options || Object.keys(options).length === 0) {
-      options = await ConfigurationLoader.getConfiguration();
-      options.set('logger', logger.log.bind(logger));
+      const config = await ConfigurationLoader.getConfiguration();
+      config.set('logger', logger.log.bind(logger));
+      options = config as unknown as MikroOrmModuleOptions;
     }
 
     return MikroORM.init(options);

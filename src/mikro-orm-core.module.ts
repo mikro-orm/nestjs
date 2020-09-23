@@ -58,14 +58,13 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
       return;
     }
 
+    const isNestMiddleware = (consumer: MiddlewareConsumer): consumer is NestMiddlewareConsumer => {
+      return typeof (consumer as any).httpAdapter === 'object';
+    };
 
-    const isNestMiddleware = (
-      consumer: MiddlewareConsumer
-    ): consumer is NestMiddlewareConsumer =>
-      typeof (consumer as any).httpAdapter === 'object';
-
-    const usingFastify = (consumer: NestMiddlewareConsumer) =>
-      consumer.httpAdapter.constructor.name.toLowerCase().startsWith('fastify');
+    const usingFastify = (consumer: NestMiddlewareConsumer) => {
+      return consumer.httpAdapter.constructor.name.toLowerCase().startsWith('fastify');
+    };
 
     const forRoutesPath =
       this.options.forRoutesPath ??
