@@ -111,6 +111,36 @@ export class PhotoService {
 }
 ```
 
+## Using `AsyncLocalStorage` for request context
+
+By default, `domain` api use used in the `RequestContext` helper. Since `@mikro-orm/core@4.0.3`,
+you can use the new `AsyncLocalStorage` too, if you are on up to date node version:
+
+```typescript
+// create new (global) storage instance
+const storage = new AsyncLocalStorage<EntityManager>();
+
+@Module({
+  imports: [
+    MikroOrmModule.forRoot({
+      // ...
+      registerRequestContext: false, // disable automatatic middleware
+      context: () => storage.getStore(), // use our AsyncLocalStorage instance
+    }),
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+
+// register the request context middleware
+const app = await NestFactory.create(AppModule, { ... });
+
+app.use((req, res, next) => {
+  storage.run(orm.em.fork(true, true), next);
+});
+```
+
 ## Using custom repositories
 
 When using custom repositories, we can get around the need for `@InjectRepository()`
