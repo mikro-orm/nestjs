@@ -125,7 +125,7 @@ describe('MikroORM Module', () => {
     await module.get<MikroORM>(MikroORM).close();
   });
 
-  it('forRootAsync should return a new em each request with request scope', async () => {
+  it('forRootAsync should return a new em each request with default scope', async () => {
     const module = await Test.createTestingModule({
       imports: [MikroOrmModule.forRootAsync({
         useFactory: (logger: Logger) => ({
