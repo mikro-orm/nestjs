@@ -3,13 +3,13 @@ import { DynamicModule, Module } from '@nestjs/common';
 
 import { createMikroOrmRepositoryProviders } from './mikro-orm.providers';
 import { MikroOrmCoreModule } from './mikro-orm-core.module';
-import { MikroOrmModuleAsyncOptions, MikroOrmModuleOptions } from './typings';
+import { MikroOrmModuleAsyncOptions, MikroOrmModuleOptions, MikroOrmModuleSyncOptions } from './typings';
 import { REGISTERED_ENTITIES } from './mikro-orm.common';
 
 @Module({})
 export class MikroOrmModule {
 
-  static forRoot(options?: MikroOrmModuleOptions): DynamicModule {
+  static forRoot(options?: MikroOrmModuleSyncOptions): DynamicModule {
     return {
       module: MikroOrmModule,
       imports: [MikroOrmCoreModule.forRoot(options)],

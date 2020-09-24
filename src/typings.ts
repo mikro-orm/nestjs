@@ -1,10 +1,14 @@
 import { IDatabaseDriver, Options } from '@mikro-orm/core';
-import { MiddlewareConsumer, ModuleMetadata, Type } from '@nestjs/common';
+import { MiddlewareConsumer, ModuleMetadata, Scope, Type } from '@nestjs/common';
 import { AbstractHttpAdapter } from '@nestjs/core';
 
 export interface NestMiddlewareConsumer extends MiddlewareConsumer {
   httpAdapter: AbstractHttpAdapter;
 }
+
+type MikroOrmNestScopeOptions = {
+  scope?: Scope;
+};
 
 export type MikroOrmModuleOptions<D extends IDatabaseDriver = IDatabaseDriver> = {
   registerRequestContext?: boolean;
@@ -23,7 +27,9 @@ export interface MikroOrmOptionsFactory<D extends IDatabaseDriver = IDatabaseDri
   createMikroOrmOptions(): Promise<MikroOrmModuleOptions<D>> | MikroOrmModuleOptions<D>;
 }
 
-export interface MikroOrmModuleAsyncOptions<D extends IDatabaseDriver = IDatabaseDriver> extends Pick<ModuleMetadata, 'imports' | 'providers'> {
+export interface MikroOrmModuleSyncOptions extends MikroOrmModuleOptions, MikroOrmNestScopeOptions { }
+
+export interface MikroOrmModuleAsyncOptions<D extends IDatabaseDriver = IDatabaseDriver> extends Pick<ModuleMetadata, 'imports' | 'providers'>, MikroOrmNestScopeOptions {
   useExisting?: Type<MikroOrmOptionsFactory<D>>;
   useClass?: Type<MikroOrmOptionsFactory<D>>;
   useFactory?: (...args: any[]) => Promise<MikroOrmModuleOptions<D>> | MikroOrmModuleOptions<D>;
