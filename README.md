@@ -178,7 +178,7 @@ export class MyService {
 
 ## Using `AsyncLocalStorage` for request context
 
-By default, `domain` api use used in the `RequestContext` helper. Since `@mikro-orm/core@4.0.3`,
+By default, the `domain` api is used in the `RequestContext` helper. Since `@mikro-orm/core@4.0.3`,
 you can use the new `AsyncLocalStorage` too, if you are on up to date node version:
 
 ```typescript
@@ -208,7 +208,7 @@ app.use((req, res, next) => {
 
 ## Using NestJS `Injection Scopes` for request context
 
-By default, `domain` api use used in the `RequestContext` helper. Since `@nestjs/common@6`,
+By default, the `domain` api is used in the `RequestContext` helper. Since `@nestjs/common@6`,
 you can use the new `Injection Scopes` (https://docs.nestjs.com/fundamentals/injection-scopes) too:
 
 ```typescript
