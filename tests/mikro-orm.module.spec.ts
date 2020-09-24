@@ -174,7 +174,7 @@ describe('MikroORM Module', () => {
     const idSet = await getEntityManagerLoop(module);
 
     expect(idSet.size).toBe(1);
-    
+
     await module.get<MikroORM>(MikroORM).close();
   });
 });
