@@ -5,7 +5,7 @@ import { ModuleRef } from '@nestjs/core';
 import { MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
 import { MikroOrmMiddleware } from './mikro-orm.middleware';
 import { createAsyncProviders, createMikroOrmEntityManagerProvider, createMikroOrmProvider } from './mikro-orm.providers';
-import { MikroOrmModuleAsyncOptions, MikroOrmModuleOptions, NestMiddlewareConsumer } from './typings';
+import { MikroOrmModuleAsyncOptions, MikroOrmModuleOptions, MikroOrmModuleSyncOptions, NestMiddlewareConsumer } from './typings';
 
 @Global()
 @Module({})
@@ -15,15 +15,15 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
               private readonly options: MikroOrmModuleOptions,
               private readonly moduleRef: ModuleRef) { }
 
-  static forRoot(options?: Options): DynamicModule {
+  static forRoot(options?: MikroOrmModuleSyncOptions): DynamicModule {
     return {
       module: MikroOrmCoreModule,
       providers: [
         { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options || {} },
         createMikroOrmProvider(),
-        createMikroOrmEntityManagerProvider(),
-        createMikroOrmEntityManagerProvider('SqlEntityManager'),
-        createMikroOrmEntityManagerProvider('MongoEntityManager'),
+        createMikroOrmEntityManagerProvider(options?.scope),
+        createMikroOrmEntityManagerProvider(options?.scope, 'SqlEntityManager'),
+        createMikroOrmEntityManagerProvider(options?.scope, 'MongoEntityManager'),
       ],
       exports: [MikroORM, EntityManager, 'SqlEntityManager', 'MongoEntityManager'],
     };
@@ -37,9 +37,9 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
         ...(options.providers || []),
         ...createAsyncProviders(options),
         createMikroOrmProvider(),
-        createMikroOrmEntityManagerProvider(),
-        createMikroOrmEntityManagerProvider('SqlEntityManager'),
-        createMikroOrmEntityManagerProvider('MongoEntityManager'),
+        createMikroOrmEntityManagerProvider(options.scope),
+        createMikroOrmEntityManagerProvider(options.scope, 'SqlEntityManager'),
+        createMikroOrmEntityManagerProvider(options.scope, 'MongoEntityManager'),
       ],
       exports: [MikroORM, EntityManager, 'SqlEntityManager', 'MongoEntityManager'],
     };

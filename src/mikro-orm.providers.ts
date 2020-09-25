@@ -2,7 +2,7 @@ import { getRepositoryToken, logger, MIKRO_ORM_MODULE_OPTIONS, REGISTERED_ENTITI
 import { AnyEntity, ConfigurationLoader, EntityManager, EntityName, MikroORM } from '@mikro-orm/core';
 
 import { MikroOrmModuleAsyncOptions, MikroOrmModuleOptions, MikroOrmOptionsFactory } from './typings';
-import { Provider } from '@nestjs/common';
+import { Provider, Scope } from '@nestjs/common';
 
 export const createMikroOrmProvider = (): Provider => ({
   provide: MikroORM,
@@ -26,9 +26,10 @@ export const createMikroOrmProvider = (): Provider => ({
   inject: [MIKRO_ORM_MODULE_OPTIONS],
 });
 
-export const createMikroOrmEntityManagerProvider = (alias?: string): Provider => ({
+export const createMikroOrmEntityManagerProvider = (scope = Scope.DEFAULT, alias?: string): Provider => ({
   provide: alias ?? EntityManager,
-  useFactory: (orm: MikroORM) => orm.em,
+  scope,
+  useFactory: (orm: MikroORM) => scope === Scope.DEFAULT ? orm.em : orm.em.fork(),
   inject: [MikroORM],
 });
 

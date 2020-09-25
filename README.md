@@ -178,7 +178,7 @@ export class MyService {
 
 ## Using `AsyncLocalStorage` for request context
 
-By default, `domain` api use used in the `RequestContext` helper. Since `@mikro-orm/core@4.0.3`,
+By default, the `domain` api is used in the `RequestContext` helper. Since `@mikro-orm/core@4.0.3`,
 you can use the new `AsyncLocalStorage` too, if you are on up to date node version:
 
 ```typescript
@@ -205,6 +205,52 @@ app.use((req, res, next) => {
   storage.run(orm.em.fork(true, true), next);
 });
 ```
+
+## Using NestJS `Injection Scopes` for request context
+
+By default, the `domain` api is used in the `RequestContext` helper. Since `@nestjs/common@6`,
+you can use the new `Injection Scopes` (https://docs.nestjs.com/fundamentals/injection-scopes) too:
+
+```typescript
+import { Scope } from '@nestjs/common';
+
+@Module({
+  imports: [
+    MikroOrmModule.forRoot({
+      // ...
+      registerRequestContext: false, // disable automatatic middleware
+      scope: Scope.REQUEST
+    }),
+  ],
+  controllers: [AppController],
+  providers: [AppService]
+})
+export class AppModule {}
+```
+
+Or, if you're using the Async provider:
+```typescript
+import { Scope } from '@nestjs/common';
+
+@Module({
+  imports: [
+    MikroOrmModule.forRootAsync({
+      // ...
+      useFactory: () => ({
+        // ...
+        registerRequestContext: false, // disable automatatic middleware
+      }),
+      scope: Scope.REQUEST
+    })
+  ],
+  controllers: [AppController],
+  providers: [AppService]
+})
+export class AppModule {}
+```
+
+> Please note that this might have some impact on performance,
+> see: https://docs.nestjs.com/fundamentals/injection-scopes#performance
 
 ## Using custom repositories
 
