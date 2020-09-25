@@ -1,3 +1,10 @@
+# [4.2.0](https://github.com/mikro-orm/nestjs/compare/v4.1.0...v4.2.0) (2020-09-25)
+
+### Features
+
+* **core:** allow setting a custom scope for the EntityManager provider ([#9](https://github.com/mikro-orm/nestjs/issues/9)) ([c11e0ea](https://github.com/mikro-orm/nestjs/commit/c11e0ea)), closes [#2](https://github.com/mikro-orm/nestjs/issues/2)
+
+
 # [4.1.0](https://github.com/mikro-orm/nestjs/compare/v4.0.0...v4.1.0) (2020-09-23)
 
 ### Features
