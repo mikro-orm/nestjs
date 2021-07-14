@@ -29,14 +29,14 @@ class ConfigService implements MikroOrmOptionsFactory {
 @Module({ providers: [ConfigService, myLoggerProvider], exports: [ConfigService] })
 class ConfigModule { }
 
-const getEntityManagerLoop = async (module: TestingModule): Promise<Set<number>> => {
+const getEntityManagerLoop = async (module: TestingModule): Promise<Set<number | string>> => {
   // this function mocks the contextId factory which is called on each request
   // it's looped 5 times and resolves the EntityManager provider 10 times
   // set only allows unique values, it should only return 5 items as it should resolve the same em with the same contextId
 
-  const generatedIds = new Set<number>();
+  const generatedIds = new Set<number | string>();
 
-  for (let i = 0; i < 5; i++) {
+  for(let i = 0; i < 5; i++) {
     const contextId = ContextIdFactory.create();
     jest
       .spyOn(ContextIdFactory, 'getByRequest')
@@ -49,7 +49,7 @@ const getEntityManagerLoop = async (module: TestingModule): Promise<Set<number>>
   }
 
   return generatedIds;
-};
+}
 
 describe('MikroORM Module', () => {
 
