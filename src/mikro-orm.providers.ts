@@ -1,5 +1,5 @@
 import { getRepositoryToken, logger, MIKRO_ORM_MODULE_OPTIONS, REGISTERED_ENTITIES } from './mikro-orm.common';
-import { AnyEntity, ConfigurationLoader, EntityManager, EntityName, MikroORM, EntityManagerType, IDatabaseDriver } from '@mikro-orm/core';
+import { AnyEntity, ConfigurationLoader, EntityManager, EntityName, MikroORM, EntityManagerType, IDatabaseDriver, MetadataStorage } from '@mikro-orm/core';
 
 import { MikroOrmModuleAsyncOptions, MikroOrmModuleOptions, MikroOrmOptionsFactory } from './typings';
 import { Provider, Scope, Type } from '@nestjs/common';
@@ -73,9 +73,26 @@ export const createAsyncProviders = (options: MikroOrmModuleAsyncOptions): Provi
 };
 
 export const createMikroOrmRepositoryProviders = (entities: EntityName<AnyEntity>[]): Provider[] => {
-  return (entities || []).map(entity => ({
-    provide: getRepositoryToken(entity),
-    useFactory: (em: EntityManager) => em.getRepository(entity),
-    inject: [EntityManager],
-  }));
+  const metadata = Object.values(MetadataStorage.getMetadata());
+  const providers: Provider[] = [];
+
+  (entities || []).forEach(entity => {
+    const meta = metadata.find(meta => meta.class === entity);
+
+    if (meta?.customRepository) {
+      providers.push({
+        provide: meta.customRepository(),
+        useFactory: em => em.getRepository(entity),
+        inject: [EntityManager],
+      });
+    }
+
+    providers.push({
+      provide: getRepositoryToken(entity),
+      useFactory: em => em.getRepository(entity),
+      inject: [EntityManager],
+    });
+  });
+
+  return providers;
 };
