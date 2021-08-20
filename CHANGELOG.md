@@ -1,3 +1,12 @@
+# [4.3.0](https://github.com/mikro-orm/nestjs/compare/v4.2.0...v4.3.0) (2021-08-19)
+
+
+### Features
+
+* add support for nestjs@8.0.0 ([#29](https://github.com/mikro-orm/nestjs/issues/29)) ([e512067](https://github.com/mikro-orm/nestjs/commit/e51206762f9eb3e96bfc9edbb6abbf7ae8bc08a8))
+
+
+
 # [4.2.0](https://github.com/mikro-orm/nestjs/compare/v4.1.0...v4.2.0) (2020-09-25)
 
 ### Features
