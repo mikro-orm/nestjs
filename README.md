@@ -300,6 +300,23 @@ export class MyService {
 }
 ```
 
+## App shutdown and cleanup
+
+By default, NestJS does not listen for system process termination signals (for example SIGTERM). Because of this, the MikroORM shutdown logic will never executed if the process is terminated, which could lead to database connections remaining open and consuming resources. To enable this, the `enableShutdownHooks` function needs to be called when starting up the application.
+
+```ts
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  // Starts listening for shutdown hooks
+  app.enableShutdownHooks();
+
+  await app.listen(3000);
+}
+```
+
+More information about [enableShutdownHooks](https://docs.nestjs.com/fundamentals/lifecycle-events#application-shutdown)
+
 ## Testing
 
 The `nestjs-mikro-orm` package exposes `getRepositoryToken()` function that returns prepared token based on a given entity to allow mocking the repository.
