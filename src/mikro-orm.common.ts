@@ -18,9 +18,13 @@ export function UseRequestContext() {
         throw new Error('@UseRequestContext() decorator can only be applied to methods of classes that carry `orm: MikroORM`');
       }
 
+      let result;
+
       await RequestContext.createAsync(context.orm.em, async () => {
-        await originalMethod.apply(context, args);
+        result = await originalMethod.apply(context, args);
       });
+
+      return result;
     };
 
     return descriptor;
