@@ -300,6 +300,52 @@ export class MyService {
 }
 ```
 
+## Using serealization interceptor
+
+- Use as a global interceptor
+```ts
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  // Added mikro-orm serealization
+  app.useGlobalInterceptors(new MikroOrmSerializerInterceptor())
+
+  await app.listen(3000);
+}
+```
+- Use as a controller interceptor
+```ts
+@UseInterceptors(MikroOrmSerializerInterceptor)
+export class AuthorController {}
+```
+
+- Use as a route interceptor
+```ts
+@UseInterceptors(MikroOrmSerializerInterceptor)
+@Get()
+findOne(): AuthorEntity {
+  return new UserEntity({
+    id: 1,
+    firstName: 'string',
+    lastName: ''string,
+    password: 'string',
+  });
+}
+```
+
+- Use as a global interceptor in conjunction with `ClassSerializerInterceptor`. **The order of interceptor calls is important!**
+```ts
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  // Added mikro-orm serealization
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)), new MikroOrmSerializerInterceptor())
+
+  await app.listen(3000);
+}
+```
+
+
 ## App shutdown and cleanup
 
 By default, NestJS does not listen for system process termination signals (for example SIGTERM). Because of this, the MikroORM shutdown logic will never executed if the process is terminated, which could lead to database connections remaining open and consuming resources. To enable this, the `enableShutdownHooks` function needs to be called when starting up the application.
