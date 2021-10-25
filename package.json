@@ -41,7 +41,7 @@
     "lint": "eslint src/**/*.ts"
   },
   "peerDependencies": {
-    "@mikro-orm/core": "^4.0.0",
+    "@mikro-orm/core": "^4.0.0||^5.0.0-dev.0",
     "@nestjs/common": "^7.0.0||^8.0.0",
     "@nestjs/core": "^7.0.0||^8.0.0"
   },
