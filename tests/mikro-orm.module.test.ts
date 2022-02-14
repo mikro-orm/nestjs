@@ -1,11 +1,14 @@
-import { EntityManager, MikroORM, Options } from '@mikro-orm/core';
+import type { Options } from '@mikro-orm/core';
+import { EntityManager, MikroORM } from '@mikro-orm/core';
 import { Inject, Logger, Module, Scope } from '@nestjs/common';
-import { ContextIdFactory, ModuleRef } from '@nestjs/core';
-import { Test, TestingModule } from '@nestjs/testing';
-import { MikroOrmModule, MikroOrmOptionsFactory } from '../src';
+import { ContextIdFactory } from '@nestjs/core';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import type { MikroOrmOptionsFactory } from '../src';
+import { MikroOrmModule } from '../src';
 
 const testOptions: Options = {
-  dbName: 'mikro_orm_test.db',
+  dbName: ':memory:',
   type: 'sqlite',
   baseDir: __dirname,
   entities: ['entities'],
@@ -36,7 +39,7 @@ const getEntityManagerLoop = async (module: TestingModule): Promise<Set<number |
 
   const generatedIds = new Set<number | string>();
 
-  for(let i = 0; i < 5; i++) {
+  for (let i = 0; i < 5; i++) {
     const contextId = ContextIdFactory.create();
     jest
       .spyOn(ContextIdFactory, 'getByRequest')
@@ -49,7 +52,7 @@ const getEntityManagerLoop = async (module: TestingModule): Promise<Set<number |
   }
 
   return generatedIds;
-}
+};
 
 describe('MikroORM Module', () => {
 
@@ -58,9 +61,9 @@ describe('MikroORM Module', () => {
       imports: [MikroOrmModule.forRoot(testOptions)],
     }).compile();
 
-    const orm = module.get<MikroORM>(MikroORM);
+    const orm = module.get(MikroORM);
     expect(orm).toBeDefined();
-    expect(module.get<EntityManager>(EntityManager)).toBeDefined();
+    expect(module.get(EntityManager)).toBeDefined();
     await orm.close();
   });
 
@@ -114,7 +117,7 @@ describe('MikroORM Module', () => {
     const module = await Test.createTestingModule({
       imports: [MikroOrmModule.forRoot({
         ...testOptions,
-        scope: Scope.REQUEST
+        scope: Scope.REQUEST,
       })],
     }).compile();
 
@@ -134,7 +137,7 @@ describe('MikroORM Module', () => {
         }),
         inject: ['my-logger'],
         providers: [myLoggerProvider],
-        scope: Scope.REQUEST
+        scope: Scope.REQUEST,
       })],
     }).compile();
 
@@ -167,7 +170,7 @@ describe('MikroORM Module', () => {
           logger: logger.log.bind(logger),
         }),
         inject: ['my-logger'],
-        providers: [myLoggerProvider]
+        providers: [myLoggerProvider],
       })],
     }).compile();
 

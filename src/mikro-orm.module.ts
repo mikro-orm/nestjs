@@ -1,9 +1,10 @@
-import { AnyEntity, EntityName, Utils } from '@mikro-orm/core';
-import { DynamicModule, Module } from '@nestjs/common';
-
+import type { AnyEntity, EntityName } from '@mikro-orm/core';
+import { Utils } from '@mikro-orm/core';
+import type { DynamicModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { createMikroOrmRepositoryProviders } from './mikro-orm.providers';
 import { MikroOrmCoreModule } from './mikro-orm-core.module';
-import { MikroOrmModuleAsyncOptions, MikroOrmModuleSyncOptions } from './typings';
+import type { MikroOrmModuleAsyncOptions, MikroOrmModuleSyncOptions } from './typings';
 import { REGISTERED_ENTITIES } from './mikro-orm.common';
 
 @Module({})
