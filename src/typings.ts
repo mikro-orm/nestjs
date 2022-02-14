@@ -1,6 +1,6 @@
-import { IDatabaseDriver, Options } from '@mikro-orm/core';
-import { MiddlewareConsumer, ModuleMetadata, Scope, Type } from '@nestjs/common';
-import { AbstractHttpAdapter } from '@nestjs/core';
+import type { IDatabaseDriver, Options } from '@mikro-orm/core';
+import type { MiddlewareConsumer, ModuleMetadata, Scope, Type } from '@nestjs/common';
+import type { AbstractHttpAdapter } from '@nestjs/core';
 
 export interface NestMiddlewareConsumer extends MiddlewareConsumer {
   httpAdapter: AbstractHttpAdapter;

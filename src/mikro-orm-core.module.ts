@@ -1,11 +1,13 @@
 import { EntityManager, MikroORM } from '@mikro-orm/core';
-import { DynamicModule, Global, Inject, MiddlewareConsumer, Module, OnApplicationShutdown, RequestMethod, Type } from '@nestjs/common';
+import type { DynamicModule, MiddlewareConsumer, OnApplicationShutdown, Type } from '@nestjs/common';
+import { Global, Inject, Module, RequestMethod } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 
 import { MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
 import { MikroOrmMiddleware } from './mikro-orm.middleware';
 import { createAsyncProviders, createMikroOrmEntityManagerProvider, createMikroOrmProvider } from './mikro-orm.providers';
-import { MikroOrmModuleAsyncOptions, MikroOrmModuleOptions, MikroOrmModuleSyncOptions, NestMiddlewareConsumer } from './typings';
+import type { MikroOrmModuleAsyncOptions, MikroOrmModuleSyncOptions, NestMiddlewareConsumer } from './typings';
+import { MikroOrmModuleOptions } from './typings';
 
 enum EntityManagerModuleName {
   Knex = '@mikro-orm/knex',
