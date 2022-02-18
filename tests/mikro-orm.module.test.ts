@@ -1,10 +1,12 @@
-import type { EntityManager, MikroORM, Options } from '@mikro-orm/core';
+import type { EntityManager, MikroORM, Options, EntityRepository } from '@mikro-orm/core';
 import { Inject, Logger, Module, Scope } from '@nestjs/common';
 import { ContextIdFactory } from '@nestjs/core';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { MikroOrmOptionsFactory } from '../src';
-import { getEntityManagerToken, getMikroORMToken, MikroOrmModule } from '../src';
+import { getEntityManagerToken, getMikroORMToken, getRepositoryToken, MikroOrmModule } from '../src';
+import { Foo } from './entities/foo.entity';
+import { Bar } from './entities/bar.entity';
 
 const testOptions: Options = {
   dbName: ':memory:',
@@ -195,6 +197,25 @@ describe('MikroORM Module', () => {
 
       await module.get<MikroORM>(getMikroORMToken()).close();
     });
+
+    it('forFeature should return repository', async () => {
+      const module = await Test.createTestingModule({
+        imports: [
+          MikroOrmModule.forRoot(testOptions),
+          MikroOrmModule.forFeature([Foo]),
+        ],
+      }).compile();
+
+      const orm = module.get<MikroORM>(getMikroORMToken());
+      const entityManager = module.get<EntityManager>(getEntityManagerToken());
+      const repository = module.get<EntityRepository<Foo>>(getRepositoryToken(Foo));
+
+      expect(orm).toBeDefined();
+      expect(entityManager).toBeDefined();
+      expect(repository).toBeDefined();
+
+      await orm.close();
+    });
   });
 
   describe('Multiple Databases', () => {
@@ -280,6 +301,29 @@ describe('MikroORM Module', () => {
       }).compile();
 
       await checkProviders(module);
+    });
+
+    it('forFeature should return repositories', async () => {
+      const module = await Test.createTestingModule({
+        imports: [
+          MikroOrmModule.forRoot({
+            contextName: 'database1',
+            ...testOptions,
+          }),
+          MikroOrmModule.forRoot({
+            contextName: 'database2',
+            ...testOptions,
+          }),
+          MikroOrmModule.forFeature([Foo], 'database1'),
+          MikroOrmModule.forFeature([Bar], 'database2'),
+        ],
+      }).compile();
+
+      const repository1 = module.get<EntityRepository<Foo>>(getRepositoryToken(Foo, 'database1'));
+      const repository2 = module.get<EntityRepository<Bar>>(getRepositoryToken(Bar, 'database2'));
+
+      expect(repository1).toBeDefined();
+      expect(repository2).toBeDefined();
     });
   });
 });

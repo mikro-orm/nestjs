@@ -16,5 +16,5 @@ export const InjectSqlEntityManager = (name: string) => Inject(getSqlEntityManag
 export const getMongoEntityManagerToken = (name = 'default') => `${name}_MongoEntityManager`;
 export const InjectMongoEntityManager = (name: string) => Inject(getMongoEntityManagerToken(name));
 
-export const getRepositoryToken = <T> (entity: EntityName<T>) => `${Utils.className(entity)}Repository`;
-export const InjectRepository = <T> (entity: EntityName<T>) => Inject(getRepositoryToken(entity));
+export const getRepositoryToken = <T> (entity: EntityName<T>, name = 'default') => `${Utils.className(entity)}Repository_${name}`;
+export const InjectRepository = <T> (entity: EntityName<T>, name: string) => Inject(getRepositoryToken(entity, name));

@@ -24,9 +24,9 @@ export class MikroOrmModule {
     };
   }
 
-  static forFeature(options: EntityName<AnyEntity>[] | { entities?: EntityName<AnyEntity>[] }): DynamicModule {
+  static forFeature(options: EntityName<AnyEntity>[] | { entities?: EntityName<AnyEntity>[] }, contextName = 'default'): DynamicModule {
     const entities = Array.isArray(options) ? options : (options.entities || []);
-    const providers = createMikroOrmRepositoryProviders(entities);
+    const providers = createMikroOrmRepositoryProviders(entities, contextName);
 
     for (const e of entities) {
       if (!Utils.isString(e)) {
