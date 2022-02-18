@@ -30,6 +30,7 @@ export interface MikroOrmOptionsFactory<D extends IDatabaseDriver = IDatabaseDri
 export interface MikroOrmModuleSyncOptions extends MikroOrmModuleOptions, MikroOrmNestScopeOptions { }
 
 export interface MikroOrmModuleAsyncOptions<D extends IDatabaseDriver = IDatabaseDriver> extends Pick<ModuleMetadata, 'imports' | 'providers'>, MikroOrmNestScopeOptions {
+  contextName?: string;
   useExisting?: Type<MikroOrmOptionsFactory<D>>;
   useClass?: Type<MikroOrmOptionsFactory<D>>;
   useFactory?: (...args: any[]) => Promise<MikroOrmModuleOptions<D>> | MikroOrmModuleOptions<D>;

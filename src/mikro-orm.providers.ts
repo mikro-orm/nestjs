@@ -1,13 +1,20 @@
-import { getRepositoryToken, logger, MIKRO_ORM_MODULE_OPTIONS, REGISTERED_ENTITIES } from './mikro-orm.common';
+import {
+  getEntityManagerToken,
+  getMikroORMToken,
+  getRepositoryToken,
+  logger,
+  MIKRO_ORM_MODULE_OPTIONS,
+  REGISTERED_ENTITIES,
+} from './mikro-orm.common';
 import type { AnyEntity, EntityName, EntityManagerType, IDatabaseDriver } from '@mikro-orm/core';
 import { ConfigurationLoader, EntityManager, MikroORM, MetadataStorage } from '@mikro-orm/core';
 
 import type { MikroOrmModuleAsyncOptions, MikroOrmModuleOptions, MikroOrmOptionsFactory } from './typings';
-import type { Provider, Type } from '@nestjs/common';
+import type { Provider } from '@nestjs/common';
 import { Scope } from '@nestjs/common';
 
-export const createMikroOrmProvider = (): Provider => ({
-  provide: MikroORM,
+export const createMikroOrmProvider = (contextName?: string): Provider => ({
+  provide: getMikroORMToken(contextName),
   useFactory: async (options?: MikroOrmModuleOptions) => {
     if (options?.autoLoadEntities) {
       options.entities = [...(options.entities || []), ...REGISTERED_ENTITIES.values()];
@@ -30,12 +37,14 @@ export const createMikroOrmProvider = (): Provider => ({
 
 export type EntityManagerProvider = Provider<IDatabaseDriver[typeof EntityManagerType] & EntityManager>;
 
-export const createMikroOrmEntityManagerProvider = (scope = Scope.DEFAULT, entityManager: Type<EntityManager> = EntityManager): EntityManagerProvider => ({
-  provide: entityManager,
-  scope,
-  useFactory: (orm: MikroORM) => scope === Scope.DEFAULT ? orm.em : orm.em.fork(),
-  inject: [MikroORM],
-});
+export const createMikroOrmEntityManagerProvider = (scope = Scope.DEFAULT, contextName = 'default', providerOverride?: string): EntityManagerProvider => {
+  return {
+    provide: providerOverride || getEntityManagerToken(contextName),
+    scope,
+    useFactory: (orm: MikroORM) => scope === Scope.DEFAULT ? orm.em : orm.em.fork(),
+    inject: [getMikroORMToken(contextName)],
+  };
+};
 
 export const createMikroOrmAsyncOptionsProvider = (options: MikroOrmModuleAsyncOptions): Provider => {
   if (options.useFactory) {
