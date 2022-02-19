@@ -213,6 +213,20 @@ We can use the `@UseRequestContext()` decorator. It requires you to first inject
 for you. Under the hood, the decorator will register new request context for your
 method and execute it inside the context.
 
+```ts
+@Injectable()
+export class MyService {
+
+  constructor(@InjectMikroORM() private readonly orm: MikroORM) { }
+
+  @UseRequestContext()
+  async doSomething() {
+    // this will be executed in a separate context
+  }
+
+}
+```
+
 ### Using NestJS `Injection Scopes`
 
 Since `@nestjs/common@6`, you can use the new `Injection Scopes` (https://docs.nestjs.com/fundamentals/injection-scopes) and may omit the use of `forMiddleware()`:
@@ -292,20 +306,6 @@ object.
 > Using `autoLoadEntities` also has no effect on the MikroORM CLI - for that we 
 > still need CLI config with the full list of entities. On the other hand, we can
 > use globs there, as the CLI won't go thru webpack.
-
-```ts
-@Injectable()
-export class MyService {
-
-  constructor(@InjectMikroORM() private readonly orm: MikroORM) { }
-
-  @UseRequestContext()
-  async doSomething() {
-    // this will be executed in a separate context
-  }
-
-}
-```
 
 ## Using custom repositories
 
