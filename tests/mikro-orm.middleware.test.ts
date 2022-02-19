@@ -58,7 +58,7 @@ class TestController {
 })
 class TestModule {}
 
-describe('Middleware', () => {
+describe('Middleware executes request context for all MikroORM registered', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
