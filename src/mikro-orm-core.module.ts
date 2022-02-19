@@ -1,17 +1,17 @@
 import type { EntityManager } from '@mikro-orm/core';
-import type { DynamicModule, MiddlewareConsumer, OnApplicationShutdown, Type } from '@nestjs/common';
-import { Global, Inject, Module, RequestMethod } from '@nestjs/common';
+import type { DynamicModule, OnApplicationShutdown, Type } from '@nestjs/common';
+import { Global, Inject, Module } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 
 import {
   getEntityManagerToken,
-  getMikroORMToken, getMongoEntityManagerToken,
+  getMikroORMToken,
+  getMongoEntityManagerToken,
   getSqlEntityManagerToken,
   MIKRO_ORM_MODULE_OPTIONS,
 } from './mikro-orm.common';
-import { MikroOrmMiddleware } from './mikro-orm.middleware';
 import { createAsyncProviders, createMikroOrmEntityManagerProvider, createMikroOrmProvider } from './mikro-orm.providers';
-import type { MikroOrmModuleAsyncOptions, MikroOrmModuleSyncOptions, NestMiddlewareConsumer } from './typings';
+import type { MikroOrmModuleAsyncOptions, MikroOrmModuleSyncOptions } from './typings';
 import { MikroOrmModuleOptions } from './typings';
 
 enum EntityManagerModuleName {
@@ -99,28 +99,6 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
     if (orm) {
       await orm.close();
     }
-  }
-
-  configure(consumer: MiddlewareConsumer): void {
-    if (this.options.registerRequestContext === false) {
-      return;
-    }
-
-    const isNestMiddleware = (consumer: MiddlewareConsumer): consumer is NestMiddlewareConsumer => {
-      return typeof (consumer as any).httpAdapter === 'object';
-    };
-
-    const usingFastify = (consumer: NestMiddlewareConsumer) => {
-      return consumer.httpAdapter.constructor.name.toLowerCase().startsWith('fastify');
-    };
-
-    const forRoutesPath =
-      this.options.forRoutesPath ??
-      (isNestMiddleware(consumer) && usingFastify(consumer) ? '(.*)' : '*');
-
-    consumer
-      .apply(MikroOrmMiddleware) // register request context automatically
-      .forRoutes({ path: forRoutesPath, method: RequestMethod.ALL });
   }
 
 }

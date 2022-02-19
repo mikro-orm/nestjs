@@ -10,9 +10,8 @@ type MikroOrmNestScopeOptions = {
   scope?: Scope;
 };
 
-export type MikroOrmModuleOptions<D extends IDatabaseDriver = IDatabaseDriver> = {
-  registerRequestContext?: boolean;
-  autoLoadEntities?: boolean;
+export type MikroOrmMiddlewareModuleOptions = {
+  contextNames: string[];
   /**
    * Routes to apply the middleware.
    *
@@ -21,6 +20,10 @@ export type MikroOrmModuleOptions<D extends IDatabaseDriver = IDatabaseDriver> =
    * For all other frameworks including Express, the middleware applies to all routes using `*`.
    */
   forRoutesPath?: string;
+};
+
+export type MikroOrmModuleOptions<D extends IDatabaseDriver = IDatabaseDriver> = {
+  autoLoadEntities?: boolean;
 } & Options<D>;
 
 export interface MikroOrmOptionsFactory<D extends IDatabaseDriver = IDatabaseDriver> {

@@ -319,11 +319,18 @@ describe('MikroORM Module', () => {
         ],
       }).compile();
 
+      const orm1 = module.get<MikroORM>(getMikroORMToken('database1'));
+      const orm2 = module.get<MikroORM>(getMikroORMToken('database2'));
       const repository1 = module.get<EntityRepository<Foo>>(getRepositoryToken(Foo, 'database1'));
       const repository2 = module.get<EntityRepository<Bar>>(getRepositoryToken(Bar, 'database2'));
 
+      expect(orm1).toBeDefined();
       expect(repository1).toBeDefined();
+      expect(orm2).toBeDefined();
       expect(repository2).toBeDefined();
+
+      await orm1.close();
+      await orm2.close();
     });
   });
 });
