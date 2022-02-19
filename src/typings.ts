@@ -11,7 +11,6 @@ type MikroOrmNestScopeOptions = {
 };
 
 export type MikroOrmMiddlewareModuleOptions = {
-  contextNames: string[];
   /**
    * Routes to apply the middleware.
    *

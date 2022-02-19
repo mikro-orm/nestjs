@@ -42,7 +42,7 @@ export class MikroOrmModule {
     };
   }
 
-  static forMiddleware(options: MikroOrmMiddlewareModuleOptions): DynamicModule {
+  static forMiddleware(options?: MikroOrmMiddlewareModuleOptions): DynamicModule {
     return {
       module: MikroOrmModule,
       imports: [MikroOrmMiddlewareModule.forMiddleware(options)],

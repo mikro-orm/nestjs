@@ -6,6 +6,7 @@ import { MikroOrmMiddleware } from './mikro-orm.middleware';
 import { MikroOrmMiddlewareModuleOptions } from './typings';
 import type { NestMiddlewareConsumer } from './typings';
 import type { MikroORM } from '@mikro-orm/core';
+import { getContextNames } from './mikro-orm-core.module';
 
 @Global()
 @Module({})
@@ -14,11 +15,11 @@ export class MikroOrmMiddlewareModule {
   constructor(@Inject(MIKRO_ORM_MODULE_OPTIONS)
               private readonly options: MikroOrmMiddlewareModuleOptions) { }
 
-  static forMiddleware(options: MikroOrmMiddlewareModuleOptions) {
+  static forMiddleware(options?: MikroOrmMiddlewareModuleOptions) {
     // Work around due to nestjs not supporting the ability to register multiple types
     // https://github.com/nestjs/nest/issues/770
     // https://github.com/nestjs/nest/issues/4786#issuecomment-755032258 - workaround suggestion
-    const inject = (options.contextNames || ['default']).map(name => getMikroORMToken(name));
+    const inject = getContextNames().map(name => getMikroORMToken(name));
     return {
       module: MikroOrmMiddlewareModule,
       providers: [

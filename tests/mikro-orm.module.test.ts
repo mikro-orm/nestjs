@@ -7,6 +7,7 @@ import type { MikroOrmOptionsFactory } from '../src';
 import { getEntityManagerToken, getMikroORMToken, getRepositoryToken, MikroOrmModule } from '../src';
 import { Foo } from './entities/foo.entity';
 import { Bar } from './entities/bar.entity';
+import { getContextNames } from '../src/mikro-orm-core.module';
 
 const testOptions: Options = {
   dbName: ':memory:',
@@ -72,6 +73,13 @@ const checkProviders = async (module: TestingModule) => {
 };
 
 describe('MikroORM Module', () => {
+
+  beforeEach(() => {
+    // Clear context names before each run, so we do not throw existing exception
+    const contextNames = getContextNames();
+    contextNames.splice(0, contextNames.length);
+  });
+
   describe('Single Database', () => {
     it('forRoot', async () => {
       const module = await Test.createTestingModule({

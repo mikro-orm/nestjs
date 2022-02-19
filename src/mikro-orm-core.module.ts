@@ -45,6 +45,12 @@ async function whenModuleAvailable<
   }
 }
 
+const contextNames: string[] = [];
+
+export function getContextNames() {
+  return contextNames;
+}
+
 @Global()
 @Module({})
 export class MikroOrmCoreModule implements OnApplicationShutdown {
@@ -54,41 +60,43 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
               private readonly moduleRef: ModuleRef) { }
 
   static async forRoot(options?: MikroOrmModuleSyncOptions): Promise<DynamicModule> {
+    const contextName = this.setContextName(options?.contextName || 'default');
     return {
       module: MikroOrmCoreModule,
       providers: [
         { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options || {} },
-        createMikroOrmProvider(options?.contextName),
-        createMikroOrmEntityManagerProvider(options?.scope, options?.contextName),
-        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ()  => createMikroOrmEntityManagerProvider(options?.scope, options?.contextName, getSqlEntityManagerToken(options?.contextName)))),
-        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ()  => createMikroOrmEntityManagerProvider(options?.scope, options?.contextName, getMongoEntityManagerToken(options?.contextName)))),
+        createMikroOrmProvider(contextName),
+        createMikroOrmEntityManagerProvider(options?.scope, contextName),
+        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ()  => createMikroOrmEntityManagerProvider(options?.scope, contextName, getSqlEntityManagerToken(contextName)))),
+        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ()  => createMikroOrmEntityManagerProvider(options?.scope, contextName, getMongoEntityManagerToken(contextName)))),
       ],
       exports: [
-        getMikroORMToken(options?.contextName),
-        getEntityManagerToken(options?.contextName),
-        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ()  => getSqlEntityManagerToken(options?.contextName))),
-        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ()  => getMongoEntityManagerToken(options?.contextName))),
+        getMikroORMToken(contextName),
+        getEntityManagerToken(contextName),
+        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ()  => getSqlEntityManagerToken(contextName))),
+        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ()  => getMongoEntityManagerToken(contextName))),
       ],
     };
   }
 
   static async forRootAsync(options: MikroOrmModuleAsyncOptions): Promise<DynamicModule> {
+    const contextName = this.setContextName(options?.contextName || 'default');
     return {
       module: MikroOrmCoreModule,
       imports: options.imports || [],
       providers: [
         ...(options.providers || []),
         ...createAsyncProviders({ ...options, contextName: options.contextName }),
-        createMikroOrmProvider(options?.contextName),
-        createMikroOrmEntityManagerProvider(options.scope, options?.contextName),
-        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ()  => createMikroOrmEntityManagerProvider(options.scope, options?.contextName, getSqlEntityManagerToken(options?.contextName)))),
-        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ()  => createMikroOrmEntityManagerProvider(options.scope, options?.contextName, getMongoEntityManagerToken(options?.contextName)))),
+        createMikroOrmProvider(contextName),
+        createMikroOrmEntityManagerProvider(options.scope, contextName),
+        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ()  => createMikroOrmEntityManagerProvider(options.scope, contextName, getSqlEntityManagerToken(contextName)))),
+        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ()  => createMikroOrmEntityManagerProvider(options.scope, contextName, getMongoEntityManagerToken(contextName)))),
       ],
       exports: [
-        getMikroORMToken(options?.contextName),
-        getEntityManagerToken(options?.contextName),
-        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ()  => getSqlEntityManagerToken(options?.contextName))),
-        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ()  => getMongoEntityManagerToken(options?.contextName))),
+        getMikroORMToken(contextName),
+        getEntityManagerToken(contextName),
+        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ()  => getSqlEntityManagerToken(contextName))),
+        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ()  => getMongoEntityManagerToken(contextName))),
       ],
     };
   }
@@ -99,6 +107,18 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
     if (orm) {
       await orm.close();
     }
+
+    contextNames.splice(0,contextNames.length);
+  }
+
+  private static setContextName(contextName: string) {
+    if (contextNames.includes(contextName)) {
+      throw new Error(`ContextName '${contextName}' already registered`);
+    }
+
+    contextNames.push(contextName);
+
+    return contextName;
   }
 
 }

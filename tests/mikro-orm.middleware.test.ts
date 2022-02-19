@@ -50,7 +50,7 @@ class TestController {
       contextName: 'database2',
       ...testOptions,
     }),
-    MikroOrmModule.forMiddleware({ contextNames: ['database1', 'database2'] }),
+    MikroOrmModule.forMiddleware(),
     MikroOrmModule.forFeature([Foo], 'database1'),
     MikroOrmModule.forFeature([Bar], 'database2'),
   ],
