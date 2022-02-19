@@ -63,8 +63,8 @@ Afterward, the `EntityManager` will be available to inject across entire project
 @Injectable()
 export class MyService {
 
-  constructor(private readonly orm: MikroORM,
-              private readonly em: EntityManager) { }
+  constructor(@InjectMikroORM() private readonly orm: MikroORM,
+              @InjectEntityManager() private readonly em: EntityManager) { }
 
 }
 ```
@@ -111,6 +111,151 @@ export class PhotoService {
 }
 ```
 
+## Multiple Databases
+
+You can define multiple database contexts by registering multiple `MikroOrmModule` and setting their `contextName`.
+
+```typescript
+@Module({
+  imports: [
+    MikroOrmModule.forRoot({
+      contextName: 'db1',
+      entities: ['../dist/entities'],
+      entitiesTs: ['../src/entities'],
+      dbName: 'my-db-name1.sqlite3',
+      type: 'sqlite',
+      baseDir: __dirname,
+    }),
+    MikroOrmModule.forRoot({
+      contextName: 'db2',
+      entities: ['../dist/entities'],
+      entitiesTs: ['../src/entities'],
+      dbName: 'my-db-name2.sqlite3',
+      type: 'sqlite',
+      baseDir: __dirname,
+    }),
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+```
+
+Afterwards you can use the same way as shown above to with the injection tokens but are required to pass the `contextName` in.
+
+```ts
+@Injectable()
+export class MyService {
+
+  constructor(@InjectMikroORM('db1') private readonly orm1: MikroORM,
+              @InjectMikroORM('db2') private readonly orm2: MikroORM,
+              @InjectEntityManager('db1') private readonly em1: EntityManager,
+              @InjectEntityManager('db2') private readonly em2: EntityManager) { }
+
+}
+```
+
+When defining your repositories with `forFeature()` method you will need to set which `contextName` you want it registered against:
+
+```typescript
+// photo.module.ts
+
+@Module({
+  imports: [MikroOrmModule.forFeature([Photo], 'db1')],
+  providers: [PhotoService],
+  controllers: [PhotoController],
+})
+export class PhotoModule {}
+```
+
+When using the `@InjectRepository` decorator you will also need to pass the `contextName` you want to get it from:
+
+```typescript
+@Injectable()
+export class PhotoService {
+  constructor(
+    @InjectRepository(Photo, 'db1')
+    private readonly photoRepository: EntityRepository<Photo>
+  ) {}
+
+  // ...
+
+}
+```
+
+## Request scopes
+As mentioned in the docs, we need a clean state for each request, this is managed in multiple ways as explained below:
+
+### Using Middleware
+In previous versions the middleware was automatically loaded and due to the changes to use injection tokens it is required to now register it with `MikroOrmModule` using `forMiddleware()` 
+
+```typescript
+@Module({
+  imports: [
+    MikroOrmModule.forRoot({
+      // ...
+    }),
+    MikroOrmModule.forMiddleware()
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+```
+
+### Using Queues
+The middleware ia executed only for regular HTTP request handles, what if we need
+a request scoped method outside of that? One example of that is queue handlers or
+scheduled tasks.
+
+We can use the `@UseRequestContext()` decorator. It requires you to first inject the
+`MikroORM` instance to current context, it will be then used to create the context
+for you. Under the hood, the decorator will register new request context for your
+method and execute it inside the context.
+
+### Using NestJS `Injection Scopes`
+
+Since `@nestjs/common@6`, you can use the new `Injection Scopes` (https://docs.nestjs.com/fundamentals/injection-scopes) and may omit the use of `forMiddleware()`:
+
+```typescript
+import { Scope } from '@nestjs/common';
+
+@Module({
+  imports: [
+    MikroOrmModule.forRoot({
+      // ...
+      scope: Scope.REQUEST
+    }),
+  ],
+  controllers: [AppController],
+  providers: [AppService]
+})
+export class AppModule {}
+```
+
+Or, if you're using the Async provider:
+```typescript
+import { Scope } from '@nestjs/common';
+
+@Module({
+  imports: [
+    MikroOrmModule.forRootAsync({
+      // ...
+      useFactory: () => ({
+        // ...
+      }),
+      scope: Scope.REQUEST
+    })
+  ],
+  controllers: [AppController],
+  providers: [AppService]
+})
+export class AppModule {}
+```
+
+> Please note that this might have some impact on performance,
+> see: https://docs.nestjs.com/fundamentals/injection-scopes#performance
+
 ## Auto entities automatically
 
 Manually adding entities to the entities array of the connection options can be 
@@ -148,25 +293,11 @@ object.
 > still need CLI config with the full list of entities. On the other hand, we can
 > use globs there, as the CLI won't go thru webpack.
 
-## Request scoped handlers in queues
-
-As mentioned in the docs, we need a clean state for each request. That is handled
-automatically thanks to the `RequestContext` helper registered via middleware. 
-
-But middlewares are executed only for regular HTTP request handles, what if we need
-a request scoped method outside of that? One example of that is queue handlers or 
-scheduled tasks. 
-
-We can use the `@UseRequestContext()` decorator. It requires you to first inject the
-`MikroORM` instance to current context, it will be then used to create the context 
-for you. Under the hood, the decorator will register new request context for your 
-method and execute it inside the context. 
-
 ```ts
 @Injectable()
 export class MyService {
 
-  constructor(private readonly orm: MikroORM) { }
+  constructor(@InjectMikroORM() private readonly orm: MikroORM) { }
 
   @UseRequestContext()
   async doSomething() {
@@ -189,7 +320,6 @@ const storage = new AsyncLocalStorage<EntityManager>();
   imports: [
     MikroOrmModule.forRoot({
       // ...
-      registerRequestContext: false, // disable automatatic middleware
       context: () => storage.getStore(), // use our AsyncLocalStorage instance
     }),
   ],
@@ -205,52 +335,6 @@ app.use((req, res, next) => {
   storage.run(orm.em.fork(true, true), next);
 });
 ```
-
-## Using NestJS `Injection Scopes` for request context
-
-By default, the `domain` api is used in the `RequestContext` helper. Since `@nestjs/common@6`,
-you can use the new `Injection Scopes` (https://docs.nestjs.com/fundamentals/injection-scopes) too:
-
-```typescript
-import { Scope } from '@nestjs/common';
-
-@Module({
-  imports: [
-    MikroOrmModule.forRoot({
-      // ...
-      registerRequestContext: false, // disable automatatic middleware
-      scope: Scope.REQUEST
-    }),
-  ],
-  controllers: [AppController],
-  providers: [AppService]
-})
-export class AppModule {}
-```
-
-Or, if you're using the Async provider:
-```typescript
-import { Scope } from '@nestjs/common';
-
-@Module({
-  imports: [
-    MikroOrmModule.forRootAsync({
-      // ...
-      useFactory: () => ({
-        // ...
-        registerRequestContext: false, // disable automatatic middleware
-      }),
-      scope: Scope.REQUEST
-    })
-  ],
-  controllers: [AppController],
-  providers: [AppService]
-})
-export class AppModule {}
-```
-
-> Please note that this might have some impact on performance,
-> see: https://docs.nestjs.com/fundamentals/injection-scopes#performance
 
 ## Using custom repositories
 
