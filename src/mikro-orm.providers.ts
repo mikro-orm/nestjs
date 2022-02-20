@@ -1,13 +1,20 @@
-import { getRepositoryToken, logger, MIKRO_ORM_MODULE_OPTIONS, REGISTERED_ENTITIES } from './mikro-orm.common';
-import type { AnyEntity, EntityName, EntityManagerType, IDatabaseDriver } from '@mikro-orm/core';
-import { ConfigurationLoader, EntityManager, MikroORM, MetadataStorage } from '@mikro-orm/core';
+import {
+  getEntityManagerToken,
+  getMikroORMToken,
+  getRepositoryToken,
+  logger,
+  MIKRO_ORM_MODULE_OPTIONS,
+  REGISTERED_ENTITIES,
+} from './mikro-orm.common';
+import type { AnyEntity, EntityName, EntityManagerType, IDatabaseDriver  } from '@mikro-orm/core';
+import { ConfigurationLoader, MikroORM, MetadataStorage, EntityManager, Utils } from '@mikro-orm/core';
 
 import type { MikroOrmModuleAsyncOptions, MikroOrmModuleOptions, MikroOrmOptionsFactory } from './typings';
 import type { Provider, Type } from '@nestjs/common';
 import { Scope } from '@nestjs/common';
 
-export const createMikroOrmProvider = (): Provider => ({
-  provide: MikroORM,
+export const createMikroOrmProvider = (contextName?: string): Provider => ({
+  provide: contextName ? getMikroORMToken(contextName) : MikroORM,
   useFactory: async (options?: MikroOrmModuleOptions) => {
     if (options?.autoLoadEntities) {
       options.entities = [...(options.entities || []), ...REGISTERED_ENTITIES.values()];
@@ -30,12 +37,22 @@ export const createMikroOrmProvider = (): Provider => ({
 
 export type EntityManagerProvider = Provider<IDatabaseDriver[typeof EntityManagerType] & EntityManager>;
 
-export const createMikroOrmEntityManagerProvider = (scope = Scope.DEFAULT, entityManager: Type<EntityManager> = EntityManager): EntityManagerProvider => ({
-  provide: entityManager,
-  scope,
-  useFactory: (orm: MikroORM) => scope === Scope.DEFAULT ? orm.em : orm.em.fork(),
-  inject: [MikroORM],
-});
+export const createMikroOrmEntityManagerProvider = (scope = Scope.DEFAULT, entityManager: Type<EntityManager> | string = EntityManager, contextName?: string): EntityManagerProvider => {
+  const getProvide = () => {
+    if (Utils.isString(entityManager)) {
+      return entityManager;
+    }
+
+    return contextName ? getEntityManagerToken(contextName) : entityManager;
+  };
+
+  return {
+    provide: getProvide(),
+    scope,
+    useFactory: (orm: MikroORM) => scope === Scope.DEFAULT ? orm.em : orm.em.fork(),
+    inject: [contextName ? getMikroORMToken(contextName) : MikroORM],
+  };
+};
 
 export const createMikroOrmAsyncOptionsProvider = (options: MikroOrmModuleAsyncOptions): Provider => {
   if (options.useFactory) {
@@ -74,9 +91,10 @@ export const createAsyncProviders = (options: MikroOrmModuleAsyncOptions): Provi
   throw new Error('Invalid MikroORM async options: one of `useClass`, `useExisting` or `useFactory` should be defined.');
 };
 
-export const createMikroOrmRepositoryProviders = (entities: EntityName<AnyEntity>[]): Provider[] => {
+export const createMikroOrmRepositoryProviders = (entities: EntityName<AnyEntity>[], contextName?: string): Provider[] => {
   const metadata = Object.values(MetadataStorage.getMetadata());
   const providers: Provider[] = [];
+  const inject = contextName ? getEntityManagerToken(contextName) : EntityManager;
 
   (entities || []).forEach(entity => {
     const meta = metadata.find(meta => meta.class === entity);
@@ -85,14 +103,14 @@ export const createMikroOrmRepositoryProviders = (entities: EntityName<AnyEntity
       providers.push({
         provide: meta.customRepository(),
         useFactory: em => em.getRepository(entity),
-        inject: [EntityManager],
+        inject: [inject],
       });
     }
 
     providers.push({
-      provide: getRepositoryToken(entity),
+      provide: getRepositoryToken(entity, contextName),
       useFactory: em => em.getRepository(entity),
-      inject: [EntityManager],
+      inject: [inject],
     });
   });
 

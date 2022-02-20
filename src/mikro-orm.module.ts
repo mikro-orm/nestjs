@@ -4,8 +4,9 @@ import type { DynamicModule } from '@nestjs/common';
 import { Module } from '@nestjs/common';
 import { createMikroOrmRepositoryProviders } from './mikro-orm.providers';
 import { MikroOrmCoreModule } from './mikro-orm-core.module';
-import type { MikroOrmModuleAsyncOptions, MikroOrmModuleSyncOptions } from './typings';
+import type { MikroOrmModuleAsyncOptions, MikroOrmModuleSyncOptions, MikroOrmMiddlewareModuleOptions } from './typings';
 import { REGISTERED_ENTITIES } from './mikro-orm.common';
+import { MikroOrmMiddlewareModule } from './mikro-orm-middleware.module';
 
 @Module({})
 export class MikroOrmModule {
@@ -24,9 +25,9 @@ export class MikroOrmModule {
     };
   }
 
-  static forFeature(options: EntityName<AnyEntity>[] | { entities?: EntityName<AnyEntity>[] }): DynamicModule {
+  static forFeature(options: EntityName<AnyEntity>[] | { entities?: EntityName<AnyEntity>[] }, contextName?: string): DynamicModule {
     const entities = Array.isArray(options) ? options : (options.entities || []);
-    const providers = createMikroOrmRepositoryProviders(entities);
+    const providers = createMikroOrmRepositoryProviders(entities, contextName);
 
     for (const e of entities) {
       if (!Utils.isString(e)) {
@@ -38,6 +39,13 @@ export class MikroOrmModule {
       module: MikroOrmModule,
       providers: [...providers],
       exports: [...providers],
+    };
+  }
+
+  static forMiddleware(options?: MikroOrmMiddlewareModuleOptions): DynamicModule {
+    return {
+      module: MikroOrmModule,
+      imports: [MikroOrmMiddlewareModule.forMiddleware(options)],
     };
   }
 

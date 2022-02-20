@@ -178,6 +178,8 @@ export class MyService {
 
 ## Using `AsyncLocalStorage` for request context
 
+> Since v5 AsyncLocalStorage is used inside RequestContext helper so this section is no longer valid.
+
 By default, the `domain` api is used in the `RequestContext` helper. Since `@mikro-orm/core@4.0.3`,
 you can use the new `AsyncLocalStorage` too, if you are on up to date node version:
 
@@ -208,8 +210,7 @@ app.use((req, res, next) => {
 
 ## Using NestJS `Injection Scopes` for request context
 
-By default, the `domain` api is used in the `RequestContext` helper. Since `@nestjs/common@6`,
-you can use the new `Injection Scopes` (https://docs.nestjs.com/fundamentals/injection-scopes) too:
+Since `@nestjs/common@6`, you can use the new `Injection Scopes` (https://docs.nestjs.com/fundamentals/injection-scopes) too:
 
 ```typescript
 import { Scope } from '@nestjs/common';
@@ -316,6 +317,73 @@ async function bootstrap() {
 ```
 
 More information about [enableShutdownHooks](https://docs.nestjs.com/fundamentals/lifecycle-events#application-shutdown)
+
+## Multiple Database Connections
+
+You can define multiple database connections by registering multiple `MikroOrmModule` and setting their `contextName`. If you want to use middleware request context you must disable automatic middleware and register `MikroOrmModule` with `forMiddleware()` or use NestJS `Injection Scope`
+
+```typescript
+@Module({
+  imports: [
+    MikroOrmModule.forRoot({
+      contextName: 'db1',
+      registerRequestContext: false, // disable automatatic middleware
+      ...
+    }),
+    MikroOrmModule.forRoot({
+      contextName: 'db2',
+      registerRequestContext: false, // disable automatatic middleware
+      ...
+    }),
+    MikroOrmModule.forMiddleware()
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+```
+
+To access different `MikroORM`/`EntityManager` connections you have to use the new injection tokens `@InjectMikroORM()`/`@InjectEntityManager()` where you are required to pass the `contextName` in:
+
+```ts
+@Injectable()
+export class MyService {
+
+  constructor(@InjectMikroORM('db1') private readonly orm1: MikroORM,
+              @InjectMikroORM('db2') private readonly orm2: MikroORM,
+              @InjectEntityManager('db1') private readonly em1: EntityManager,
+              @InjectEntityManager('db2') private readonly em2: EntityManager) { }
+
+}
+```
+
+When defining your repositories with `forFeature()` method you will need to set which `contextName` you want it registered against:
+
+```typescript
+// photo.module.ts
+
+@Module({
+  imports: [MikroOrmModule.forFeature([Photo], 'db1')],
+  providers: [PhotoService],
+  controllers: [PhotoController],
+})
+export class PhotoModule {}
+```
+
+When using the `@InjectRepository` decorator you will also need to pass the `contextName` you want to get it from:
+
+```typescript
+@Injectable()
+export class PhotoService {
+  constructor(
+    @InjectRepository(Photo, 'db1')
+    private readonly photoRepository: EntityRepository<Photo>
+  ) {}
+
+  // ...
+
+}
+```
 
 ## Testing
 
