@@ -176,10 +176,41 @@ export class MyService {
 }
 ```
 
+## Using `AsyncLocalStorage` for request context
+
+> Since v5 AsyncLocalStorage is used inside RequestContext helper so this section is no longer valid.
+
+By default, the `domain` api is used in the `RequestContext` helper. Since `@mikro-orm/core@4.0.3`,
+you can use the new `AsyncLocalStorage` too, if you are on up to date node version:
+
+```typescript
+// create new (global) storage instance
+const storage = new AsyncLocalStorage<EntityManager>();
+
+@Module({
+  imports: [
+    MikroOrmModule.forRoot({
+      // ...
+      registerRequestContext: false, // disable automatatic middleware
+      context: () => storage.getStore(), // use our AsyncLocalStorage instance
+    }),
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+
+// register the request context middleware
+const app = await NestFactory.create(AppModule, { ... });
+
+app.use((req, res, next) => {
+  storage.run(orm.em.fork(true, true), next);
+});
+```
+
 ## Using NestJS `Injection Scopes` for request context
 
-By default, the `domain` api is used in the `RequestContext` helper. Since `@nestjs/common@6`,
-you can use the new `Injection Scopes` (https://docs.nestjs.com/fundamentals/injection-scopes) too:
+Since `@nestjs/common@6`, you can use the new `Injection Scopes` (https://docs.nestjs.com/fundamentals/injection-scopes) too:
 
 ```typescript
 import { Scope } from '@nestjs/common';
@@ -269,9 +300,27 @@ export class MyService {
 
 }
 ```
-## Multiple Databases
 
-You can define multiple database contexts by registering multiple `MikroOrmModule` and setting their `contextName`. If you want to use middleware request context you must disable automatic middleware and register `MikroOrmModule` with `forMiddleware()` or use NestJS `Injection Scope`
+## App shutdown and cleanup
+
+By default, NestJS does not listen for system process termination signals (for example SIGTERM). Because of this, the MikroORM shutdown logic will never executed if the process is terminated, which could lead to database connections remaining open and consuming resources. To enable this, the `enableShutdownHooks` function needs to be called when starting up the application.
+
+```ts
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  // Starts listening for shutdown hooks
+  app.enableShutdownHooks();
+
+  await app.listen(3000);
+}
+```
+
+More information about [enableShutdownHooks](https://docs.nestjs.com/fundamentals/lifecycle-events#application-shutdown)
+
+## Multiple Database Connections
+
+You can define multiple database connections by registering multiple `MikroOrmModule` and setting their `contextName`. If you want to use middleware request context you must disable automatic middleware and register `MikroOrmModule` with `forMiddleware()` or use NestJS `Injection Scope`
 
 ```typescript
 @Module({
@@ -294,7 +343,7 @@ You can define multiple database contexts by registering multiple `MikroOrmModul
 export class AppModule {}
 ```
 
-Afterwards you can use the same way as shown above to with the injection tokens but are required to pass the `contextName` in.
+To access different `MikroORM`/`EntityManager` connections you have to use the new injection tokens `@InjectMikroORM()`/`@InjectEntityManager()` where you are required to pass the `contextName` in:
 
 ```ts
 @Injectable()
@@ -335,23 +384,6 @@ export class PhotoService {
 
 }
 ```
-
-## App shutdown and cleanup
-
-By default, NestJS does not listen for system process termination signals (for example SIGTERM). Because of this, the MikroORM shutdown logic will never executed if the process is terminated, which could lead to database connections remaining open and consuming resources. To enable this, the `enableShutdownHooks` function needs to be called when starting up the application.
-
-```ts
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
-  // Starts listening for shutdown hooks
-  app.enableShutdownHooks();
-
-  await app.listen(3000);
-}
-```
-
-More information about [enableShutdownHooks](https://docs.nestjs.com/fundamentals/lifecycle-events#application-shutdown)
 
 ## Testing
 
