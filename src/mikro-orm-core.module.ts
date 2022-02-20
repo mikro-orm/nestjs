@@ -37,8 +37,8 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
         { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options || {} },
         createMikroOrmProvider(contextName),
         createEntityManagerProvider(options?.scope, EntityManager, contextName),
-        ...(knex ? [createEntityManagerProvider(options?.scope, contextName ? getEntityManagerToken(contextName) : knex.SqlEntityManager, contextName)] : []),
-        ...(mongo ? [createEntityManagerProvider(options?.scope, contextName ? getEntityManagerToken(contextName) : mongo.MongoEntityManager, contextName)] : []),
+        ...(knex ? [createEntityManagerProvider(options?.scope, knex.SqlEntityManager, contextName)] : []),
+        ...(mongo ? [createEntityManagerProvider(options?.scope, mongo.MongoEntityManager, contextName)] : []),
       ],
       exports: [
         contextName ? getMikroORMToken(contextName) : MikroORM,
@@ -62,8 +62,8 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
         ...createAsyncProviders({ ...options, contextName: options.contextName }),
         createMikroOrmProvider(contextName),
         createEntityManagerProvider(options.scope, EntityManager, contextName),
-        ...(knex ? [createEntityManagerProvider(options?.scope, contextName ? getEntityManagerToken(contextName) : knex.SqlEntityManager, contextName)] : []),
-        ...(mongo ? [createEntityManagerProvider(options?.scope, contextName ? getEntityManagerToken(contextName) : mongo.MongoEntityManager, contextName)] : []),
+        ...(knex ? [createEntityManagerProvider(options?.scope, knex.SqlEntityManager, contextName)] : []),
+        ...(mongo ? [createEntityManagerProvider(options?.scope, mongo.MongoEntityManager, contextName)] : []),
       ],
       exports: [
         contextName ? getMikroORMToken(contextName) : MikroORM,
