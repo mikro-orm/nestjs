@@ -5,10 +5,9 @@ import { ContextIdFactory } from '@nestjs/core';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { MikroOrmOptionsFactory } from '../src';
-import { getEntityManagerToken, getMikroORMToken, getRepositoryToken, MikroOrmModule } from '../src';
+import { CONTEXT_NAMES, getEntityManagerToken, getMikroORMToken, getRepositoryToken, MikroOrmModule } from '../src';
 import { Foo } from './entities/foo.entity';
 import { Bar } from './entities/bar.entity';
-import { getContextNames } from '../src/mikro-orm-core.module';
 
 const testOptions: Options = {
   dbName: ':memory:',
@@ -77,8 +76,7 @@ describe('MikroORM Module', () => {
 
   beforeEach(() => {
     // Clear context names before each run, so we do not throw existing exception
-    const contextNames = getContextNames();
-    contextNames.splice(0, contextNames.length);
+    CONTEXT_NAMES.splice(0, CONTEXT_NAMES.length);
   });
 
   describe('Single Database', () => {
