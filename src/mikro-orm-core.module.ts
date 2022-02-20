@@ -4,6 +4,7 @@ import { Global, Inject, Module, RequestMethod } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 
 import {
+  CONTEXT_NAMES,
   getEntityManagerToken,
   getMikroORMToken,
   getMongoEntityManagerToken,
@@ -45,12 +46,6 @@ async function whenModuleAvailable<
   } catch (err) {
     return [];
   }
-}
-
-const contextNames: string[] = [];
-
-export function getContextNames() {
-  return contextNames;
 }
 
 @Global()
@@ -111,7 +106,7 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
       await orm.close();
     }
 
-    contextNames.splice(0,contextNames.length);
+    CONTEXT_NAMES.splice(0,CONTEXT_NAMES.length);
   }
 
   configure(consumer: MiddlewareConsumer): void {
@@ -129,11 +124,11 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
       return;
     }
 
-    if (contextNames.includes(contextName)) {
+    if (CONTEXT_NAMES.includes(contextName)) {
       throw new Error(`ContextName '${contextName}' already registered`);
     }
 
-    contextNames.push(contextName);
+    CONTEXT_NAMES.push(contextName);
 
     return contextName;
   }

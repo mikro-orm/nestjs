@@ -1,11 +1,10 @@
 import type { MiddlewareConsumer } from '@nestjs/common';
 import { Global, Inject, Module, RequestMethod } from '@nestjs/common';
 
-import { getMikroORMToken, MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
+import { CONTEXT_NAMES, getMikroORMToken, MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
 import { MultipleMikroOrmMiddleware } from './multiple-mikro-orm.middleware';
 import { MikroOrmMiddlewareModuleOptions } from './typings';
 import type { MikroORM } from '@mikro-orm/core';
-import { getContextNames } from './mikro-orm-core.module';
 import { forRoutesPath } from './middleware.helper';
 
 @Global()
@@ -19,7 +18,7 @@ export class MikroOrmMiddlewareModule {
     // Work around due to nestjs not supporting the ability to register multiple types
     // https://github.com/nestjs/nest/issues/770
     // https://github.com/nestjs/nest/issues/4786#issuecomment-755032258 - workaround suggestion
-    const inject = getContextNames().map(name => getMikroORMToken(name));
+    const inject = CONTEXT_NAMES.map(name => getMikroORMToken(name));
     return {
       module: MikroOrmMiddlewareModule,
       providers: [

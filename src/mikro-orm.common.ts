@@ -4,6 +4,7 @@ import { Inject, Logger } from '@nestjs/common';
 
 export const MIKRO_ORM_MODULE_OPTIONS = Symbol('mikro-orm-module-options');
 export const REGISTERED_ENTITIES = new Set<EntityName<AnyEntity>>();
+export const CONTEXT_NAMES = new Array<string>();
 export const logger = new Logger(MikroORM.name);
 
 export const getMikroORMToken = (name = 'default') => `${name}_MikroORM`;
