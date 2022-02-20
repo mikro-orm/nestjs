@@ -1,5 +1,5 @@
 import { EntityManager, MikroORM } from '@mikro-orm/core';
-import type { DynamicModule, OnApplicationShutdown, Type , MiddlewareConsumer } from '@nestjs/common';
+import type { DynamicModule, MiddlewareConsumer, OnApplicationShutdown, Type } from '@nestjs/common';
 import { Global, Inject, Module, RequestMethod } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 
