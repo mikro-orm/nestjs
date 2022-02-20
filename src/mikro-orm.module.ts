@@ -25,7 +25,7 @@ export class MikroOrmModule {
     };
   }
 
-  static forFeature(options: EntityName<AnyEntity>[] | { entities?: EntityName<AnyEntity>[] }, contextName = 'default'): DynamicModule {
+  static forFeature(options: EntityName<AnyEntity>[] | { entities?: EntityName<AnyEntity>[] }, contextName?: string): DynamicModule {
     const entities = Array.isArray(options) ? options : (options.entities || []);
     const providers = createMikroOrmRepositoryProviders(entities, contextName);
 

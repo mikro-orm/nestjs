@@ -1,4 +1,5 @@
-import type { EntityManager, MikroORM, Options, EntityRepository } from '@mikro-orm/core';
+import { EntityManager, MikroORM } from '@mikro-orm/core';
+import type { Options, EntityRepository } from '@mikro-orm/core';
 import { Inject, Logger, Module, Scope } from '@nestjs/common';
 import { ContextIdFactory } from '@nestjs/core';
 import type { TestingModule } from '@nestjs/testing';
@@ -48,8 +49,8 @@ const getEntityManagerLoop = async (module: TestingModule): Promise<Set<number |
       .mockImplementation(() => contextId);
 
     (await Promise.all([
-      module.resolve(getEntityManagerToken(), contextId),
-      module.resolve(getEntityManagerToken(), contextId),
+      module.resolve(EntityManager, contextId),
+      module.resolve(EntityManager, contextId),
     ])).forEach(em => generatedIds.add(em.id));
   }
 
@@ -86,9 +87,9 @@ describe('MikroORM Module', () => {
         imports: [MikroOrmModule.forRoot(testOptions)],
       }).compile();
 
-      const orm = module.get<MikroORM>(getMikroORMToken());
+      const orm = module.get<MikroORM>(MikroORM);
       expect(orm).toBeDefined();
-      expect(module.get<EntityManager>(getEntityManagerToken())).toBeDefined();
+      expect(module.get<EntityManager>(EntityManager)).toBeDefined();
       await orm.close();
     });
 
@@ -100,9 +101,9 @@ describe('MikroORM Module', () => {
         })],
       }).compile();
 
-      const orm = module.get<MikroORM>(getMikroORMToken());
+      const orm = module.get<MikroORM>(MikroORM);
       expect(orm).toBeDefined();
-      expect(module.get<EntityManager>(getEntityManagerToken())).toBeDefined();
+      expect(module.get<EntityManager>(EntityManager)).toBeDefined();
       await orm.close();
     });
 
@@ -114,9 +115,9 @@ describe('MikroORM Module', () => {
         })],
       }).compile();
 
-      const orm = module.get<MikroORM>(getMikroORMToken());
+      const orm = module.get<MikroORM>(MikroORM);
       expect(orm).toBeDefined();
-      expect(module.get<EntityManager>(getEntityManagerToken())).toBeDefined();
+      expect(module.get<EntityManager>(EntityManager)).toBeDefined();
       await orm.close();
     });
 
@@ -132,9 +133,9 @@ describe('MikroORM Module', () => {
         })],
       }).compile();
 
-      const orm = module.get<MikroORM>(getMikroORMToken());
+      const orm = module.get<MikroORM>(MikroORM);
       expect(orm).toBeDefined();
-      expect(module.get<EntityManager>(getEntityManagerToken())).toBeDefined();
+      expect(module.get<EntityManager>(EntityManager)).toBeDefined();
       await orm.close();
     });
 
@@ -150,7 +151,7 @@ describe('MikroORM Module', () => {
 
       expect(idSet.size).toBe(5);
 
-      await module.get<MikroORM>(getMikroORMToken()).close();
+      await module.get<MikroORM>(MikroORM).close();
     });
 
     it('forRootAsync should return a new em each request with request scope', async () => {
@@ -170,7 +171,7 @@ describe('MikroORM Module', () => {
 
       expect(idSet.size).toBe(5);
 
-      await module.get<MikroORM>(getMikroORMToken()).close();
+      await module.get<MikroORM>(MikroORM).close();
     });
 
     it('forRoot should return the same em each request with default scope', async () => {
@@ -184,7 +185,7 @@ describe('MikroORM Module', () => {
 
       expect(idSet.size).toBe(1);
 
-      await module.get<MikroORM>(getMikroORMToken()).close();
+      await module.get<MikroORM>(MikroORM).close();
     });
 
     it('forRootAsync should return the same em each request with default scope', async () => {
@@ -203,7 +204,7 @@ describe('MikroORM Module', () => {
 
       expect(idSet.size).toBe(1);
 
-      await module.get<MikroORM>(getMikroORMToken()).close();
+      await module.get<MikroORM>(MikroORM).close();
     });
 
     it('forFeature should return repository', async () => {
@@ -214,8 +215,8 @@ describe('MikroORM Module', () => {
         ],
       }).compile();
 
-      const orm = module.get<MikroORM>(getMikroORMToken());
-      const entityManager = module.get<EntityManager>(getEntityManagerToken());
+      const orm = module.get<MikroORM>(MikroORM);
+      const entityManager = module.get<EntityManager>(EntityManager);
       const repository = module.get<EntityRepository<Foo>>(getRepositoryToken(Foo));
 
       expect(orm).toBeDefined();

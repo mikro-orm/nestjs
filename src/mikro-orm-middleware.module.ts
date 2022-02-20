@@ -2,11 +2,11 @@ import type { MiddlewareConsumer } from '@nestjs/common';
 import { Global, Inject, Module, RequestMethod } from '@nestjs/common';
 
 import { getMikroORMToken, MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
-import { MikroOrmMiddleware } from './mikro-orm.middleware';
+import { MultipleMikroOrmMiddleware } from './multiple-mikro-orm.middleware';
 import { MikroOrmMiddlewareModuleOptions } from './typings';
-import type { NestMiddlewareConsumer } from './typings';
 import type { MikroORM } from '@mikro-orm/core';
 import { getContextNames } from './mikro-orm-core.module';
+import { forRoutesPath } from './middleware.helper';
 
 @Global()
 @Module({})
@@ -34,21 +34,9 @@ export class MikroOrmMiddlewareModule {
   }
 
   configure(consumer: MiddlewareConsumer): void {
-    const isNestMiddleware = (consumer: MiddlewareConsumer): consumer is NestMiddlewareConsumer => {
-      return typeof (consumer as any).httpAdapter === 'object';
-    };
-
-    const usingFastify = (consumer: NestMiddlewareConsumer) => {
-      return consumer.httpAdapter.constructor.name.toLowerCase().startsWith('fastify');
-    };
-
-    const forRoutesPath =
-      this.options.forRoutesPath ??
-      (isNestMiddleware(consumer) && usingFastify(consumer) ? '(.*)' : '*');
-
     consumer
-      .apply(MikroOrmMiddleware) // register request context automatically
-      .forRoutes({ path: forRoutesPath, method: RequestMethod.ALL });
+      .apply(MultipleMikroOrmMiddleware)
+      .forRoutes({ path: forRoutesPath(this.options, consumer), method: RequestMethod.ALL });
   }
 
 }

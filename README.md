@@ -63,8 +63,8 @@ Afterward, the `EntityManager` will be available to inject across entire project
 @Injectable()
 export class MyService {
 
-  constructor(@InjectMikroORM() private readonly orm: MikroORM,
-              @InjectEntityManager() private readonly em: EntityManager) { }
+  constructor(private readonly orm: MikroORM,
+              private readonly em: EntityManager) { }
 
 }
 ```
@@ -111,29 +111,182 @@ export class PhotoService {
 }
 ```
 
+## Auto entities automatically
+
+Manually adding entities to the entities array of the connection options can be
+tedious. In addition, referencing entities from the root module breaks application
+domain boundaries and causes leaking implementation details to other parts of the
+application. To solve this issue, static glob paths can be used.
+
+Note, however, that glob paths are not supported by webpack, so if you are building
+your application within a monorepo, you won't be able to use them. To address this
+issue, an alternative solution is provided. To automatically load entities, set the
+`autoLoadEntities` property of the configuration object (passed into the `forRoot()`
+method) to `true`, as shown below:
+
+```ts
+@Module({
+  imports: [
+    MikroOrmModule.forRoot({
+      ...
+      autoLoadEntities: true,
+    }),
+  ],
+})
+export class AppModule {}
+```
+
+With that option specified, every entity registered through the `forFeature()`
+method will be automatically added to the entities array of the configuration
+object.
+
+> Note that entities that aren't registered through the `forFeature()` method, but
+> are only referenced from the entity (via a relationship), won't be included by
+> way of the `autoLoadEntities` setting.
+
+> Using `autoLoadEntities` also has no effect on the MikroORM CLI - for that we
+> still need CLI config with the full list of entities. On the other hand, we can
+> use globs there, as the CLI won't go thru webpack.
+
+## Request scoped handlers in queues
+
+As mentioned in the docs, we need a clean state for each request. That is handled
+automatically thanks to the `RequestContext` helper registered via middleware.
+
+But middlewares are executed only for regular HTTP request handles, what if we need
+a request scoped method outside of that? One example of that is queue handlers or
+scheduled tasks.
+
+We can use the `@UseRequestContext()` decorator. It requires you to first inject the
+`MikroORM` instance to current context, it will be then used to create the context
+for you. Under the hood, the decorator will register new request context for your
+method and execute it inside the context.
+
+```ts
+@Injectable()
+export class MyService {
+
+  constructor(private readonly orm: MikroORM) { }
+
+  @UseRequestContext()
+  async doSomething() {
+    // this will be executed in a separate context
+  }
+
+}
+```
+
+## Using NestJS `Injection Scopes` for request context
+
+By default, the `domain` api is used in the `RequestContext` helper. Since `@nestjs/common@6`,
+you can use the new `Injection Scopes` (https://docs.nestjs.com/fundamentals/injection-scopes) too:
+
+```typescript
+import { Scope } from '@nestjs/common';
+
+@Module({
+  imports: [
+    MikroOrmModule.forRoot({
+      // ...
+      registerRequestContext: false, // disable automatatic middleware
+      scope: Scope.REQUEST
+    }),
+  ],
+  controllers: [AppController],
+  providers: [AppService]
+})
+export class AppModule {}
+```
+
+Or, if you're using the Async provider:
+```typescript
+import { Scope } from '@nestjs/common';
+
+@Module({
+  imports: [
+    MikroOrmModule.forRootAsync({
+      // ...
+      useFactory: () => ({
+        // ...
+        registerRequestContext: false, // disable automatatic middleware
+      }),
+      scope: Scope.REQUEST
+    })
+  ],
+  controllers: [AppController],
+  providers: [AppService]
+})
+export class AppModule {}
+```
+
+> Please note that this might have some impact on performance,
+> see: https://docs.nestjs.com/fundamentals/injection-scopes#performance
+
+## Using custom repositories
+
+When using custom repositories, we can get around the need for `@InjectRepository()`
+decorator by naming our repositories the same way as `getRepositoryToken()` method do:
+
+```ts
+export const getRepositoryToken = <T> (entity: EntityName<T>) => `${Utils.className(entity)}Repository`;
+```
+
+In other words, as long as we name the repository same was as the entity is called,
+appending `Repository` suffix, the repository will be registered automatically in
+the Nest.js DI container.
+
+`**./author.entity.ts**`
+
+```ts
+@Entity()
+export class Author {
+
+  // to allow inference in `em.getRepository()`
+  [EntityRepositoryType]?: AuthorRepository;
+
+}
+```
+
+`**./author.repository.ts**`
+
+```ts
+@Repository(Author)
+export class AuthorRepository extends EntityRepository<Author> {
+
+  // your custom methods...
+
+}
+```
+
+As the custom repository name is the same as what `getRepositoryToken()` would
+return, we do not need the `@InjectRepository()` decorator anymore:
+
+```ts
+@Injectable()
+export class MyService {
+
+  constructor(private readonly repo: AuthorRepository) { }
+
+}
+```
 ## Multiple Databases
 
-You can define multiple database contexts by registering multiple `MikroOrmModule` and setting their `contextName`.
+You can define multiple database contexts by registering multiple `MikroOrmModule` and setting their `contextName`. If you want to use middleware request context you must disable automatic middleware and register `MikroOrmModule` with `forMiddleware()` or use NestJS `Injection Scope`
 
 ```typescript
 @Module({
   imports: [
     MikroOrmModule.forRoot({
       contextName: 'db1',
-      entities: ['../dist/entities'],
-      entitiesTs: ['../src/entities'],
-      dbName: 'my-db-name1.sqlite3',
-      type: 'sqlite',
-      baseDir: __dirname,
+      registerRequestContext: false, // disable automatatic middleware
+      ...
     }),
     MikroOrmModule.forRoot({
       contextName: 'db2',
-      entities: ['../dist/entities'],
-      entitiesTs: ['../src/entities'],
-      dbName: 'my-db-name2.sqlite3',
-      type: 'sqlite',
-      baseDir: __dirname,
+      registerRequestContext: false, // disable automatatic middleware
+      ...
     }),
+    MikroOrmModule.forMiddleware()
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -183,178 +336,6 @@ export class PhotoService {
 }
 ```
 
-## Request scopes
-As mentioned in the docs, we need a clean state for each request, this is managed in multiple ways as explained below:
-
-### Using Middleware
-In previous versions the middleware was automatically loaded and due to the changes to use injection tokens it is required to now register it with `MikroOrmModule` using `forMiddleware()` 
-
-```typescript
-@Module({
-  imports: [
-    MikroOrmModule.forRoot({
-      // ...
-    }),
-    MikroOrmModule.forMiddleware()
-  ],
-  controllers: [AppController],
-  providers: [AppService],
-})
-export class AppModule {}
-```
-
-### Using Queues
-The middleware ia executed only for regular HTTP request handles, what if we need
-a request scoped method outside of that? One example of that is queue handlers or
-scheduled tasks.
-
-We can use the `@UseRequestContext()` decorator. It requires you to first inject the
-`MikroORM` instance to current context, it will be then used to create the context
-for you. Under the hood, the decorator will register new request context for your
-method and execute it inside the context.
-
-```ts
-@Injectable()
-export class MyService {
-
-  constructor(@InjectMikroORM() private readonly orm: MikroORM) { }
-
-  @UseRequestContext()
-  async doSomething() {
-    // this will be executed in a separate context
-  }
-
-}
-```
-
-### Using NestJS `Injection Scopes`
-
-Since `@nestjs/common@6`, you can use the new `Injection Scopes` (https://docs.nestjs.com/fundamentals/injection-scopes) and may omit the use of `forMiddleware()`:
-
-```typescript
-import { Scope } from '@nestjs/common';
-
-@Module({
-  imports: [
-    MikroOrmModule.forRoot({
-      // ...
-      scope: Scope.REQUEST
-    }),
-  ],
-  controllers: [AppController],
-  providers: [AppService]
-})
-export class AppModule {}
-```
-
-Or, if you're using the Async provider:
-```typescript
-import { Scope } from '@nestjs/common';
-
-@Module({
-  imports: [
-    MikroOrmModule.forRootAsync({
-      // ...
-      useFactory: () => ({
-        // ...
-      }),
-      scope: Scope.REQUEST
-    })
-  ],
-  controllers: [AppController],
-  providers: [AppService]
-})
-export class AppModule {}
-```
-
-> Please note that this might have some impact on performance,
-> see: https://docs.nestjs.com/fundamentals/injection-scopes#performance
-
-## Auto entities automatically
-
-Manually adding entities to the entities array of the connection options can be 
-tedious. In addition, referencing entities from the root module breaks application 
-domain boundaries and causes leaking implementation details to other parts of the 
-application. To solve this issue, static glob paths can be used.
-
-Note, however, that glob paths are not supported by webpack, so if you are building 
-your application within a monorepo, you won't be able to use them. To address this 
-issue, an alternative solution is provided. To automatically load entities, set the 
-`autoLoadEntities` property of the configuration object (passed into the `forRoot()` 
-method) to `true`, as shown below: 
-
-```ts
-@Module({
-  imports: [
-    MikroOrmModule.forRoot({
-      ...
-      autoLoadEntities: true,
-    }),
-  ],
-})
-export class AppModule {}
-```
-
-With that option specified, every entity registered through the `forFeature()` 
-method will be automatically added to the entities array of the configuration 
-object.
-
-> Note that entities that aren't registered through the `forFeature()` method, but 
-> are only referenced from the entity (via a relationship), won't be included by 
-> way of the `autoLoadEntities` setting.
-
-> Using `autoLoadEntities` also has no effect on the MikroORM CLI - for that we 
-> still need CLI config with the full list of entities. On the other hand, we can
-> use globs there, as the CLI won't go thru webpack.
-
-## Using custom repositories
-
-When using custom repositories, we can get around the need for `@InjectRepository()`
-decorator by naming our repositories the same way as `getRepositoryToken()` method do:
-
-```ts
-export const getRepositoryToken = <T> (entity: EntityName<T>) => `${Utils.className(entity)}Repository`;
-```
-
-In other words, as long as we name the repository same was as the entity is called, 
-appending `Repository` suffix, the repository will be registered automatically in 
-the Nest.js DI container.
-
-`**./author.entity.ts**`
-
-```ts
-@Entity()
-export class Author {
-
-  // to allow inference in `em.getRepository()`
-  [EntityRepositoryType]?: AuthorRepository;
-
-}
-```
-
-`**./author.repository.ts**`
-
-```ts
-@Repository(Author)
-export class AuthorRepository extends EntityRepository<Author> {
-
-  // your custom methods...
-
-}
-```
-
-As the custom repository name is the same as what `getRepositoryToken()` would
-return, we do not need the `@InjectRepository()` decorator anymore:
-
-```ts
-@Injectable()
-export class MyService {
-
-  constructor(private readonly repo: AuthorRepository) { }
-
-}
-```
-
 ## App shutdown and cleanup
 
 By default, NestJS does not listen for system process termination signals (for example SIGTERM). Because of this, the MikroORM shutdown logic will never executed if the process is terminated, which could lead to database connections remaining open and consuming resources. To enable this, the `enableShutdownHooks` function needs to be called when starting up the application.
@@ -391,8 +372,8 @@ export class PhotoModule {}
 
 ## 🤝 Contributing
 
-Contributions, issues and feature requests are welcome. Please read 
-[CONTRIBUTING.md](CONTRIBUTING.md) 
+Contributions, issues and feature requests are welcome. Please read
+[CONTRIBUTING.md](CONTRIBUTING.md)
 for details on the process for submitting pull requests to us.
 
 ## Authors
@@ -415,5 +396,3 @@ Please ⭐️ this repository if this project helped you!
 ## 📝 License
 
 Copyright © 2018 [Martin Adámek](https://github.com/b4nan).
-
-This project is licensed under the MIT License - see the [LICENSE file](LICENSE) for details.

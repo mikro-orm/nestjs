@@ -44,10 +44,12 @@ class TestController {
   imports: [
     MikroOrmModule.forRoot({
       contextName: 'database1',
+      registerRequestContext: false,
       ...testOptions,
     }),
     MikroOrmModule.forRoot({
       contextName: 'database2',
+      registerRequestContext: false,
       ...testOptions,
     }),
     MikroOrmModule.forMiddleware(),

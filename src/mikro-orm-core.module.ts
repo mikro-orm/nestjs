@@ -1,6 +1,6 @@
-import type { EntityManager } from '@mikro-orm/core';
-import type { DynamicModule, OnApplicationShutdown, Type } from '@nestjs/common';
-import { Global, Inject, Module } from '@nestjs/common';
+import { EntityManager, MikroORM } from '@mikro-orm/core';
+import type { DynamicModule, OnApplicationShutdown, Type , MiddlewareConsumer } from '@nestjs/common';
+import { Global, Inject, Module, RequestMethod } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 
 import {
@@ -13,6 +13,8 @@ import {
 import { createAsyncProviders, createMikroOrmEntityManagerProvider, createMikroOrmProvider } from './mikro-orm.providers';
 import type { MikroOrmModuleAsyncOptions, MikroOrmModuleSyncOptions } from './typings';
 import { MikroOrmModuleOptions } from './typings';
+import { MikroOrmMiddleware } from './mikro-orm.middleware';
+import { forRoutesPath } from './middleware.helper';
 
 enum EntityManagerModuleName {
   Knex = '@mikro-orm/knex',
@@ -60,27 +62,27 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
               private readonly moduleRef: ModuleRef) { }
 
   static async forRoot(options?: MikroOrmModuleSyncOptions): Promise<DynamicModule> {
-    const contextName = this.setContextName(options?.contextName || 'default');
+    const contextName = this.setContextName(options?.contextName);
     return {
       module: MikroOrmCoreModule,
       providers: [
         { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options || {} },
         createMikroOrmProvider(contextName),
-        createMikroOrmEntityManagerProvider(options?.scope, contextName),
-        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ()  => createMikroOrmEntityManagerProvider(options?.scope, contextName, getSqlEntityManagerToken(contextName)))),
-        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ()  => createMikroOrmEntityManagerProvider(options?.scope, contextName, getMongoEntityManagerToken(contextName)))),
+        createMikroOrmEntityManagerProvider(options?.scope, EntityManager, contextName),
+        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ({ SqlEntityManager })  => createMikroOrmEntityManagerProvider(options?.scope, SqlEntityManager, contextName, getSqlEntityManagerToken(contextName)))),
+        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ({ MongoEntityManager })  => createMikroOrmEntityManagerProvider(options?.scope, MongoEntityManager, contextName, getMongoEntityManagerToken(contextName)))),
       ],
       exports: [
-        getMikroORMToken(contextName),
-        getEntityManagerToken(contextName),
-        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ()  => getSqlEntityManagerToken(contextName))),
-        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ()  => getMongoEntityManagerToken(contextName))),
+        contextName ? getMikroORMToken(contextName) : MikroORM,
+        contextName ? getEntityManagerToken(contextName) : EntityManager,
+        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ({ SqlEntityManager })  => contextName ? getSqlEntityManagerToken(contextName) : SqlEntityManager)),
+        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ({ MongoEntityManager })  => contextName ? getMongoEntityManagerToken(contextName) : MongoEntityManager)),
       ],
     };
   }
 
   static async forRootAsync(options: MikroOrmModuleAsyncOptions): Promise<DynamicModule> {
-    const contextName = this.setContextName(options?.contextName || 'default');
+    const contextName = this.setContextName(options?.contextName);
     return {
       module: MikroOrmCoreModule,
       imports: options.imports || [],
@@ -88,21 +90,22 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
         ...(options.providers || []),
         ...createAsyncProviders({ ...options, contextName: options.contextName }),
         createMikroOrmProvider(contextName),
-        createMikroOrmEntityManagerProvider(options.scope, contextName),
-        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ()  => createMikroOrmEntityManagerProvider(options.scope, contextName, getSqlEntityManagerToken(contextName)))),
-        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ()  => createMikroOrmEntityManagerProvider(options.scope, contextName, getMongoEntityManagerToken(contextName)))),
+        createMikroOrmEntityManagerProvider(options.scope, EntityManager, contextName),
+        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ({ SqlEntityManager })  => createMikroOrmEntityManagerProvider(options.scope, SqlEntityManager, contextName, getSqlEntityManagerToken(contextName)))),
+        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ({ MongoEntityManager })  => createMikroOrmEntityManagerProvider(options.scope, MongoEntityManager, contextName, getMongoEntityManagerToken(contextName)))),
       ],
       exports: [
-        getMikroORMToken(contextName),
-        getEntityManagerToken(contextName),
-        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ()  => getSqlEntityManagerToken(contextName))),
-        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ()  => getMongoEntityManagerToken(contextName))),
+        contextName ? getMikroORMToken(contextName) : MikroORM,
+        contextName ? getEntityManagerToken(contextName) : EntityManager,
+        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ({ SqlEntityManager })  => contextName ? getSqlEntityManagerToken(contextName) : SqlEntityManager)),
+        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ({ MongoEntityManager })  => contextName ? getMongoEntityManagerToken(contextName) : MongoEntityManager)),
       ],
     };
   }
 
   async onApplicationShutdown() {
-    const orm = this.moduleRef.get(getMikroORMToken(this.options.contextName));
+    const token = this.options.contextName ? getMikroORMToken(this.options.contextName) : MikroORM;
+    const orm = this.moduleRef.get(token);
 
     if (orm) {
       await orm.close();
@@ -111,7 +114,21 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
     contextNames.splice(0,contextNames.length);
   }
 
-  private static setContextName(contextName: string) {
+  configure(consumer: MiddlewareConsumer): void {
+    if (this.options.registerRequestContext === false) {
+      return;
+    }
+
+    consumer
+      .apply(MikroOrmMiddleware) // register request context automatically
+      .forRoutes({ path: forRoutesPath(this.options, consumer), method: RequestMethod.ALL });
+  }
+
+  private static setContextName(contextName?: string) {
+    if (!contextName) {
+      return;
+    }
+
     if (contextNames.includes(contextName)) {
       throw new Error(`ContextName '${contextName}' already registered`);
     }

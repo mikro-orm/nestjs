@@ -22,8 +22,9 @@ export type MikroOrmMiddlewareModuleOptions = {
 };
 
 export type MikroOrmModuleOptions<D extends IDatabaseDriver = IDatabaseDriver> = {
+  registerRequestContext?: boolean;
   autoLoadEntities?: boolean;
-} & Options<D>;
+} & Options<D> & MikroOrmMiddlewareModuleOptions;
 
 export interface MikroOrmOptionsFactory<D extends IDatabaseDriver = IDatabaseDriver> {
   createMikroOrmOptions(): Promise<MikroOrmModuleOptions<D>> | MikroOrmModuleOptions<D>;
