@@ -1,3 +1,25 @@
+# [5.0.0](https://github.com/mikro-orm/nestjs/compare/v4.3.0...v5.0.0) (2022-02-20)
+
+
+### Bug Fixes
+
+* use constant imports for webpack bundling ([47f56ff](https://github.com/mikro-orm/nestjs/commit/47f56ff7ee6c8f784ffe7f32ae302d2c89f9ae11)), closes [#57](https://github.com/mikro-orm/nestjs/issues/57)
+
+
+### Features
+
+* support multiple database connections ([#56](https://github.com/mikro-orm/nestjs/issues/56)) ([df4725b](https://github.com/mikro-orm/nestjs/commit/df4725bd8e0ba70c86e8e597bfd6bb67ca4df36b))
+* return value from UseRequestContext callback ([#28](https://github.com/mikro-orm/nestjs/issues/28)) ([4bf5b0f](https://github.com/mikro-orm/nestjs/commit/4bf5b0f8d16653a756b474315a92609c0bd7b632))
+
+
+### BREAKING CHANGES
+
+- MikroORM v5 and Nest v8 required
+- `@UseRequestContext` decorator is now moved to the `core` package
+- Node 14+ and TS 4.1+ required
+
+
+
 # [4.3.0](https://github.com/mikro-orm/nestjs/compare/v4.2.0...v4.3.0) (2021-08-19)
 
 
