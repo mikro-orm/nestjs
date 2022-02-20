@@ -12,10 +12,6 @@ export const InjectMikroORM = (name: string) => Inject(getMikroORMToken(name));
 
 export const getEntityManagerToken = (name: string) => `${name}_EntityManager`;
 export const InjectEntityManager = (name: string) => Inject(getEntityManagerToken(name));
-export const getSqlEntityManagerToken = (name: string) => `${name}_SqlEntityManager`;
-export const InjectSqlEntityManager = (name: string) => Inject(getSqlEntityManagerToken(name));
-export const getMongoEntityManagerToken = (name: string) => `${name}_MongoEntityManager`;
-export const InjectMongoEntityManager = (name: string) => Inject(getMongoEntityManagerToken(name));
 
 export const getRepositoryToken = <T> (entity: EntityName<T>, name?: string) => {
   const suffix = name ? `_${name}` : '';
