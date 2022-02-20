@@ -21,4 +21,4 @@ export const getRepositoryToken = <T> (entity: EntityName<T>, name?: string) => 
   const suffix = name ? `_${name}` : '';
   return `${Utils.className(entity)}Repository${suffix}`;
 };
-export const InjectRepository = <T> (entity: EntityName<T>, name: string) => Inject(getRepositoryToken(entity, name));
+export const InjectRepository = <T> (entity: EntityName<T>, name?: string) => Inject(getRepositoryToken(entity, name));
