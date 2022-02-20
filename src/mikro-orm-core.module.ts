@@ -64,8 +64,8 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
         { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options || {} },
         createMikroOrmProvider(contextName),
         createMikroOrmEntityManagerProvider(options?.scope, EntityManager, contextName),
-        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ({ SqlEntityManager })  => createMikroOrmEntityManagerProvider(options?.scope, SqlEntityManager, contextName, getSqlEntityManagerToken(contextName)))),
-        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ({ MongoEntityManager })  => createMikroOrmEntityManagerProvider(options?.scope, MongoEntityManager, contextName, getMongoEntityManagerToken(contextName)))),
+        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ({ SqlEntityManager })  => createMikroOrmEntityManagerProvider(options?.scope, contextName ? getSqlEntityManagerToken(contextName) : SqlEntityManager, contextName))),
+        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ({ MongoEntityManager })  => createMikroOrmEntityManagerProvider(options?.scope, contextName ? getMongoEntityManagerToken(contextName) : MongoEntityManager, contextName))),
       ],
       exports: [
         contextName ? getMikroORMToken(contextName) : MikroORM,
@@ -86,8 +86,8 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
         ...createAsyncProviders({ ...options, contextName: options.contextName }),
         createMikroOrmProvider(contextName),
         createMikroOrmEntityManagerProvider(options.scope, EntityManager, contextName),
-        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ({ SqlEntityManager })  => createMikroOrmEntityManagerProvider(options.scope, SqlEntityManager, contextName, getSqlEntityManagerToken(contextName)))),
-        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ({ MongoEntityManager })  => createMikroOrmEntityManagerProvider(options.scope, MongoEntityManager, contextName, getMongoEntityManagerToken(contextName)))),
+        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ({ SqlEntityManager })  => createMikroOrmEntityManagerProvider(options?.scope, contextName ? getSqlEntityManagerToken(contextName) : SqlEntityManager, contextName))),
+        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ({ MongoEntityManager })  => createMikroOrmEntityManagerProvider(options?.scope, contextName ? getMongoEntityManagerToken(contextName) : MongoEntityManager, contextName))),
       ],
       exports: [
         contextName ? getMikroORMToken(contextName) : MikroORM,

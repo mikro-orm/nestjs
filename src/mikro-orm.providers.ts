@@ -7,7 +7,7 @@ import {
   REGISTERED_ENTITIES,
 } from './mikro-orm.common';
 import type { AnyEntity, EntityName, EntityManagerType, IDatabaseDriver  } from '@mikro-orm/core';
-import { ConfigurationLoader, MikroORM, MetadataStorage , EntityManager } from '@mikro-orm/core';
+import { ConfigurationLoader, MikroORM, MetadataStorage, EntityManager, Utils } from '@mikro-orm/core';
 
 import type { MikroOrmModuleAsyncOptions, MikroOrmModuleOptions, MikroOrmOptionsFactory } from './typings';
 import type { Provider, Type } from '@nestjs/common';
@@ -37,9 +37,17 @@ export const createMikroOrmProvider = (contextName?: string): Provider => ({
 
 export type EntityManagerProvider = Provider<IDatabaseDriver[typeof EntityManagerType] & EntityManager>;
 
-export const createMikroOrmEntityManagerProvider = (scope = Scope.DEFAULT, entityManager: Type<EntityManager> = EntityManager, contextName?: string, providerOverride?: string): EntityManagerProvider => {
+export const createMikroOrmEntityManagerProvider = (scope = Scope.DEFAULT, entityManager: Type<EntityManager> | string = EntityManager, contextName?: string): EntityManagerProvider => {
+  const getProvide = () => {
+    if (Utils.isString(entityManager)) {
+      return entityManager;
+    }
+
+    return contextName ? getEntityManagerToken(contextName) : entityManager;
+  };
+
   return {
-    provide: contextName ? (providerOverride || getEntityManagerToken(contextName)) : entityManager,
+    provide: getProvide(),
     scope,
     useFactory: (orm: MikroORM) => scope === Scope.DEFAULT ? orm.em : orm.em.fork(),
     inject: [contextName ? getMikroORMToken(contextName) : MikroORM],
