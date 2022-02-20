@@ -106,7 +106,7 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
       await orm.close();
     }
 
-    CONTEXT_NAMES.splice(0,CONTEXT_NAMES.length);
+    CONTEXT_NAMES.length = 0;
   }
 
   configure(consumer: MiddlewareConsumer): void {
