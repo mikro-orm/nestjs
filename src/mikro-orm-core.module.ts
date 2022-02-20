@@ -1,5 +1,5 @@
 import { EntityManager, MikroORM } from '@mikro-orm/core';
-import type { DynamicModule, MiddlewareConsumer, OnApplicationShutdown, Type } from '@nestjs/common';
+import type { DynamicModule, MiddlewareConsumer, ModuleMetadata, OnApplicationShutdown, Type } from '@nestjs/common';
 import { Global, Inject, Module, RequestMethod } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 
@@ -17,36 +17,23 @@ import { MikroOrmModuleOptions } from './typings';
 import { MikroOrmMiddleware } from './mikro-orm.middleware';
 import { forRoutesPath } from './middleware.helper';
 
-enum EntityManagerModuleName {
-  Knex = '@mikro-orm/knex',
-  MongoDb = '@mikro-orm/mongodb',
-}
-
-type SqlEntityManagerExportObj = { SqlEntityManager: Type<EntityManager> };
-type MongoEntityManagerExportObj = { MongoEntityManager: Type<EntityManager> };
-
-type EntityManagerExportObj<TModuleName extends EntityManagerModuleName> =
-  TModuleName extends EntityManagerModuleName.Knex ? SqlEntityManagerExportObj :
-    TModuleName extends EntityManagerModuleName.MongoDb ? MongoEntityManagerExportObj :
-      never;
-
-// https://github.com/krzkaczor/ts-essentials/blob/d9034549ec1b3a72bf3f335fc54724349356dd7c/lib/types.ts
-type AsyncOrSync<T> = PromiseLike<T> | T;
-type Awaited<T> = T extends PromiseLike<infer PT> ? PT : never;
-
-async function whenModuleAvailable<
-  TModuleName extends EntityManagerModuleName,
-  TReturnValue,
->(moduleName: TModuleName, returnFn: (module: EntityManagerExportObj<TModuleName>) => AsyncOrSync<TReturnValue>): Promise<[Awaited<TReturnValue>] | []> {
+const importMongoEntityManager = async () => {
   try {
-    const module = await import(moduleName);
-    // TReturnValue may be incorrect if expecting it to extend Promise<T> since its being awaited in the return
-    // casting to Awaited<TReturnValue> to satisfy the return type will prevent that confusion
-    return [await returnFn(module) as Awaited<TReturnValue>];
-  } catch (err) {
-    return [];
+    const module = await import('@mikro-orm/mongodb' as const);
+    return module.EntityManager as Type<EntityManager>;
+  } catch {
+    return undefined;
   }
-}
+};
+
+const importSqlEntityManager = async () => {
+  try {
+    const module = await import('@mikro-orm/knex' as const);
+    return module.EntityManager as Type<EntityManager>;
+  } catch {
+    return undefined;
+  }
+};
 
 @Global()
 @Module({})
@@ -58,43 +45,71 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
 
   static async forRoot(options?: MikroOrmModuleSyncOptions): Promise<DynamicModule> {
     const contextName = this.setContextName(options?.contextName);
+
+    const SqlEntityManager = await importSqlEntityManager();
+    const MongoEntityManager = await importMongoEntityManager();
+
+    const providers: ModuleMetadata['providers'] = [
+      { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options || {} },
+      createMikroOrmProvider(contextName),
+      createMikroOrmEntityManagerProvider(options?.scope, EntityManager, contextName),
+    ];
+
+    const exports: ModuleMetadata['exports'] = [
+      contextName ? getMikroORMToken(contextName) : MikroORM,
+      contextName ? getEntityManagerToken(contextName) : EntityManager,
+    ];
+
+    if (SqlEntityManager) {
+      providers.push(createMikroOrmEntityManagerProvider(options?.scope, contextName ? getSqlEntityManagerToken(contextName) : SqlEntityManager, contextName));
+      exports.push(contextName ? getSqlEntityManagerToken(contextName) : SqlEntityManager);
+    }
+
+    if (MongoEntityManager) {
+      providers.push(createMikroOrmEntityManagerProvider(options?.scope, contextName ? getMongoEntityManagerToken(contextName) : MongoEntityManager, contextName));
+      exports.push(contextName ? getMongoEntityManagerToken(contextName) : MongoEntityManager);
+    }
+
     return {
       module: MikroOrmCoreModule,
-      providers: [
-        { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options || {} },
-        createMikroOrmProvider(contextName),
-        createMikroOrmEntityManagerProvider(options?.scope, EntityManager, contextName),
-        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ({ SqlEntityManager })  => createMikroOrmEntityManagerProvider(options?.scope, contextName ? getSqlEntityManagerToken(contextName) : SqlEntityManager, contextName))),
-        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ({ MongoEntityManager })  => createMikroOrmEntityManagerProvider(options?.scope, contextName ? getMongoEntityManagerToken(contextName) : MongoEntityManager, contextName))),
-      ],
-      exports: [
-        contextName ? getMikroORMToken(contextName) : MikroORM,
-        contextName ? getEntityManagerToken(contextName) : EntityManager,
-        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ({ SqlEntityManager })  => contextName ? getSqlEntityManagerToken(contextName) : SqlEntityManager)),
-        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ({ MongoEntityManager })  => contextName ? getMongoEntityManagerToken(contextName) : MongoEntityManager)),
-      ],
+      providers,
+      exports,
     };
   }
 
   static async forRootAsync(options: MikroOrmModuleAsyncOptions): Promise<DynamicModule> {
     const contextName = this.setContextName(options?.contextName);
+
+    const SqlEntityManager = await importSqlEntityManager();
+    const MongoEntityManager = await importMongoEntityManager();
+
+    const providers: ModuleMetadata['providers'] = [
+      ...(options.providers || []),
+      ...createAsyncProviders({ ...options, contextName: options.contextName }),
+      createMikroOrmProvider(contextName),
+      createMikroOrmEntityManagerProvider(options.scope, EntityManager, contextName),
+    ];
+
+    const exports: ModuleMetadata['exports'] = [
+      contextName ? getMikroORMToken(contextName) : MikroORM,
+      contextName ? getEntityManagerToken(contextName) : EntityManager,
+    ];
+
+    if (SqlEntityManager) {
+      providers.push(createMikroOrmEntityManagerProvider(options?.scope, contextName ? getSqlEntityManagerToken(contextName) : SqlEntityManager, contextName));
+      exports.push(contextName ? getSqlEntityManagerToken(contextName) : SqlEntityManager);
+    }
+
+    if (MongoEntityManager) {
+      providers.push(createMikroOrmEntityManagerProvider(options?.scope, contextName ? getMongoEntityManagerToken(contextName) : MongoEntityManager, contextName));
+      exports.push(contextName ? getMongoEntityManagerToken(contextName) : MongoEntityManager);
+    }
+
     return {
       module: MikroOrmCoreModule,
       imports: options.imports || [],
-      providers: [
-        ...(options.providers || []),
-        ...createAsyncProviders({ ...options, contextName: options.contextName }),
-        createMikroOrmProvider(contextName),
-        createMikroOrmEntityManagerProvider(options.scope, EntityManager, contextName),
-        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ({ SqlEntityManager })  => createMikroOrmEntityManagerProvider(options?.scope, contextName ? getSqlEntityManagerToken(contextName) : SqlEntityManager, contextName))),
-        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ({ MongoEntityManager })  => createMikroOrmEntityManagerProvider(options?.scope, contextName ? getMongoEntityManagerToken(contextName) : MongoEntityManager, contextName))),
-      ],
-      exports: [
-        contextName ? getMikroORMToken(contextName) : MikroORM,
-        contextName ? getEntityManagerToken(contextName) : EntityManager,
-        ...(await whenModuleAvailable(EntityManagerModuleName.Knex, ({ SqlEntityManager })  => contextName ? getSqlEntityManagerToken(contextName) : SqlEntityManager)),
-        ...(await whenModuleAvailable(EntityManagerModuleName.MongoDb, ({ MongoEntityManager })  => contextName ? getMongoEntityManagerToken(contextName) : MongoEntityManager)),
-      ],
+      providers,
+      exports,
     };
   }
 
