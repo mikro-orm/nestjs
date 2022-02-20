@@ -17,7 +17,7 @@
 - MikroORM v5 and Nest v8 required
 - `@UseRequestContext` decorator is now moved to the `core` package
 - Node 14+ and TS 4.1+ required
-
+- https://mikro-orm.io/docs/upgrading-v4-to-v5
 
 
 # [4.3.0](https://github.com/mikro-orm/nestjs/compare/v4.2.0...v4.3.0) (2021-08-19)

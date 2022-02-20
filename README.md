@@ -269,7 +269,7 @@ the Nest.js DI container.
 `**./author.entity.ts**`
 
 ```ts
-@Entity()
+@Entity({ customRepository: () => AuthorRepository })
 export class Author {
 
   // to allow inference in `em.getRepository()`
@@ -281,7 +281,6 @@ export class Author {
 `**./author.repository.ts**`
 
 ```ts
-@Repository(Author)
 export class AuthorRepository extends EntityRepository<Author> {
 
   // your custom methods...
