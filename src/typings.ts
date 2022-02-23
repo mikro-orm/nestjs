@@ -1,4 +1,4 @@
-import type { IDatabaseDriver, Options } from '@mikro-orm/core';
+import type { AnyEntity, EntityName, IDatabaseDriver, Options } from '@mikro-orm/core';
 import type { MiddlewareConsumer, ModuleMetadata, Scope, Type } from '@nestjs/common';
 import type { AbstractHttpAdapter } from '@nestjs/core';
 
@@ -25,6 +25,11 @@ export type MikroOrmModuleOptions<D extends IDatabaseDriver = IDatabaseDriver> =
   registerRequestContext?: boolean;
   autoLoadEntities?: boolean;
 } & Options<D> & MikroOrmMiddlewareModuleOptions;
+
+export interface MikroOrmModuleFeatureOptions {
+  entities?: EntityName<AnyEntity>[];
+  contextName?: string;
+}
 
 export interface MikroOrmOptionsFactory<D extends IDatabaseDriver = IDatabaseDriver> {
   createMikroOrmOptions(): Promise<MikroOrmModuleOptions<D>> | MikroOrmModuleOptions<D>;
