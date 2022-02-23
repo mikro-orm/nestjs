@@ -41,6 +41,6 @@ export interface MikroOrmModuleAsyncOptions<D extends IDatabaseDriver = IDatabas
   contextName?: string;
   useExisting?: Type<MikroOrmOptionsFactory<D>>;
   useClass?: Type<MikroOrmOptionsFactory<D>>;
-  useFactory?: (...args: any[]) => Promise<MikroOrmModuleOptions<D>> | MikroOrmModuleOptions<D>;
+  useFactory?: (...args: any[]) => Promise<Omit<MikroOrmModuleOptions<D>, 'contextName'>> | Omit<MikroOrmModuleOptions<D>, 'contextName'>;
   inject?: any[];
 }
