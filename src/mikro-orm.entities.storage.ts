@@ -1,0 +1,30 @@
+import type { AnyEntity, EntityName } from '@mikro-orm/core';
+
+export class MikroOrmEntitiesStorage {
+
+  private static readonly storage = new Map<string, Set<EntityName<AnyEntity>>>();
+
+  static addEntity(entity: EntityName<AnyEntity>, contextName = 'default'): void {
+    let set = this.storage.get(contextName);
+    if (!set) {
+      set = new Set<EntityName<AnyEntity>>();
+      this.storage.set(contextName, set);
+    }
+
+    set.add(entity);
+  }
+
+  static getEntities(contextName = 'default') {
+    return this.storage.get(contextName)?.values() || [];
+  }
+
+  static clear(contextName = 'default') {
+    const set = this.storage.get(contextName);
+    if (!set) {
+      return;
+    }
+
+    set.clear();
+  }
+
+}

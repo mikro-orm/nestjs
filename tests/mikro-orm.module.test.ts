@@ -380,7 +380,7 @@ describe('MikroORM Module', () => {
             ...options,
           }),
           MikroOrmModule.forFeature([Foo], 'database1'),
-          MikroOrmModule.forFeature({ entities: [Bar], contextName: 'database2' }),
+          MikroOrmModule.forFeature({ entities: [Bar] }, 'database2'),
         ],
       }).compile();
 
