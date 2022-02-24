@@ -4,7 +4,7 @@ export class MikroOrmEntitiesStorage {
 
   private static readonly storage = new Map<string, Set<EntityName<AnyEntity>>>();
 
-  static addEntity(entity: EntityName<AnyEntity>, contextName = 'default'): void {
+  static addEntity(entity: EntityName<AnyEntity>, contextName = 'default') {
     let set = this.storage.get(contextName);
     if (!set) {
       set = new Set<EntityName<AnyEntity>>();
