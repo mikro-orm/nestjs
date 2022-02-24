@@ -389,16 +389,8 @@ describe('MikroORM Module', () => {
       const repository1 = module.get<EntityRepository<Foo>>(getRepositoryToken(Foo, 'database1'));
       const repository2 = module.get<EntityRepository<Bar>>(getRepositoryToken(Bar, 'database2'));
 
-      try {
-        module.get<EntityRepository<Foo>>(getRepositoryToken(Foo, 'database2'));
-        fail('should not have come here');
-      } catch {}
-
-      try {
-        module.get<EntityRepository<Bar>>(getRepositoryToken(Bar, 'database1'));
-        fail('should not have come here');
-      } catch {}
-
+      expect(() => module.get<EntityRepository<Foo>>(getRepositoryToken(Foo, 'database2'))).toThrow();
+      expect(() => module.get<EntityRepository<Bar>>(getRepositoryToken(Bar, 'database1'))).toThrow();
       expect(orm1).toBeDefined();
       expect(repository1).toBeDefined();
       expect(orm2).toBeDefined();
