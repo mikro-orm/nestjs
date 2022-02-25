@@ -10,8 +10,8 @@ import type {
   MikroOrmMiddlewareModuleOptions,
   MikroOrmModuleFeatureOptions,
 } from './typings';
-import { REGISTERED_ENTITIES } from './mikro-orm.common';
 import { MikroOrmMiddlewareModule } from './mikro-orm-middleware.module';
+import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage';
 
 @Module({})
 export class MikroOrmModule {
@@ -32,12 +32,12 @@ export class MikroOrmModule {
 
   static forFeature(options: EntityName<AnyEntity>[] | MikroOrmModuleFeatureOptions, contextName?: string): DynamicModule {
     const entities = Array.isArray(options) ? options : (options.entities || []);
-    const name = Array.isArray(options) ? contextName : options.contextName;
+    const name = (Array.isArray(options) || contextName) ? contextName : options.contextName;
     const providers = createMikroOrmRepositoryProviders(entities, name);
 
     for (const e of entities) {
       if (!Utils.isString(e)) {
-        REGISTERED_ENTITIES.add(e);
+        MikroOrmEntitiesStorage.addEntity(e, name);
       }
     }
 

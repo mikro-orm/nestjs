@@ -223,6 +223,30 @@ describe('MikroORM Module', () => {
 
       await orm.close();
     });
+
+    it('forFeature and autoLoadEntities enabled should return repository', async () => {
+      const { entities, ...options } = testOptions;
+
+      const module = await Test.createTestingModule({
+        imports: [
+          MikroOrmModule.forRoot({
+            autoLoadEntities: true,
+            ...options,
+          }),
+          MikroOrmModule.forFeature([Foo]),
+        ],
+      }).compile();
+
+      const orm = module.get<MikroORM>(MikroORM);
+      const entityManager = module.get<EntityManager>(EntityManager);
+      const repository = module.get<EntityRepository<Foo>>(getRepositoryToken(Foo));
+
+      expect(orm).toBeDefined();
+      expect(entityManager).toBeDefined();
+      expect(repository).toBeDefined();
+
+      await orm.close();
+    });
   });
 
   describe('Multiple Databases', () => {
@@ -322,7 +346,7 @@ describe('MikroORM Module', () => {
             ...testOptions,
           }),
           MikroOrmModule.forFeature([Foo], 'database1'),
-          MikroOrmModule.forFeature([Bar], 'database2'),
+          MikroOrmModule.forFeature({ entities: [Bar], contextName: 'database2' }),
         ],
       }).compile();
 
@@ -331,6 +355,42 @@ describe('MikroORM Module', () => {
       const repository1 = module.get<EntityRepository<Foo>>(getRepositoryToken(Foo, 'database1'));
       const repository2 = module.get<EntityRepository<Bar>>(getRepositoryToken(Bar, 'database2'));
 
+      expect(orm1).toBeDefined();
+      expect(repository1).toBeDefined();
+      expect(orm2).toBeDefined();
+      expect(repository2).toBeDefined();
+
+      await orm1.close();
+      await orm2.close();
+    });
+
+    it('forFeature and autoLoadEntities enabled should return repository', async () => {
+      const { entities, ...options } = testOptions;
+
+      const module = await Test.createTestingModule({
+        imports: [
+          MikroOrmModule.forRoot({
+            contextName: 'database1',
+            autoLoadEntities: true,
+            ...options,
+          }),
+          MikroOrmModule.forRoot({
+            contextName: 'database2',
+            autoLoadEntities: true,
+            ...options,
+          }),
+          MikroOrmModule.forFeature([Foo], 'database1'),
+          MikroOrmModule.forFeature({ entities: [Bar] }, 'database2'),
+        ],
+      }).compile();
+
+      const orm1 = module.get<MikroORM>(getMikroORMToken('database1'));
+      const orm2 = module.get<MikroORM>(getMikroORMToken('database2'));
+      const repository1 = module.get<EntityRepository<Foo>>(getRepositoryToken(Foo, 'database1'));
+      const repository2 = module.get<EntityRepository<Bar>>(getRepositoryToken(Bar, 'database2'));
+
+      expect(() => module.get<EntityRepository<Foo>>(getRepositoryToken(Foo, 'database2'))).toThrow();
+      expect(() => module.get<EntityRepository<Bar>>(getRepositoryToken(Bar, 'database1'))).toThrow();
       expect(orm1).toBeDefined();
       expect(repository1).toBeDefined();
       expect(orm2).toBeDefined();
