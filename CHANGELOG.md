@@ -1,3 +1,11 @@
+## 5.0.1 (2022-03-11)
+
+
+### Bug Fixes
+
+* multiple database connection with `autoLoadEntities` ([#62](https://github.com/mikro-orm/nestjs/issues/62)) ([7dfc097](https://github.com/mikro-orm/nestjs/commit/7dfc0975523c1abe33bd6302237f1719e12fe4d5))
+
+
 # [5.0.0](https://github.com/mikro-orm/nestjs/compare/v4.3.0...v5.0.0) (2022-02-20)
 
 
