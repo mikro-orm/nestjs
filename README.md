@@ -176,6 +176,32 @@ export class MyService {
 }
 ```
 
+## Serialization caveat
+
+[NestJS built-in serialization](https://docs.nestjs.com/techniques/serialization) relies on [class-transformer](https://github.com/typestack/class-transformer). Since MikroORM wraps every single entity relation in a `Reference` or a `Collection` instance (for type-safety), this will make the built-in `ClassSerializerInterceptor` blind to any wrapped relations. In other words, if you return MikroORM entities from your HTTP or WebSocket handlers, all of their relations will NOT be serialized.
+
+Luckily, MikroORM provides a [serialization API](https://mikro-orm.io/docs/serializing) which can be used in lieu of `ClassSerializerInterceptor`.
+
+```typescript
+@Entity()
+export class Book {
+
+  @Property({ hidden: true })   // --> Equivalent of class-transformer's `@Exclude`
+  hiddenField = Date.now();
+  
+  @Property({ persist: false }) // --> Will only exist in memory (and will be serialized). Similar to class-transformer's `@Expose()`
+  count?: number;
+  
+  @ManyToOne({ serializer: value => value.name, serializedName: 'authorName' })   // Equivalent of class-transformer's `@Transform()`
+  author: Author;
+
+}
+
+```
+
+ 
+
+
 ## Using `AsyncLocalStorage` for request context
 
 > Since v5 AsyncLocalStorage is used inside RequestContext helper so this section is no longer valid.
