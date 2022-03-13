@@ -187,7 +187,7 @@ Luckily, MikroORM provides a [serialization API](https://mikro-orm.io/docs/seria
 export class Book {
 
   @Property({ hidden: true })   // --> Equivalent of class-transformer's `@Exclude`
-  hiddenField = Date.now();
+  hiddenField: number = Date.now();
   
   @Property({ persist: false }) // --> Will only exist in memory (and will be serialized). Similar to class-transformer's `@Expose()`
   count?: number;
@@ -198,9 +198,6 @@ export class Book {
 }
 
 ```
-
- 
-
 
 ## Using `AsyncLocalStorage` for request context
 
