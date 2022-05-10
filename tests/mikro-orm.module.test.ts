@@ -22,8 +22,9 @@ class ConfigService implements MikroOrmOptionsFactory {
 
   constructor(@Inject('my-logger') private readonly logger: Logger) { }
 
-  createMikroOrmOptions(): Options {
+  createMikroOrmOptions(contextName?: string): Options {
     return {
+      contextName,
       ...testOptions,
       logger: this.logger.log.bind(this.logger),
     };
@@ -63,7 +64,9 @@ const checkProviders = async (module: TestingModule) => {
   const em2 = module.get<EntityManager>(getEntityManagerToken('database2'));
 
   expect(orm1).toBeDefined();
+  expect(orm1.config.get('contextName')).toBe('database1');
   expect(orm2).toBeDefined();
+  expect(orm2.config.get('contextName')).toBe('database2');
   expect(em1).toBeDefined();
   expect(em2).toBeDefined();
   expect(em1).not.toBe(em2);
@@ -87,6 +90,7 @@ describe('MikroORM Module', () => {
 
       const orm = module.get<MikroORM>(MikroORM);
       expect(orm).toBeDefined();
+      expect(orm.config.get('contextName')).toBe('default');
       expect(module.get<EntityManager>(EntityManager)).toBeDefined();
       await orm.close();
     });
