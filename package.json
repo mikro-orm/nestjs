@@ -1,6 +1,6 @@
 {
   "name": "@mikro-orm/nestjs",
-  "version": "5.0.0",
+  "version": "5.0.2",
   "license": "MIT",
   "author": {
     "name": "Martin Adamek",
@@ -56,9 +56,9 @@
   },
   "devDependencies": {
     "@mikro-orm/core": "^5.0.3",
-    "@mikro-orm/sqlite": "^5.0.3",
-    "@mikro-orm/mongodb": "^5.0.3",
     "@mikro-orm/knex": "^5.0.3",
+    "@mikro-orm/mongodb": "^5.0.3",
+    "@mikro-orm/sqlite": "^5.0.3",
     "@nestjs/common": "^8.2.6",
     "@nestjs/core": "^8.2.6",
     "@nestjs/platform-express": "^8.2.6",

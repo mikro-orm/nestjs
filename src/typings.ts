@@ -32,7 +32,7 @@ export interface MikroOrmModuleFeatureOptions {
 }
 
 export interface MikroOrmOptionsFactory<D extends IDatabaseDriver = IDatabaseDriver> {
-  createMikroOrmOptions(): Promise<MikroOrmModuleOptions<D>> | MikroOrmModuleOptions<D>;
+  createMikroOrmOptions(contextName?: string): Promise<MikroOrmModuleOptions<D>> | MikroOrmModuleOptions<D>;
 }
 
 export interface MikroOrmModuleSyncOptions extends MikroOrmModuleOptions, MikroOrmNestScopeOptions { }
