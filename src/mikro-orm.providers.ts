@@ -25,8 +25,7 @@ export function createMikroOrmProvider(contextName?: string): Provider {
         options = config as unknown as MikroOrmModuleOptions;
       }
 
-      const mergedOptions = !options.contextName && contextName ? { ...options, contextName } : options;
-      return MikroORM.init(mergedOptions);
+      return MikroORM.init(options);
     },
     inject: [MIKRO_ORM_MODULE_OPTIONS],
   };
@@ -49,7 +48,13 @@ export function createMikroOrmAsyncOptionsProvider(options: MikroOrmModuleAsyncO
   if (options.useFactory) {
     return {
       provide: MIKRO_ORM_MODULE_OPTIONS,
-      useFactory: options.useFactory,
+      useFactory: (...args: any[]) => {
+        const factoryOptions = options.useFactory!(...args);
+        return {
+          contextName: options.contextName,
+          ...factoryOptions,
+        };
+      },
       inject: options.inject || [],
     };
   }

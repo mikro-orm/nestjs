@@ -42,10 +42,12 @@ class TestController {
 
 @Module({
   imports: [
-    MikroOrmModule.forRoot({
+    MikroOrmModule.forRootAsync({
       contextName: 'database1',
-      registerRequestContext: false,
-      ...testOptions,
+      useFactory: () => ({
+        registerRequestContext: false,
+        ...testOptions,
+      }),
     }),
     MikroOrmModule.forRoot({
       contextName: 'database2',
