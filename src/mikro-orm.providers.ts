@@ -50,10 +50,9 @@ export function createMikroOrmAsyncOptionsProvider(options: MikroOrmModuleAsyncO
       provide: MIKRO_ORM_MODULE_OPTIONS,
       useFactory: (...args: any[]) => {
         const factoryOptions = options.useFactory!(...args);
-        return {
-          contextName: options.contextName,
-          ...factoryOptions,
-        };
+        return options.contextName
+          ? { contextName: options.contextName, ...factoryOptions }
+          : factoryOptions;
       },
       inject: options.inject || [],
     };

@@ -23,11 +23,12 @@ class ConfigService implements MikroOrmOptionsFactory {
   constructor(@Inject('my-logger') private readonly logger: Logger) { }
 
   createMikroOrmOptions(contextName?: string): Options {
-    return {
-      contextName,
+    const options = {
       ...testOptions,
       logger: this.logger.log.bind(this.logger),
     };
+
+    return contextName ? { contextName, ...options } : options;
   }
 
 }
@@ -105,6 +106,7 @@ describe('MikroORM Module', () => {
 
       const orm = module.get<MikroORM>(MikroORM);
       expect(orm).toBeDefined();
+      expect(orm.config.get('contextName')).toBe('default');
       expect(module.get<EntityManager>(EntityManager)).toBeDefined();
       await orm.close();
     });
@@ -119,6 +121,7 @@ describe('MikroORM Module', () => {
 
       const orm = module.get<MikroORM>(MikroORM);
       expect(orm).toBeDefined();
+      expect(orm.config.get('contextName')).toBe('default');
       expect(module.get<EntityManager>(EntityManager)).toBeDefined();
       await orm.close();
     });
@@ -137,6 +140,7 @@ describe('MikroORM Module', () => {
 
       const orm = module.get<MikroORM>(MikroORM);
       expect(orm).toBeDefined();
+      expect(orm.config.get('contextName')).toBe('default');
       expect(module.get<EntityManager>(EntityManager)).toBeDefined();
       await orm.close();
     });
