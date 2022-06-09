@@ -1,3 +1,12 @@
+## 5.0.2 (2022-05-09)
+
+
+### Bug Fixes
+
+* ensure correct application shutdown with forRootAsync and multiple databases ([#75](https://github.com/mikro-orm/nestjs/issues/75)) ([91b6faf](https://github.com/mikro-orm/nestjs/commit/91b6faf))
+* ensure correct `contextName` in `forRootAsync` ([#74](https://github.com/mikro-orm/nestjs/issues/74)) ([4609e5d](https://github.com/mikro-orm/nestjs/commit/4609e5d))
+
+
 ## 5.0.1 (2022-03-11)
 
 
