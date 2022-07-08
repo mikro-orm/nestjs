@@ -1,3 +1,11 @@
+# 5.1.0 (2022-07-08)
+
+### Features
+
+* add support for nestjs@9.0.0 ([#80](https://github.com/mikro-orm/nestjs/issues/80)) ([f571181](https://github.com/mikro-orm/nestjs/commit/f571181ef1ee6a08ed7a9cf410a48111fac7d9ee))
+
+
+
 ## 5.0.2 (2022-05-09)
 
 
