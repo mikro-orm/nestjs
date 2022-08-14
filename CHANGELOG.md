@@ -1,3 +1,13 @@
+# 5.1.1 (2022-07-08)
+
+### Bug Fixes
+
+* make the `forFeature` type more loose and accept any `EntitySchema` ([c0012c9](https://github.com/mikro-orm/nestjs/commit/c0012c9))
+ fix:  (#82) [GitHub]
+* return same EM fork for EM from core and driver packages ([#82](https://github.com/mikro-orm/nestjs/pull/82)) ([d6789f6](https://github.com/mikro-orm/nestjs/commit/d6789f6))
+
+
+
 # 5.1.0 (2022-07-08)
 
 ### Features
