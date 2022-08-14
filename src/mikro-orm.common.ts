@@ -1,6 +1,6 @@
-import type { EntityName } from '@mikro-orm/core';
 import { MikroORM, Utils } from '@mikro-orm/core';
 import { Inject, Logger } from '@nestjs/common';
+import type { EntityName } from './typings';
 
 export const MIKRO_ORM_MODULE_OPTIONS = Symbol('mikro-orm-module-options');
 export const CONTEXT_NAMES: string[] = [];

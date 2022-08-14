@@ -1,4 +1,4 @@
-import type { AnyEntity, EntityName } from '@mikro-orm/core';
+import type { AnyEntity } from '@mikro-orm/core';
 import { Utils } from '@mikro-orm/core';
 import type { DynamicModule } from '@nestjs/common';
 import { Module } from '@nestjs/common';
@@ -9,6 +9,7 @@ import type {
   MikroOrmModuleSyncOptions,
   MikroOrmMiddlewareModuleOptions,
   MikroOrmModuleFeatureOptions,
+  EntityName,
 } from './typings';
 import { MikroOrmMiddlewareModule } from './mikro-orm-middleware.module';
 import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage';
