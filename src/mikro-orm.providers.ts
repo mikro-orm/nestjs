@@ -36,6 +36,15 @@ export function createEntityManagerProvider(
   entityManager: Type = EntityManager,
   contextName?: string,
 ): Provider<EntityManager> {
+  if (!contextName && entityManager !== EntityManager) {
+    return {
+      provide: entityManager,
+      scope,
+      useFactory: (em: EntityManager) => em, // just a simle alias, unlike `useExisting` from nest, this works with request scopes too
+      inject: [EntityManager], // depend on the EM from core package
+    };
+  }
+
   return {
     provide: contextName ? getEntityManagerToken(contextName) : entityManager,
     scope,
