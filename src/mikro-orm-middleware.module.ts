@@ -29,7 +29,7 @@ export class MikroOrmMiddlewareModule {
           inject,
         },
       ],
-      exports: ['MikroORMs']
+      exports: ['MikroORMs'],
     };
   }
 
