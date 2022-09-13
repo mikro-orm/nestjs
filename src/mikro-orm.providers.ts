@@ -40,7 +40,7 @@ export function createEntityManagerProvider(
     return {
       provide: entityManager,
       scope,
-      useFactory: (em: EntityManager) => em, // just a simle alias, unlike `useExisting` from nest, this works with request scopes too
+      useFactory: (em: EntityManager) => em, // just a simple alias, unlike `useExisting` from nest, this works with request scopes too
       inject: [EntityManager], // depend on the EM from core package
     };
   }
