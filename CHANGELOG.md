@@ -1,3 +1,9 @@
+# 5.1.2 (2022-09-13)
+
+* this version adds all ORM packages as optional peer dependencies, which might help with PNPM dependency resolution ([#81](https://github.com/mikro-orm/nestjs/issues/81))
+
+
+
 # 5.1.1 (2022-08-14)
 
 ### Bug Fixes
