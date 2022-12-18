@@ -12,3 +12,4 @@
 /mikro_orm_test.db
 *.tsbuildinfo
 .DS_Store
+.yarn

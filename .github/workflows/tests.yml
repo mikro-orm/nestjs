@@ -19,9 +19,19 @@ jobs:
     - name: EditorConfig Lint
       uses: docker://mstruebing/editorconfig-checker:2.4.0
 
+    - name: Enable corepack
+      run: |
+        corepack enable
+
+    - name: Cache node_modules
+      uses: actions/cache@v3
+      with:
+        path: '**/node_modules'
+        key: ${{ runner.os }}-16-modules-${{ hashFiles('**/yarn.lock') }}
+
     - name: Install
       run: |
-        yarn config set ignore-engines true
+        corepack prepare yarn@3.3.0 --activate
         yarn
 
     - name: Build
