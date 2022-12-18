@@ -1,3 +1,4 @@
+import type { Dictionary } from '@mikro-orm/core';
 import { EntityManager, MikroORM } from '@mikro-orm/core';
 import type { DynamicModule, MiddlewareConsumer, OnApplicationShutdown } from '@nestjs/common';
 import { Global, Inject, Module, RequestMethod } from '@nestjs/common';
@@ -10,9 +11,9 @@ import { MikroOrmModuleOptions } from './typings';
 import { MikroOrmMiddleware } from './mikro-orm.middleware';
 import { forRoutesPath } from './middleware.helper';
 
-async function tryRequire<T>(cb: () => Promise<T>): Promise<T | undefined> {
+async function tryRequire(name: string): Promise<Dictionary | undefined> {
   try {
-    return await cb();
+    return await import(name);
   } catch {
     return undefined; // ignore, optional dependency
   }
@@ -28,8 +29,8 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
 
   static async forRoot(options?: MikroOrmModuleSyncOptions): Promise<DynamicModule> {
     const contextName = this.setContextName(options?.contextName);
-    const knex = await tryRequire(() => import('@mikro-orm/knex'));
-    const mongo = await tryRequire(() => import('@mikro-orm/mongodb'));
+    const knex = await tryRequire('@mikro-orm/knex');
+    const mongo = await tryRequire('@mikro-orm/mongodb');
 
     return {
       module: MikroOrmCoreModule,
@@ -51,8 +52,8 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
 
   static async forRootAsync(options: MikroOrmModuleAsyncOptions): Promise<DynamicModule> {
     const contextName = this.setContextName(options?.contextName);
-    const knex = await tryRequire(() => import('@mikro-orm/knex'));
-    const mongo = await tryRequire(() => import('@mikro-orm/mongodb'));
+    const knex = await tryRequire('@mikro-orm/knex');
+    const mongo = await tryRequire('@mikro-orm/mongodb');
 
     return {
       module: MikroOrmCoreModule,

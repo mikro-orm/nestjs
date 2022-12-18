@@ -12,8 +12,8 @@ export const InjectMikroORM = (name: string) => Inject(getMikroORMToken(name));
 export const getEntityManagerToken = (name: string) => `${name}_EntityManager`;
 export const InjectEntityManager = (name: string) => Inject(getEntityManagerToken(name));
 
-export const getRepositoryToken = <T> (entity: EntityName<T>, name?: string) => {
+export const getRepositoryToken = <T extends object> (entity: EntityName<T>, name?: string) => {
   const suffix = name ? `_${name}` : '';
   return `${Utils.className(entity)}Repository${suffix}`;
 };
-export const InjectRepository = <T> (entity: EntityName<T>, name?: string) => Inject(getRepositoryToken(entity, name));
+export const InjectRepository = <T extends object> (entity: EntityName<T>, name?: string) => Inject(getRepositoryToken(entity, name));
