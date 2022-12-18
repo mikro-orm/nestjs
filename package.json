@@ -1,6 +1,6 @@
 {
   "name": "@mikro-orm/nestjs",
-  "version": "5.1.3-dev.1",
+  "version": "5.1.3",
   "license": "MIT",
   "author": {
     "name": "Martin Adamek",

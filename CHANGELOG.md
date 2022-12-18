@@ -1,3 +1,9 @@
+# 5.1.3 (2022-12-18)
+
+* this version uses different mechanism for registering the EntityManager flavours (e.g. `SqlEntityManager`), which should also help with pnpm dependency resolution issues 
+
+
+
 # 5.1.2 (2022-09-13)
 
 * this version adds all ORM packages as optional peer dependencies, which might help with PNPM dependency resolution ([#81](https://github.com/mikro-orm/nestjs/issues/81))

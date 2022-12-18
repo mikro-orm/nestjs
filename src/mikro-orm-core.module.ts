@@ -1,6 +1,6 @@
 import type { Dictionary } from '@mikro-orm/core';
-import { EntityManager, MikroORM } from '@mikro-orm/core';
-import type { DynamicModule, MiddlewareConsumer, OnApplicationShutdown } from '@nestjs/common';
+import { Configuration, ConfigurationLoader, EntityManager, MikroORM } from '@mikro-orm/core';
+import type { DynamicModule, MiddlewareConsumer, OnApplicationShutdown, Type } from '@nestjs/common';
 import { Global, Inject, Module, RequestMethod } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 
@@ -28,6 +28,10 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
               private readonly moduleRef: ModuleRef) { }
 
   static async forRoot(options?: MikroOrmModuleSyncOptions): Promise<DynamicModule> {
+    const config = (!options || Object.keys(options).length === 0)
+      ? await ConfigurationLoader.getConfiguration()
+      : new Configuration(options);
+    const em = config.getDriver().createEntityManager();
     const contextName = this.setContextName(options?.contextName);
     const knex = await tryRequire('@mikro-orm/knex');
     const mongo = await tryRequire('@mikro-orm/mongodb');
@@ -38,19 +42,25 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
         { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options || {} },
         createMikroOrmProvider(contextName),
         createEntityManagerProvider(options?.scope, EntityManager, contextName),
-        ...(knex ? [createEntityManagerProvider(options?.scope, knex.SqlEntityManager, contextName)] : []),
-        ...(mongo ? [createEntityManagerProvider(options?.scope, mongo.MongoEntityManager, contextName)] : []),
+        createEntityManagerProvider(options?.scope, em.constructor as Type, contextName),
+        ...(knex ? [createEntityManagerProvider(options?.scope, knex.EntityManager, contextName)] : []),
+        ...(mongo ? [createEntityManagerProvider(options?.scope, mongo.EntityManager, contextName)] : []),
       ],
       exports: [
         contextName ? getMikroORMToken(contextName) : MikroORM,
         contextName ? getEntityManagerToken(contextName) : EntityManager,
-        ...(knex ? (contextName ? [] : [knex.SqlEntityManager as any]) : []),
-        ...(mongo ? (contextName ? [] : [mongo.MongoEntityManager as any]) : []),
+        ...(contextName ? [] : [em.constructor]),
+        ...(knex ? (contextName ? [] : [knex.EntityManager]) : []),
+        ...(mongo ? (contextName ? [] : [mongo.EntityManager]) : []),
       ],
     };
   }
 
   static async forRootAsync(options: MikroOrmModuleAsyncOptions): Promise<DynamicModule> {
+    const config = (!options || Object.keys(options).length === 0)
+      ? await ConfigurationLoader.getConfiguration()
+      : new Configuration(options);
+    const em = config.getDriver().createEntityManager();
     const contextName = this.setContextName(options?.contextName);
     const knex = await tryRequire('@mikro-orm/knex');
     const mongo = await tryRequire('@mikro-orm/mongodb');
@@ -63,14 +73,16 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
         ...createAsyncProviders({ ...options, contextName: options.contextName }),
         createMikroOrmProvider(contextName),
         createEntityManagerProvider(options.scope, EntityManager, contextName),
-        ...(knex ? [createEntityManagerProvider(options?.scope, knex.SqlEntityManager, contextName)] : []),
-        ...(mongo ? [createEntityManagerProvider(options?.scope, mongo.MongoEntityManager, contextName)] : []),
+        createEntityManagerProvider(options?.scope, em.constructor as Type, contextName),
+        ...(knex ? [createEntityManagerProvider(options?.scope, knex.EntityManager, contextName)] : []),
+        ...(mongo ? [createEntityManagerProvider(options?.scope, mongo.EntityManager, contextName)] : []),
       ],
       exports: [
         contextName ? getMikroORMToken(contextName) : MikroORM,
         contextName ? getEntityManagerToken(contextName) : EntityManager,
-        ...(knex ? (contextName ? [] : [knex.SqlEntityManager as any]) : []),
-        ...(mongo ? (contextName ? [] : [mongo.MongoEntityManager as any]) : []),
+        ...(contextName ? [] : [em.constructor]),
+        ...(knex ? (contextName ? [] : [knex.EntityManager]) : []),
+        ...(mongo ? (contextName ? [] : [mongo.EntityManager]) : []),
       ],
     };
   }
