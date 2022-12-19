@@ -1,3 +1,15 @@
+# 5.1.5 (2022-12-19)
+
+* fixes some edge cases after the fix from 5.1.3 
+
+
+
+# 5.1.4 (2022-12-19)
+
+* removes yarn v3 constraint from package.json `engines` 
+
+
+
 # 5.1.3 (2022-12-18)
 
 * this version uses different mechanism for registering the EntityManager flavours (e.g. `SqlEntityManager`), which should also help with pnpm dependency resolution issues 

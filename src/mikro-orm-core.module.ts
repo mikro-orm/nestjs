@@ -28,13 +28,10 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
               private readonly moduleRef: ModuleRef) { }
 
   static async forRoot(options?: MikroOrmModuleSyncOptions): Promise<DynamicModule> {
-    const config = (!options || Object.keys(options).length === 0)
-      ? await ConfigurationLoader.getConfiguration(false)
-      : new Configuration(options, false);
-    const em = config.getDriver().createEntityManager();
     const contextName = this.setContextName(options?.contextName);
     const knex = await tryRequire('@mikro-orm/knex');
     const mongo = await tryRequire('@mikro-orm/mongodb');
+    const em = await this.createEntityManager(options);
 
     return {
       module: MikroOrmCoreModule,
@@ -42,28 +39,25 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
         { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options || {} },
         createMikroOrmProvider(contextName),
         createEntityManagerProvider(options?.scope, EntityManager, contextName),
-        createEntityManagerProvider(options?.scope, em.constructor as Type, contextName),
+        ...(em ? [createEntityManagerProvider(options?.scope, em.constructor as Type, contextName)] : []),
         ...(knex ? [createEntityManagerProvider(options?.scope, knex.EntityManager, contextName)] : []),
         ...(mongo ? [createEntityManagerProvider(options?.scope, mongo.EntityManager, contextName)] : []),
       ],
       exports: [
         contextName ? getMikroORMToken(contextName) : MikroORM,
         contextName ? getEntityManagerToken(contextName) : EntityManager,
-        ...(contextName ? [] : [em.constructor]),
-        ...(knex ? (contextName ? [] : [knex.EntityManager]) : []),
-        ...(mongo ? (contextName ? [] : [mongo.EntityManager]) : []),
+        ...(em && !contextName ? [em.constructor] : []),
+        ...(knex && !contextName ? [knex.EntityManager] : []),
+        ...(mongo && !contextName ? [mongo.EntityManager] : []),
       ],
     };
   }
 
   static async forRootAsync(options: MikroOrmModuleAsyncOptions): Promise<DynamicModule> {
-    const config = (!options || Object.keys(options).length === 0)
-      ? await ConfigurationLoader.getConfiguration()
-      : new Configuration(options);
-    const em = config.getDriver().createEntityManager();
     const contextName = this.setContextName(options?.contextName);
     const knex = await tryRequire('@mikro-orm/knex');
     const mongo = await tryRequire('@mikro-orm/mongodb');
+    const em = await this.createEntityManager(options);
 
     return {
       module: MikroOrmCoreModule,
@@ -73,18 +67,42 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
         ...createAsyncProviders({ ...options, contextName: options.contextName }),
         createMikroOrmProvider(contextName),
         createEntityManagerProvider(options.scope, EntityManager, contextName),
-        createEntityManagerProvider(options?.scope, em.constructor as Type, contextName),
+        ...(em ? [createEntityManagerProvider(options?.scope, em.constructor as Type, contextName)] : []),
         ...(knex ? [createEntityManagerProvider(options?.scope, knex.EntityManager, contextName)] : []),
         ...(mongo ? [createEntityManagerProvider(options?.scope, mongo.EntityManager, contextName)] : []),
       ],
       exports: [
         contextName ? getMikroORMToken(contextName) : MikroORM,
         contextName ? getEntityManagerToken(contextName) : EntityManager,
-        ...(contextName ? [] : [em.constructor]),
-        ...(knex ? (contextName ? [] : [knex.EntityManager]) : []),
-        ...(mongo ? (contextName ? [] : [mongo.EntityManager]) : []),
+        ...(em && !contextName ? [em.constructor] : []),
+        ...(knex && !contextName ? [knex.EntityManager] : []),
+        ...(mongo && !contextName ? [mongo.EntityManager] : []),
       ],
     };
+  }
+
+  /**
+   * Tries to create the driver instance to use the actual entity manager implementation for DI symbol.
+   * This helps with dependency resolution issues when importing the EM from driver package (e.g. `SqlEntityManager`).
+   */
+  private static async createEntityManager(options?: MikroOrmModuleSyncOptions | MikroOrmModuleAsyncOptions): Promise<any> {
+    if (options?.contextName) {
+      return undefined;
+    }
+
+    try {
+      if (!options || Object.keys(options).length === 0) {
+        const config = await ConfigurationLoader.getConfiguration(false);
+        return config.getDriver().createEntityManager();
+      }
+
+      if ('useFactory' in options) {
+        const config = new Configuration(options.useFactory!(), false);
+        return config.getDriver().createEntityManager();
+      }
+    } catch {
+      // ignore
+    }
   }
 
   async onApplicationShutdown() {
