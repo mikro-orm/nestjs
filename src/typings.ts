@@ -45,4 +45,4 @@ export interface MikroOrmModuleAsyncOptions<D extends IDatabaseDriver = IDatabas
   inject?: any[];
 }
 
-export declare type EntityName<T extends AnyEntity<T>> = CoreEntityName<T> | EntitySchema<any>;
+export declare type EntityName<T extends AnyEntity<T>> = CoreEntityName<T> | EntitySchema;
