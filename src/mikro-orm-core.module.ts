@@ -29,8 +29,8 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
 
   static async forRoot(options?: MikroOrmModuleSyncOptions): Promise<DynamicModule> {
     const config = (!options || Object.keys(options).length === 0)
-      ? await ConfigurationLoader.getConfiguration()
-      : new Configuration(options);
+      ? await ConfigurationLoader.getConfiguration(false)
+      : new Configuration(options, false);
     const em = config.getDriver().createEntityManager();
     const contextName = this.setContextName(options?.contextName);
     const knex = await tryRequire('@mikro-orm/knex');
