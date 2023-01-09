@@ -1,3 +1,10 @@
+# 5.1.6 (2023-01-09)
+
+* tries to fix issue with async `useFactory` 
+* tries to fix issue with `autoLoadEntities` and repeatable `init/close` calls
+
+
+
 # 5.1.5 (2022-12-19)
 
 * fixes some edge cases after the fix from 5.1.3 
