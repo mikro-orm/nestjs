@@ -17,8 +17,6 @@ export function createMikroOrmProvider(contextName?: string): Provider {
         delete options.autoLoadEntities;
       }
 
-      MikroOrmEntitiesStorage.clear(contextName);
-
       if (!options || Object.keys(options).length === 0) {
         const config = await ConfigurationLoader.getConfiguration();
         config.set('logger', logger.log.bind(logger));
