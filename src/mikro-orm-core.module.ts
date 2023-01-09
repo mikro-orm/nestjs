@@ -97,7 +97,7 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
       }
 
       if ('useFactory' in options) {
-        const config = new Configuration(options.useFactory!(), false);
+        const config = new Configuration(await options.useFactory!(), false);
         return config.getDriver().createEntityManager();
       }
     } catch {
