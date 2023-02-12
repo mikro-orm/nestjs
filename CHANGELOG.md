@@ -1,3 +1,10 @@
+# 5.1.7 (2023-02-12)
+
+* support custom repositories in v6
+* export `MikroORMs` provider (#88)
+
+
+
 # 5.1.6 (2023-01-09)
 
 * tries to fix issue with async `useFactory` 
