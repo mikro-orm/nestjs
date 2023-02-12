@@ -3,7 +3,7 @@ import type { AnyEntity } from '@mikro-orm/core';
 import { ConfigurationLoader, EntityManager, MetadataStorage, MikroORM } from '@mikro-orm/core';
 
 import type { MikroOrmModuleAsyncOptions, MikroOrmModuleOptions, MikroOrmOptionsFactory, EntityName } from './typings';
-import type { Provider, Type } from '@nestjs/common';
+import type { InjectionToken, Provider, Type } from '@nestjs/common';
 import { Scope } from '@nestjs/common';
 import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage';
 
@@ -100,10 +100,11 @@ export function createMikroOrmRepositoryProviders(entities: EntityName<AnyEntity
 
   (entities || []).forEach(entity => {
     const meta = metadata.find(meta => meta.class === entity);
+    const repository = (meta?.repository ?? meta?.customRepository) as unknown as (() => InjectionToken) | undefined;
 
-    if (meta?.customRepository) {
+    if (repository) {
       providers.push({
-        provide: meta.customRepository(),
+        provide: repository(),
         useFactory: em => em.getRepository(entity),
         inject: [inject],
       });
