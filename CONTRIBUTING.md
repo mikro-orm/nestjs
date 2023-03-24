@@ -41,6 +41,9 @@ Before you submit your pull request consider the following guidelines:
 - Search [GitHub](https://github.com/mikro-orm/mikro-orm/pulls) for an open or closed PR
   that relates to your submission. You don't want to duplicate effort.
 
+- Ensure that you are using yarn 3.x and not npm or yarn 1.x. This way, if you upgrade any dependency, 
+  the lockfile will have the same format as the one used by the project.
+
 - Fork the project, install NPM dependencies and start docker to have all databases ready.
   [run-rs](https://www.npmjs.com/package/run-rs) is used to manage mongodb replica set.
   On windows you might need to execute `run-rs` directly as well as adjust some configuration,
