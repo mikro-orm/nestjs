@@ -10,7 +10,7 @@ to dive into the source code - send a pull request!
 
 First take a look at documentation, then try to go thru existing issues. If you have a general 
 question about how something works, better place to ask is our 
-[Slack channel](https://join.slack.com/t/mikroorm/shared_invite/enQtNTM1ODYzMzM4MDk3LTBmZDNlODBhYjcxNGZlMTkyYzJmODAwMDhjODc0ZTM2MzQ2Y2VkOGM0ODYzYTJjMDRiZDdjMmIxYjI2OTY0Y2U)
+[Slack channel](https://join.slack.com/t/mikroorm/shared_invite/enQtNTM1ODYzMzM4MDk3LWM4ZDExMjU5ZDhmNjA2MmM3MWMwZmExNjhhNDdiYTMwNWM0MGY5ZTE3ZjkyZTMzOWExNDgyYmMzNDE1NDI5NjA)
 or [Stack overflow](https://stackoverflow.com/tags/mikro-orm/). 
 
 ## Found a bug?
@@ -40,6 +40,8 @@ Before you submit your pull request consider the following guidelines:
 
 - Search [GitHub](https://github.com/mikro-orm/mikro-orm/pulls) for an open or closed PR
   that relates to your submission. You don't want to duplicate effort.
+
+- Fork the project and install NPM dependencies. This project uses `yarn/berry`, so you will need to install it, preferably by [enabling `corepack`](https://yarnpkg.com/getting-started/install).
 
 - Fork the project, install NPM dependencies and start docker to have all databases ready.
   [run-rs](https://www.npmjs.com/package/run-rs) is used to manage mongodb replica set.
