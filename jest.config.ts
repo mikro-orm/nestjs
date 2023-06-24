@@ -3,7 +3,12 @@ import type { Config } from '@jest/types';
 // Sync object
 const config: Config.InitialOptions = {
   testTimeout: 30000,
-  preset: 'ts-jest',
+  transform: {
+    '^.+\\.tsx?$': ['ts-jest', {
+      tsconfig: 'tests/tsconfig.json',
+      isolatedModules: true,
+    }],
+  },
   collectCoverage: false,
   collectCoverageFrom: [
     '<rootDir>/src/**/*.ts',
@@ -12,11 +17,6 @@ const config: Config.InitialOptions = {
     'dist/package.json',
     '<rootDir>/package.json',
   ],
-  globals: {
-    'ts-jest': {
-      tsconfig: 'tests/tsconfig.json',
-    },
-  },
 };
 
 export default config;
