@@ -17,6 +17,14 @@ import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage';
 @Module({})
 export class MikroOrmModule {
 
+  /**
+   * Clears the entity storage. This is useful for testing purposes, when you want to isolate the tests.
+   * Keep in mind that this should be called when using a test runner that keeps the context alive between tests (like Vitest with threads disabled).
+   */
+  static clearStorage(contextName?: string) {
+    MikroOrmEntitiesStorage.clear(contextName);
+  }
+
   static forRoot(options?: MikroOrmModuleSyncOptions): DynamicModule {
     return {
       module: MikroOrmModule,
