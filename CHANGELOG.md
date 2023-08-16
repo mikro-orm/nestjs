@@ -1,3 +1,17 @@
+## [5.2.1](https://github.com/mikro-orm/nestjs/compare/v5.2.0...v5.2.1) (2023-08-16)
+
+
+### Bug Fixes
+
+* fix weird bugs when `vitest` is used with `autoLoadEntities` ([cd7767a](https://github.com/mikro-orm/nestjs/commit/cd7767aafb6d243c0dfed796c8870302d989f38f)), closes [#134](https://github.com/mikro-orm/nestjs/issues/134)
+
+
+### Features
+
+* add clear storage method ([#133](https://github.com/mikro-orm/nestjs/issues/133)) ([41ba27b](https://github.com/mikro-orm/nestjs/commit/41ba27b34be069795337a3c2bc73fc9fa45c8b3f))
+
+
+
 # 5.2.0 (2023-06-24)
 
 * support NestJS 10
