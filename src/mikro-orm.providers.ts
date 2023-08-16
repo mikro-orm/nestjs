@@ -11,6 +11,8 @@ export function createMikroOrmProvider(contextName?: string): Provider {
   return {
     provide: contextName ? getMikroORMToken(contextName) : MikroORM,
     useFactory: async (options?: MikroOrmModuleOptions) => {
+      options = { ...options };
+
       if (options?.autoLoadEntities) {
         options.entities = [...(options.entities || []), ...MikroOrmEntitiesStorage.getEntities(contextName)];
         options.entitiesTs = [...(options.entitiesTs || []), ...MikroOrmEntitiesStorage.getEntities(contextName)];
