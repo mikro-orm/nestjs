@@ -1,4 +1,12 @@
-## [5.2.1](https://github.com/mikro-orm/nestjs/compare/v5.2.0...v5.2.1) (2023-08-16)
+# [5.2.2](https://github.com/mikro-orm/nestjs/compare/v5.2.1...v5.2.2) (2023-08-23)
+
+### Features
+
+* clear the `autoLoadEntities` cache automatically on app shutdown ([#4733](https://github.com/mikro-orm/mikro-orm/discussions/4733)) ([aca7c01](https://github.com/mikro-orm/nestjs/commit/aca7c01a53cde125d9e3a34f412ea428b6521a7e))
+
+
+
+# [5.2.1](https://github.com/mikro-orm/nestjs/compare/v5.2.0...v5.2.1) (2023-08-16)
 
 
 ### Bug Fixes
