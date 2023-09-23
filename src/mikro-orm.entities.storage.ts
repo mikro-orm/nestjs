@@ -20,12 +20,7 @@ export class MikroOrmEntitiesStorage {
   }
 
   static clear(contextName = 'default') {
-    const set = this.storage.get(contextName);
-    if (!set) {
-      return;
-    }
-
-    set.clear();
+    this.storage.get(contextName)?.clear();
   }
 
 }

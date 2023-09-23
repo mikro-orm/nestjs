@@ -10,6 +10,7 @@ import type { MikroOrmModuleAsyncOptions, MikroOrmModuleSyncOptions } from './ty
 import { MikroOrmModuleOptions } from './typings';
 import { MikroOrmMiddleware } from './mikro-orm.middleware';
 import { forRoutesPath } from './middleware.helper';
+import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage';
 
 async function tryRequire(name: string): Promise<Dictionary | undefined> {
   try {
@@ -111,6 +112,7 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
 
     if (orm) {
       await orm.close();
+      MikroOrmEntitiesStorage.clear(orm.config.get('contextName'));
     }
 
     CONTEXT_NAMES.length = 0;
