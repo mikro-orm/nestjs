@@ -1,6 +1,6 @@
 import { getEntityManagerToken, getMikroORMToken, getRepositoryToken, logger, MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
 import type { AnyEntity } from '@mikro-orm/core';
-import { ConfigurationLoader, EntityManager, MetadataStorage, MikroORM } from '@mikro-orm/core';
+import { ConfigurationLoader, EntityManager, MetadataStorage, MikroORM, EntitySchema } from '@mikro-orm/core';
 
 import type { MikroOrmModuleAsyncOptions, MikroOrmModuleOptions, MikroOrmOptionsFactory, EntityName } from './typings';
 import type { InjectionToken, Provider, Type } from '@nestjs/common';
@@ -98,7 +98,10 @@ export function createMikroOrmRepositoryProviders(entities: EntityName<AnyEntity
   const providers: Provider[] = [];
   const inject = contextName ? getEntityManagerToken(contextName) : EntityManager;
 
-  (entities || []).forEach(entity => {
+  const isSchema = (entity: EntityName<AnyEntity> | EntitySchema<AnyEntity>) => entity instanceof EntitySchema;
+  const isAbstractSchema = (entity: EntityName<AnyEntity> | EntitySchema<AnyEntity>) => isSchema(entity) && entity.meta.abstract === true;
+
+  (entities || []).filter(entity => !isAbstractSchema(entity)).forEach(entity => {
     const meta = metadata.find(meta => meta.class === entity);
     const repository = (meta?.repository ?? meta?.customRepository) as unknown as (() => InjectionToken) | undefined;
 

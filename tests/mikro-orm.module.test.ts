@@ -8,6 +8,7 @@ import type { MikroOrmOptionsFactory } from '../src';
 import { CONTEXT_NAMES, getEntityManagerToken, getMikroORMToken, getRepositoryToken, MikroOrmModule } from '../src';
 import { Foo } from './entities/foo.entity';
 import { Bar } from './entities/bar.entity';
+import { baseEntitySchema, bazEntitySchema, BazEntity } from './entities-schema';
 
 const testOptions: Options = {
   dbName: ':memory:',
@@ -224,6 +225,30 @@ describe('MikroORM Module', () => {
       const orm = module.get<MikroORM>(MikroORM);
       const entityManager = module.get<EntityManager>(EntityManager);
       const repository = module.get<EntityRepository<Foo>>(getRepositoryToken(Foo));
+
+      expect(orm).toBeDefined();
+      expect(entityManager).toBeDefined();
+      expect(repository).toBeDefined();
+
+      await orm.close();
+    });
+
+    
+    it('forFeature should return repository for schema', async () => {
+      const module = await Test.createTestingModule({
+        imports: [
+          MikroOrmModule.forRoot({
+            ...testOptions,
+            entities: undefined,
+            autoLoadEntities: true,
+          }),
+          MikroOrmModule.forFeature([baseEntitySchema, bazEntitySchema]),
+        ],
+      }).compile();
+
+      const orm = module.get<MikroORM>(MikroORM);
+      const entityManager = module.get<EntityManager>(EntityManager);
+      const repository = module.get<EntityRepository<BazEntity>>(getRepositoryToken(BazEntity));
 
       expect(orm).toBeDefined();
       expect(entityManager).toBeDefined();
