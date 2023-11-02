@@ -98,7 +98,7 @@ export function createMikroOrmRepositoryProviders(entities: EntityName<AnyEntity
   const providers: Provider[] = [];
   const inject = contextName ? getEntityManagerToken(contextName) : EntityManager;
 
-  const isSchema = (entity: EntityName<AnyEntity> | EntitySchema<AnyEntity>) => entity instanceof EntitySchema;
+  const isSchema = (entity: EntityName<AnyEntity> | EntitySchema<AnyEntity>): entity is EntitySchema => entity instanceof EntitySchema;
   const isAbstractSchema = (entity: EntityName<AnyEntity> | EntitySchema<AnyEntity>) => isSchema(entity) && entity.meta.abstract === true;
 
   (entities || []).filter(entity => !isAbstractSchema(entity)).forEach(entity => {

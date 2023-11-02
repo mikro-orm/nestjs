@@ -1,4 +1,4 @@
-import { BaseEntity } from './base.entity.ts';
+import { BaseEntity } from './base.entity';
 import { EntitySchema } from "@mikro-orm/core";
 
 export const baseEntitySchema = new EntitySchema<BaseEntity>({
