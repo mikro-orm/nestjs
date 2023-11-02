@@ -233,7 +233,6 @@ describe('MikroORM Module', () => {
       await orm.close();
     });
 
-    
     it('forFeature should return repository for schema', async () => {
       const module = await Test.createTestingModule({
         imports: [
