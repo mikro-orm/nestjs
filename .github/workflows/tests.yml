@@ -1,46 +1,45 @@
 name: tests
 
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        node-version: [14, 16, 18, 20]
+        node-version: [ 14, 16, 18, 20 ]
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: yarn
 
-    - name: EditorConfig Lint
-      uses: docker://mstruebing/editorconfig-checker:2.7.2
+      - name: EditorConfig Lint
+        uses: docker://mstruebing/editorconfig-checker:2.7.2
 
-    - name: Enable corepack
-      run: |
-        corepack enable
+      - name: Enable corepack
+        run: |
+          corepack enable
+          corepack prepare yarn@stable --activate
+          
+          # Yarn dependencies cannot be cached until yarn is installed
+          # WORKAROUND: https://github.com/actions/setup-node/issues/531
+          - name: Extract cached dependencies
+            uses: actions/setup-node@v4
+            with:
+              cache: yarn
 
-    - name: Cache node_modules
-      uses: actions/cache@v3
-      with:
-        path: '**/node_modules'
-        key: ${{ runner.os }}-16-modules-${{ hashFiles('**/yarn.lock') }}
+      - name: Build
+        run: yarn build
 
-    - name: Install
-      run: |
-        corepack prepare yarn@3.3.0 --activate
-        yarn
+      - name: Lint
+        run: yarn lint
 
-    - name: Build
-      run: yarn build
-
-    - name: Lint
-      run: yarn lint
-
-    - name: Test
-      run: |
-        yarn coverage > COVERAGE_RESULT
-        echo "$(cat COVERAGE_RESULT)"
+      - name: Test
+        run: |
+          yarn coverage > COVERAGE_RESULT
+          echo "$(cat COVERAGE_RESULT)"
