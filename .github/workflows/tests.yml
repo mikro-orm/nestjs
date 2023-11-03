@@ -25,12 +25,8 @@ jobs:
           corepack enable
           corepack prepare yarn@stable --activate
 
-      # Yarn dependencies cannot be cached until yarn is installed
-      # WORKAROUND: https://github.com/actions/setup-node/issues/531
-      - name: Extract cached dependencies
-        uses: actions/setup-node@v4
-        with:
-          cache: yarn
+      - name: Install
+        run: yarn
 
       - name: Build
         run: yarn build
