@@ -112,7 +112,7 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
 
     if (orm) {
       await orm.close();
-      MikroOrmEntitiesStorage.clear(orm.config.get('contextName'));
+      MikroOrmEntitiesStorage.clearLater();
     }
 
     CONTEXT_NAMES.length = 0;
