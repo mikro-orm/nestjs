@@ -129,6 +129,7 @@ module.exports = {
     'no-console': 'error',
     'no-duplicate-imports': 'off',
     'no-multiple-empty-lines': 'error',
+    'no-multi-spaces': 'error',
     'no-throw-literal': 'error',
     'no-trailing-spaces': 'error',
     'no-undef-init': 'error',
