@@ -100,7 +100,7 @@ export function createMikroOrmRepositoryProviders(entities: EntityName<AnyEntity
 
   (entities || []).forEach(entity => {
     const meta = metadata.find(meta => meta.class === entity);
-    const repository = (meta?.repository) as unknown as (() => InjectionToken) | undefined;
+    const repository = meta?.repository as unknown as (() => InjectionToken) | undefined;
 
     if (repository) {
       providers.push({
