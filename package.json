@@ -1,6 +1,6 @@
 {
   "name": "@mikro-orm/nestjs",
-  "version": "5.2.3",
+  "version": "6.0.1",
   "license": "MIT",
   "author": {
     "name": "Martin Adamek",
@@ -40,13 +40,13 @@
     "lint": "eslint src/**/*.ts"
   },
   "peerDependencies": {
-    "@mikro-orm/core": "^5.0.0 || ^6.0.0-dev.0",
+    "@mikro-orm/core": "^5.0.0 || ^6.0.0",
     "@nestjs/common": "^8.0.0 || ^9.0.0 || ^10.0.0",
     "@nestjs/core": "^8.0.0 || ^9.0.0 || ^10.0.0"
   },
   "devDependencies": {
-    "@mikro-orm/core": "^5.7.12",
-    "@mikro-orm/sqlite": "^5.7.12",
+    "@mikro-orm/core": "^6.0.1",
+    "@mikro-orm/sqlite": "^6.0.1",
     "@nestjs/common": "^9.4.3",
     "@nestjs/core": "^9.4.3",
     "@nestjs/platform-express": "^9.4.3",
@@ -102,7 +102,7 @@
     ]
   },
   "engines": {
-    "node": ">= 14.0.0"
+    "node": ">= 18.12.0"
   },
   "packageManager": "yarn@4.0.2"
 }
