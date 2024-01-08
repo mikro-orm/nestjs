@@ -1,16 +1,13 @@
-import type { Dictionary } from '@mikro-orm/core';
-import { Configuration, ConfigurationLoader, EntityManager, MikroORM } from '@mikro-orm/core';
-import type { DynamicModule, MiddlewareConsumer, OnApplicationShutdown, Type } from '@nestjs/common';
-import { Global, Inject, Module, RequestMethod } from '@nestjs/common';
+import { Configuration, ConfigurationLoader, EntityManager, MikroORM, type Dictionary } from '@mikro-orm/core';
+import { Global, Inject, Module, RequestMethod, type DynamicModule, type MiddlewareConsumer, type OnApplicationShutdown, type Type } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 
-import { CONTEXT_NAMES, getEntityManagerToken, getMikroORMToken, MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
-import { createAsyncProviders, createEntityManagerProvider, createMikroOrmProvider } from './mikro-orm.providers';
-import type { MikroOrmModuleAsyncOptions, MikroOrmModuleSyncOptions } from './typings';
-import { MikroOrmModuleOptions } from './typings';
-import { MikroOrmMiddleware } from './mikro-orm.middleware';
 import { forRoutesPath } from './middleware.helper';
+import { CONTEXT_NAMES, getEntityManagerToken, getMikroORMToken, MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
 import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage';
+import { MikroOrmMiddleware } from './mikro-orm.middleware';
+import { createAsyncProviders, createEntityManagerProvider, createMikroOrmProvider } from './mikro-orm.providers';
+import { MikroOrmModuleOptions, type MikroOrmModuleAsyncOptions, type MikroOrmModuleSyncOptions } from './typings';
 
 async function tryRequire(name: string): Promise<Dictionary | undefined> {
   try {

@@ -1,7 +1,5 @@
-import type { AnyEntity } from '@mikro-orm/core';
-import { Utils } from '@mikro-orm/core';
-import type { DynamicModule } from '@nestjs/common';
-import { Module } from '@nestjs/common';
+import { Utils ,type  AnyEntity  } from '@mikro-orm/core';
+import { Module ,type  DynamicModule  } from '@nestjs/common';
 import { createMikroOrmRepositoryProviders } from './mikro-orm.providers';
 import { MikroOrmCoreModule } from './mikro-orm-core.module';
 import type {
