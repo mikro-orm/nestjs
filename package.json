@@ -45,8 +45,8 @@
     "@nestjs/core": "^8.0.0 || ^9.0.0 || ^10.0.0"
   },
   "devDependencies": {
-    "@mikro-orm/core": "^5.7.12",
-    "@mikro-orm/sqlite": "^5.7.12",
+    "@mikro-orm/core": "^6.0.0",
+    "@mikro-orm/sqlite": "^6.0.0",
     "@nestjs/common": "^9.4.3",
     "@nestjs/core": "^9.4.3",
     "@nestjs/platform-express": "^9.4.3",
