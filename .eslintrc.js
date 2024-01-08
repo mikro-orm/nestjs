@@ -18,10 +18,10 @@ module.exports = {
   },
   plugins: [
     '@typescript-eslint',
+    'import',
   ],
   rules: {
     '@typescript-eslint/consistent-type-imports': 'error',
-    '@typescript-eslint/no-duplicate-imports': 'error',
     '@typescript-eslint/prefer-optional-chain': 'error',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
@@ -64,6 +64,7 @@ module.exports = {
       named: 'never',
       asyncArrow: 'always',
     }],
+    'import/no-duplicates': ['error', { 'prefer-inline': true }],
     'arrow-parens': ['error', 'as-needed'],
     'no-var': 'error',
     'prefer-const': 'error',
@@ -124,7 +125,7 @@ module.exports = {
     'comma-dangle': ['error', 'always-multiline'],
     'dot-notation': 'error',
     'eol-last': 'error',
-    'eqeqeq': ['error', 'always', {"null": "ignore"}],
+    'eqeqeq': ['error', 'always', { "null": "ignore" }],
     'no-console': 'error',
     'no-duplicate-imports': 'off',
     'no-multiple-empty-lines': 'error',
