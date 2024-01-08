@@ -1,17 +1,18 @@
+import type { EntityRepository, Options } from '@mikro-orm/core';
 import { EntityManager, MikroORM } from '@mikro-orm/core';
-import type { Options, EntityRepository } from '@mikro-orm/core';
+import { SqliteDriver } from '@mikro-orm/sqlite';
 import { Inject, Logger, Module, Scope } from '@nestjs/common';
 import { ContextIdFactory } from '@nestjs/core';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { MikroOrmOptionsFactory } from '../src';
-import { CONTEXT_NAMES, getEntityManagerToken, getMikroORMToken, getRepositoryToken, MikroOrmModule } from '../src';
-import { Foo } from './entities/foo.entity';
+import { CONTEXT_NAMES, MikroOrmModule, getEntityManagerToken, getMikroORMToken, getRepositoryToken } from '../src';
 import { Bar } from './entities/bar.entity';
+import { Foo } from './entities/foo.entity';
 
 const testOptions: Options = {
   dbName: ':memory:',
-  type: 'sqlite',
+  driver: SqliteDriver,
   baseDir: __dirname,
   entities: ['entities'],
 };

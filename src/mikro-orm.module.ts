@@ -1,18 +1,16 @@
-import type { AnyEntity } from '@mikro-orm/core';
-import { Utils } from '@mikro-orm/core';
-import type { DynamicModule } from '@nestjs/common';
-import { Module } from '@nestjs/common';
-import { createMikroOrmRepositoryProviders } from './mikro-orm.providers';
+import { Utils, type AnyEntity } from '@mikro-orm/core';
+import { Module, type DynamicModule } from '@nestjs/common';
 import { MikroOrmCoreModule } from './mikro-orm-core.module';
-import type {
-  MikroOrmModuleAsyncOptions,
-  MikroOrmModuleSyncOptions,
-  MikroOrmMiddlewareModuleOptions,
-  MikroOrmModuleFeatureOptions,
-  EntityName,
-} from './typings';
 import { MikroOrmMiddlewareModule } from './mikro-orm-middleware.module';
 import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage';
+import { createMikroOrmRepositoryProviders } from './mikro-orm.providers';
+import type {
+  EntityName,
+  MikroOrmMiddlewareModuleOptions,
+  MikroOrmModuleAsyncOptions,
+  MikroOrmModuleFeatureOptions,
+  MikroOrmModuleSyncOptions,
+} from './typings';
 
 @Module({})
 export class MikroOrmModule {

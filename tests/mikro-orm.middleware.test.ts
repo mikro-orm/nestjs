@@ -1,3 +1,6 @@
+import type { Options } from '@mikro-orm/core';
+import { MikroORM } from '@mikro-orm/core';
+import { SqliteDriver } from '@mikro-orm/sqlite';
 import type { INestApplication } from '@nestjs/common';
 import {
   Controller,
@@ -8,14 +11,12 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
 import { InjectMikroORM, MikroOrmModule } from '../src';
-import type { Options } from '@mikro-orm/core';
-import { MikroORM } from '@mikro-orm/core';
-import { Foo } from './entities/foo.entity';
 import { Bar } from './entities/bar.entity';
+import { Foo } from './entities/foo.entity';
 
 const testOptions: Options = {
   dbName: ':memory:',
-  type: 'sqlite',
+  driver: SqliteDriver,
   baseDir: __dirname,
   entities: ['entities'],
 };
