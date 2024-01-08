@@ -1,7 +1,7 @@
-import { ConfigurationLoader, EntityManager, MetadataStorage, MikroORM ,type  AnyEntity,type  EntityClass,type  EntityClassGroup,type  EntitySchema  } from '@mikro-orm/core';
-import { getEntityManagerToken, getMikroORMToken, getRepositoryToken, logger, MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
+import { ConfigurationLoader, EntityManager, MetadataStorage, MikroORM, type AnyEntity, type EntityClass, type EntityClassGroup, type EntitySchema } from '@mikro-orm/core';
+import { MIKRO_ORM_MODULE_OPTIONS, getEntityManagerToken, getMikroORMToken, getRepositoryToken, logger } from './mikro-orm.common';
 
-import { Scope ,type  InjectionToken,type  Provider,type  Type  } from '@nestjs/common';
+import { Scope, type InjectionToken, type Provider, type Type } from '@nestjs/common';
 import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage';
 import type { EntityName, MikroOrmModuleAsyncOptions, MikroOrmModuleOptions, MikroOrmOptionsFactory } from './typings';
 
