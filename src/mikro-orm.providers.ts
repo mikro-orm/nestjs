@@ -1,11 +1,11 @@
-import { getEntityManagerToken, getMikroORMToken, getRepositoryToken, logger, MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
-import type { AnyEntity } from '@mikro-orm/core';
+import type { AnyEntity, EntityClass, EntityClassGroup, EntitySchema } from '@mikro-orm/core';
 import { ConfigurationLoader, EntityManager, MetadataStorage, MikroORM } from '@mikro-orm/core';
+import { getEntityManagerToken, getMikroORMToken, getRepositoryToken, logger, MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
 
-import type { MikroOrmModuleAsyncOptions, MikroOrmModuleOptions, MikroOrmOptionsFactory, EntityName } from './typings';
 import type { InjectionToken, Provider, Type } from '@nestjs/common';
 import { Scope } from '@nestjs/common';
 import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage';
+import type { EntityName, MikroOrmModuleAsyncOptions, MikroOrmModuleOptions, MikroOrmOptionsFactory } from './typings';
 
 export function createMikroOrmProvider(contextName?: string): Provider {
   return {
@@ -14,8 +14,8 @@ export function createMikroOrmProvider(contextName?: string): Provider {
       options = { ...options };
 
       if (options?.autoLoadEntities) {
-        options.entities = [...(options.entities || []), ...MikroOrmEntitiesStorage.getEntities(contextName)];
-        options.entitiesTs = [...(options.entitiesTs || []), ...MikroOrmEntitiesStorage.getEntities(contextName)];
+        options.entities = [...(options.entities || []), ...MikroOrmEntitiesStorage.getEntities(contextName)] as (string | EntityClass<AnyEntity> | EntityClassGroup<AnyEntity> | EntitySchema)[];
+        options.entitiesTs = [...(options.entitiesTs || []), ...MikroOrmEntitiesStorage.getEntities(contextName)] as (string | EntityClass<AnyEntity> | EntityClassGroup<AnyEntity> | EntitySchema)[];
         delete options.autoLoadEntities;
       }
 
