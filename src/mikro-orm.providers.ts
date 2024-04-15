@@ -57,8 +57,8 @@ export function createMikroOrmAsyncOptionsProvider(options: MikroOrmModuleAsyncO
   if (options.useFactory) {
     return {
       provide: MIKRO_ORM_MODULE_OPTIONS,
-      useFactory: (...args: any[]) => {
-        const factoryOptions = options.useFactory!(...args);
+      useFactory: async (...args: any[]) => {
+        const factoryOptions = await options.useFactory!(...args);
         return options.contextName
           ? { contextName: options.contextName, ...factoryOptions }
           : factoryOptions;
