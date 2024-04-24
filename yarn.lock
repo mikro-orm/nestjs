@@ -1020,7 +1020,7 @@ __metadata:
     "@nestjs/testing": "npm:^9.4.3"
     "@types/jest": "npm:^29.5.2"
     "@types/node": "npm:^20.3.1"
-    "@types/supertest": "npm:^2.0.12"
+    "@types/supertest": "npm:^6.0.0"
     "@typescript-eslint/eslint-plugin": "npm:~5.61.0"
     "@typescript-eslint/parser": "npm:~5.61.0"
     conventional-changelog: "npm:^5.0.0"
@@ -1345,10 +1345,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/cookiejar@npm:*":
-  version: 2.1.2
-  resolution: "@types/cookiejar@npm:2.1.2"
-  checksum: 10c0/f663f2476ad0aed8ccab03056bbc18b62ed059642077eaec7ab497f56c78149558bfbc0f34345a85872e019352dc28f3c12872af971dc455da3c598ff3966cda
+"@types/cookiejar@npm:^2.1.5":
+  version: 2.1.5
+  resolution: "@types/cookiejar@npm:2.1.5"
+  checksum: 10c0/af38c3d84aebb3ccc6e46fb6afeeaac80fb26e63a487dd4db5a8b87e6ad3d4b845ba1116b2ae90d6f886290a36200fa433d8b1f6fe19c47da6b81872ce9a2764
   languageName: node
   linkType: hard
 
@@ -1403,6 +1403,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/methods@npm:^1.1.4":
+  version: 1.1.4
+  resolution: "@types/methods@npm:1.1.4"
+  checksum: 10c0/a78534d79c300718298bfff92facd07bf38429c66191f640c1db4c9cff1e36f819304298a96f7536b6512bfc398e5c3e6b831405e138cd774b88ad7be78d682a
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:*":
   version: 18.0.3
   resolution: "@types/node@npm:18.0.3"
@@ -1445,22 +1452,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/superagent@npm:*":
-  version: 4.1.15
-  resolution: "@types/superagent@npm:4.1.15"
+"@types/superagent@npm:^8.1.0":
+  version: 8.1.6
+  resolution: "@types/superagent@npm:8.1.6"
   dependencies:
-    "@types/cookiejar": "npm:*"
+    "@types/cookiejar": "npm:^2.1.5"
+    "@types/methods": "npm:^1.1.4"
     "@types/node": "npm:*"
-  checksum: 10c0/73d624d82c2d8e094706af6b9b23b8d938d4013270e0276cc372c730a4d7495fedc62e0dbc1d0e35d3c224e73c71ca312339c8b09ad44825c71037e5c9d72843
+  checksum: 10c0/c954caea1e94636f502af4a4c693be99a92453519bb8f76a61e8798deaca06cd320097d594d983c419f51c279e36a10ae898f67ea544431011a863fa06df5818
   languageName: node
   linkType: hard
 
-"@types/supertest@npm:^2.0.12":
-  version: 2.0.12
-  resolution: "@types/supertest@npm:2.0.12"
+"@types/supertest@npm:^6.0.0":
+  version: 6.0.2
+  resolution: "@types/supertest@npm:6.0.2"
   dependencies:
-    "@types/superagent": "npm:*"
-  checksum: 10c0/64ba18395a8e673cce9a4ffcdda7234d2f9982d737a2eb9289c1268ff148e410a1a1d8b7a4f42498511457ad9f51b9b4d53832fbdef3d86aff7bdfbcfe7610ab
+    "@types/methods": "npm:^1.1.4"
+    "@types/superagent": "npm:^8.1.0"
+  checksum: 10c0/44a28f9b35b65800f4c7bcc23748e71c925098aa74ea504d14c98385c36d00de2a4f5aca15d7dc4514bc80533e0af21f985a4ab9f5f317c7266e9e75836aef39
   languageName: node
   linkType: hard
 
