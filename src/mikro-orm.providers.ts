@@ -5,9 +5,12 @@ import { Scope, type InjectionToken, type Provider, type Type } from '@nestjs/co
 import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage';
 import type { EntityName, MikroOrmModuleAsyncOptions, MikroOrmModuleOptions, MikroOrmOptionsFactory } from './typings';
 
-export function createMikroOrmProvider(contextName?: string): Provider {
+export function createMikroOrmProvider(
+  contextName?: string,
+  type: Type = MikroORM,
+): Provider {
   return {
-    provide: contextName ? getMikroORMToken(contextName) : MikroORM,
+    provide: contextName ? getMikroORMToken(contextName) : type,
     useFactory: async (options?: MikroOrmModuleOptions) => {
       options = { ...options };
 
@@ -55,8 +58,8 @@ export function createMikroOrmAsyncOptionsProvider(options: MikroOrmModuleAsyncO
   if (options.useFactory) {
     return {
       provide: MIKRO_ORM_MODULE_OPTIONS,
-      useFactory: (...args: any[]) => {
-        const factoryOptions = options.useFactory!(...args);
+      useFactory: async (...args: any[]) => {
+        const factoryOptions = await options.useFactory!(...args);
         return options.contextName
           ? { contextName: options.contextName, ...factoryOptions }
           : factoryOptions;
