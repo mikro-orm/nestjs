@@ -20,6 +20,18 @@ async function tryRequire(name: string): Promise<Dictionary | undefined> {
   }
 }
 
+// TODO: provide the package name via some platform method, prefer that over the static map when available
+const PACKAGES = {
+  MongoDriver: '@mikro-orm/mongo',
+  MySqlDriver: '@mikro-orm/mysql',
+  MsSqlDriver: '@mikro-orm/mssql',
+  MariaDbDriver: '@mikro-orm/mariadb',
+  PostgreSqlDriver: '@mikro-orm/postgresql',
+  SqliteDriver: '@mikro-orm/sqlite',
+  LibSqlDriver: '@mikro-orm/libsql',
+  BetterSqliteDriver: '@mikro-orm/better-sqlite',
+} as const;
+
 @Global()
 @Module({})
 export class MikroOrmCoreModule implements OnApplicationShutdown {
@@ -34,11 +46,36 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
     const mongo = await tryRequire('@mikro-orm/mongodb');
     const em = await this.createEntityManager(options);
 
+    if (em && !contextName) {
+      const packageName = PACKAGES[em.getDriver().constructor.name as keyof typeof PACKAGES];
+      const driverPackage = await tryRequire(packageName);
+
+      if (driverPackage) {
+        return {
+          module: MikroOrmCoreModule,
+          providers: [
+            { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options || {} },
+            createMikroOrmProvider(contextName),
+            createMikroOrmProvider(contextName, driverPackage.MikroORM),
+            createEntityManagerProvider(options?.scope, EntityManager),
+            createEntityManagerProvider(options?.scope, driverPackage.EntityManager),
+          ],
+          exports: [
+            MikroORM,
+            EntityManager,
+            driverPackage.EntityManager,
+            driverPackage.MikroORM,
+          ],
+        };
+      }
+    }
+
     return {
       module: MikroOrmCoreModule,
       providers: [
         { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options || {} },
         createMikroOrmProvider(contextName),
+        ...(mongo ? [createMikroOrmProvider(contextName, mongo.MikroORM)] : []),
         createEntityManagerProvider(options?.scope, EntityManager, contextName),
         ...(em ? [createEntityManagerProvider(options?.scope, em.constructor as Type, contextName)] : []),
         ...(knex ? [createEntityManagerProvider(options?.scope, knex.EntityManager, contextName)] : []),
@@ -49,7 +86,7 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
         contextName ? getEntityManagerToken(contextName) : EntityManager,
         ...(em && !contextName ? [em.constructor] : []),
         ...(knex && !contextName ? [knex.EntityManager] : []),
-        ...(mongo && !contextName ? [mongo.EntityManager] : []),
+        ...(mongo && !contextName ? [mongo.EntityManager, mongo.MikroORM] : []),
       ],
     };
   }
@@ -59,6 +96,32 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
     const knex = await tryRequire('@mikro-orm/knex');
     const mongo = await tryRequire('@mikro-orm/mongodb');
     const em = await this.createEntityManager(options);
+
+    if (em && !contextName) {
+      const packageName = PACKAGES[em.getDriver().constructor.name as keyof typeof PACKAGES];
+      const driverPackage = await tryRequire(packageName);
+
+      if (driverPackage) {
+        return {
+          module: MikroOrmCoreModule,
+          imports: options.imports || [],
+          providers: [
+            ...(options.providers || []),
+            ...createAsyncProviders({ ...options, contextName: options.contextName }),
+            createMikroOrmProvider(contextName),
+            createMikroOrmProvider(contextName, driverPackage.MikroORM),
+            createEntityManagerProvider(options?.scope, EntityManager),
+            createEntityManagerProvider(options?.scope, driverPackage.EntityManager),
+          ],
+          exports: [
+            MikroORM,
+            EntityManager,
+            driverPackage.EntityManager,
+            driverPackage.MikroORM,
+          ],
+        };
+      }
+    }
 
     return {
       module: MikroOrmCoreModule,
@@ -77,7 +140,7 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
         contextName ? getEntityManagerToken(contextName) : EntityManager,
         ...(em && !contextName ? [em.constructor] : []),
         ...(knex && !contextName ? [knex.EntityManager] : []),
-        ...(mongo && !contextName ? [mongo.EntityManager] : []),
+        ...(mongo && !contextName ? [mongo.EntityManager, mongo.MikroORM] : []),
       ],
     };
   }

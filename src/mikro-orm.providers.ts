@@ -7,9 +7,12 @@ import type { InjectionToken, Provider, Type } from '@nestjs/common';
 import { Scope } from '@nestjs/common';
 import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage';
 
-export function createMikroOrmProvider(contextName?: string): Provider {
+export function createMikroOrmProvider(
+  contextName?: string,
+  type: Type = MikroORM,
+): Provider {
   return {
-    provide: contextName ? getMikroORMToken(contextName) : MikroORM,
+    provide: contextName ? getMikroORMToken(contextName) : type,
     useFactory: async (options?: MikroOrmModuleOptions) => {
       options = { ...options };
 
