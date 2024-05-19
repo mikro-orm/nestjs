@@ -1,3 +1,11 @@
+# [6.0.1](https://github.com/mikro-orm/nestjs/compare/v6.0.0...v6.0.1) (2024-05-19)
+
+### Bug Fixes
+
+* reuse single `MikroORM` instance ([3656eaf](https://github.com/mikro-orm/nestjs/commit/3656eaf))
+* improve support for driver specific imports ([a71c354](https://github.com/mikro-orm/nestjs/commit/a71c354))
+
+
 # [6.0.0](https://github.com/mikro-orm/nestjs/compare/v5.2.3...v6.0.0) (2024-05-19)
 
 ### Features
