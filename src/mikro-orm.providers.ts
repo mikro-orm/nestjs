@@ -9,6 +9,14 @@ export function createMikroOrmProvider(
   contextName?: string,
   type: Type = MikroORM,
 ): Provider {
+  if (!contextName && type !== MikroORM) {
+    return {
+      provide: type,
+      useFactory: orm => orm, // just a simple alias
+      inject: [MikroORM], // depend on the ORM from core package
+    };
+  }
+
   return {
     provide: contextName ? getMikroORMToken(contextName) : type,
     useFactory: async (options?: MikroOrmModuleOptions) => {
