@@ -1,3 +1,21 @@
+# [6.0.0](https://github.com/mikro-orm/nestjs/compare/v5.2.3...v6.0.0) (2023-08-23)
+
+### Features
+
+* support MikroORM v6 ([#153](https://github.com/mikro-orm/nestjs/issues/153)) ([a3ad8d6](https://github.com/mikro-orm/nestjs/commit/a3ad8d6))
+* register driver specific MikroORM provider ([#176](https://github.com/mikro-orm/nestjs/issues/176)) ([d65b268](https://github.com/mikro-orm/nestjs/commit/d65b268))
+
+### Bug Fixes
+
+* await `useFactory` resolution when registering MikroORM with `forRootAsync` ([#166](https://github.com/mikro-orm/nestjs/issues/166)) ([ae637bd](https://github.com/mikro-orm/nestjs/commit/ae637bd))
+
+### BREAKING CHANGES
+
+- MikroORM v6 and Nest v10 required
+- Node 18.12+ and TS 5.0+ required
+- https://mikro-orm.io/docs/upgrading-v5-to-v6
+
+
 # [5.2.3](https://github.com/mikro-orm/nestjs/compare/v5.2.2...v5.2.3) (2023-08-23)
 
 ### Features
