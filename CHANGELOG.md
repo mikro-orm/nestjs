@@ -1,4 +1,4 @@
-# [6.0.0](https://github.com/mikro-orm/nestjs/compare/v5.2.3...v6.0.0) (2023-08-23)
+# [6.0.0](https://github.com/mikro-orm/nestjs/compare/v5.2.3...v6.0.0) (2024-05-19)
 
 ### Features
 
