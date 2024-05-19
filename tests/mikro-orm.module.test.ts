@@ -1,12 +1,9 @@
-import type { EntityRepository, Options } from '@mikro-orm/core';
-import { EntityManager, MikroORM } from '@mikro-orm/core';
+import { EntityRepository, Options, EntityManager, MikroORM } from '@mikro-orm/core';
 import { SqliteDriver } from '@mikro-orm/sqlite';
 import { Inject, Logger, Module, Scope } from '@nestjs/common';
 import { ContextIdFactory } from '@nestjs/core';
-import type { TestingModule } from '@nestjs/testing';
-import { Test } from '@nestjs/testing';
-import type { MikroOrmOptionsFactory } from '../src';
-import { CONTEXT_NAMES, MikroOrmModule, getEntityManagerToken, getMikroORMToken, getRepositoryToken } from '../src';
+import { TestingModule, Test } from '@nestjs/testing';
+import { MikroOrmOptionsFactory, CONTEXT_NAMES, MikroOrmModule, getEntityManagerToken, getMikroORMToken, getRepositoryToken } from '../src';
 import { Bar } from './entities/bar.entity';
 import { Foo } from './entities/foo.entity';
 

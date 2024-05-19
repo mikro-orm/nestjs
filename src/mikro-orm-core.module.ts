@@ -152,15 +152,25 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
     }
 
     try {
+      let config;
+
       if (!options || Object.keys(options).length === 0) {
-        const config = await ConfigurationLoader.getConfiguration(false);
-        return config.getDriver().createEntityManager();
+        config = await ConfigurationLoader.getConfiguration(false);
       }
 
-      if ('useFactory' in options) {
-        const config = new Configuration(await options.useFactory!(), false);
-        return config.getDriver().createEntityManager();
+      if (!config && 'useFactory' in options!) {
+        config = new Configuration(await options.useFactory!(), false);
       }
+
+      if (!config && options instanceof Configuration) {
+        config = options;
+      }
+
+      if (!config && typeof options === 'object' && options && 'driver' in options) {
+        config = new Configuration(options, false);
+      }
+
+      return config?.getDriver().createEntityManager();
     } catch {
       // ignore
     }
