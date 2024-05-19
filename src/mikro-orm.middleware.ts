@@ -1,6 +1,5 @@
 import { MikroORM, RequestContext } from '@mikro-orm/core';
-import type { NestMiddleware } from '@nestjs/common';
-import { Injectable } from '@nestjs/common';
+import { Injectable, type NestMiddleware } from '@nestjs/common';
 
 @Injectable()
 export class MikroOrmMiddleware implements NestMiddleware {

@@ -1,11 +1,9 @@
-import { getEntityManagerToken, getMikroORMToken, getRepositoryToken, logger, MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
-import type { AnyEntity } from '@mikro-orm/core';
-import { ConfigurationLoader, EntityManager, MetadataStorage, MikroORM } from '@mikro-orm/core';
+import { ConfigurationLoader, EntityManager, MetadataStorage, MikroORM, type AnyEntity, type EntityClass, type EntityClassGroup, type EntitySchema } from '@mikro-orm/core';
+import { MIKRO_ORM_MODULE_OPTIONS, getEntityManagerToken, getMikroORMToken, getRepositoryToken, logger } from './mikro-orm.common';
 
-import type { MikroOrmModuleAsyncOptions, MikroOrmModuleOptions, MikroOrmOptionsFactory, EntityName } from './typings';
-import type { InjectionToken, Provider, Type } from '@nestjs/common';
-import { Scope } from '@nestjs/common';
+import { Scope, type InjectionToken, type Provider, type Type } from '@nestjs/common';
 import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage';
+import type { EntityName, MikroOrmModuleAsyncOptions, MikroOrmModuleOptions, MikroOrmOptionsFactory } from './typings';
 
 export function createMikroOrmProvider(
   contextName?: string,
@@ -17,8 +15,8 @@ export function createMikroOrmProvider(
       options = { ...options };
 
       if (options?.autoLoadEntities) {
-        options.entities = [...(options.entities || []), ...MikroOrmEntitiesStorage.getEntities(contextName)];
-        options.entitiesTs = [...(options.entitiesTs || []), ...MikroOrmEntitiesStorage.getEntities(contextName)];
+        options.entities = [...(options.entities || []), ...MikroOrmEntitiesStorage.getEntities(contextName)] as (string | EntityClass<AnyEntity> | EntityClassGroup<AnyEntity> | EntitySchema)[];
+        options.entitiesTs = [...(options.entitiesTs || []), ...MikroOrmEntitiesStorage.getEntities(contextName)] as (string | EntityClass<AnyEntity> | EntityClassGroup<AnyEntity> | EntitySchema)[];
         delete options.autoLoadEntities;
       }
 
@@ -105,7 +103,7 @@ export function createMikroOrmRepositoryProviders(entities: EntityName<AnyEntity
 
   (entities || []).forEach(entity => {
     const meta = metadata.find(meta => meta.class === entity);
-    const repository = (meta?.repository ?? meta?.customRepository) as unknown as (() => InjectionToken) | undefined;
+    const repository = meta?.repository as unknown as (() => InjectionToken) | undefined;
 
     if (repository) {
       providers.push({
