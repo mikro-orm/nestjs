@@ -127,6 +127,7 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
         ...(options.providers || []),
         ...createAsyncProviders({ ...options, contextName: options.contextName }),
         createMikroOrmProvider(contextName),
+        ...(mongo ? [createMikroOrmProvider(contextName, mongo.MikroORM)] : []),
         createEntityManagerProvider(options.scope, EntityManager, contextName),
         ...(em ? [createEntityManagerProvider(options?.scope, em.constructor as Type, contextName)] : []),
         ...(knex ? [createEntityManagerProvider(options?.scope, knex.EntityManager, contextName)] : []),
