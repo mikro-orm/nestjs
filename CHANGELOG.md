@@ -1,3 +1,11 @@
+# [6.0.2](https://github.com/mikro-orm/nestjs/compare/v6.0.1...v6.0.2) (2024-06-04)
+
+### Bug Fixes
+
+* allow dev versions of `@mikro-orm/core` ([685d7e7](https://github.com/mikro-orm/nestjs/commit/685d7e7))
+* register `MongoMikroORM` provider even if we fail to infer driver from config and there is mongo installed ([7e73205](https://github.com/mikro-orm/nestjs/commit/7e73205))
+
+
 # [6.0.1](https://github.com/mikro-orm/nestjs/compare/v6.0.0...v6.0.1) (2024-05-19)
 
 ### Bug Fixes
