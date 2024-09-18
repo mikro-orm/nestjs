@@ -1,16 +1,9 @@
-import type { Options } from '@mikro-orm/core';
-import { MikroORM } from '@mikro-orm/core';
+import { MikroORM, type Options } from '@mikro-orm/core';
 import { SqliteDriver } from '@mikro-orm/sqlite';
-import type { INestApplication } from '@nestjs/common';
-import {
-  Controller,
-  Get,
-  Module,
-} from '@nestjs/common';
-import type { TestingModule } from '@nestjs/testing';
-import { Test } from '@nestjs/testing';
+import { Controller, Get, Module, type INestApplication } from '@nestjs/common';
+import { Test, type TestingModule } from '@nestjs/testing';
 import request from 'supertest';
-import { InjectMikroORM, MikroOrmModule } from '../src';
+import { InjectMikroORM, MikroOrmModule, MultipleMikroOrmModule } from '../src';
 import { Bar } from './entities/bar.entity';
 import { Foo } from './entities/foo.entity';
 
@@ -55,7 +48,7 @@ class TestController {
       registerRequestContext: false,
       ...testOptions,
     }),
-    MikroOrmModule.forMiddleware(),
+    MultipleMikroOrmModule.forRoot(),
     MikroOrmModule.forFeature([Foo], 'database1'),
     MikroOrmModule.forFeature([Bar], 'database2'),
   ],

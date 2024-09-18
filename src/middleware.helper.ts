@@ -1,7 +1,7 @@
-import type { MikroOrmMiddlewareModuleOptions, NestMiddlewareConsumer } from './typings';
+import type { MultipleMikroOrmModuleOptions, NestMiddlewareConsumer } from './typings';
 import type { MiddlewareConsumer } from '@nestjs/common';
 
-export function forRoutesPath(options: MikroOrmMiddlewareModuleOptions, consumer: MiddlewareConsumer) {
+export function forRoutesPath(options: MultipleMikroOrmModuleOptions, consumer: MiddlewareConsumer) {
   const isNestMiddleware = (consumer: MiddlewareConsumer): consumer is NestMiddlewareConsumer => {
     return typeof (consumer as any).httpAdapter === 'object';
   };
