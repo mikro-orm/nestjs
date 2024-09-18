@@ -10,7 +10,7 @@ type MikroOrmNestScopeOptions = {
   scope?: Scope;
 };
 
-export type MikroOrmMiddlewareModuleOptions = {
+export type MultipleMikroOrmModuleOptions = {
   /**
    * Routes to apply the middleware.
    *
@@ -24,7 +24,7 @@ export type MikroOrmMiddlewareModuleOptions = {
 export type MikroOrmModuleOptions<D extends IDatabaseDriver = IDatabaseDriver> = {
   registerRequestContext?: boolean;
   autoLoadEntities?: boolean;
-} & Options<D> & MikroOrmMiddlewareModuleOptions;
+} & Options<D> & MultipleMikroOrmModuleOptions;
 
 export interface MikroOrmModuleFeatureOptions {
   entities?: EntityName<AnyEntity>[];

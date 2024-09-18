@@ -342,7 +342,7 @@ More information about [enableShutdownHooks](https://docs.nestjs.com/fundamental
 
 ## Multiple Database Connections
 
-You can define multiple database connections by registering multiple `MikroOrmModule` and setting their `contextName`. If you want to use middleware request context you must disable automatic middleware and register `MikroOrmModule` with `forMiddleware()` or use NestJS `Injection Scope`
+You can define multiple database connections by registering several MikroOrmModules, each with a unique contextName and setting registerRequestContext to false. If you want to use the middleware request context you must register `MultipleMikroOrmModule` with `forRoot()` or use NestJS `Injection Scope`
 
 ```typescript
 @Module({
@@ -357,7 +357,7 @@ You can define multiple database connections by registering multiple `MikroOrmMo
       registerRequestContext: false, // disable automatatic middleware
       ...
     }),
-    MikroOrmModule.forMiddleware()
+    MultipleMikroOrmModule.forRoot()
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,12 +1,12 @@
 import { Utils, type AnyEntity } from '@mikro-orm/core';
 import { Module, type DynamicModule } from '@nestjs/common';
 import { MikroOrmCoreModule } from './mikro-orm-core.module';
-import { MikroOrmMiddlewareModule } from './mikro-orm-middleware.module';
+import { MultipleMikroOrmModule } from './multiple-mikro-orm.module';
 import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage';
 import { createMikroOrmRepositoryProviders } from './mikro-orm.providers';
 import type {
   EntityName,
-  MikroOrmMiddlewareModuleOptions,
+  MultipleMikroOrmModuleOptions,
   MikroOrmModuleAsyncOptions,
   MikroOrmModuleFeatureOptions,
   MikroOrmModuleSyncOptions,
@@ -55,10 +55,11 @@ export class MikroOrmModule {
     };
   }
 
-  static forMiddleware(options?: MikroOrmMiddlewareModuleOptions): DynamicModule {
+  // Remove this in the next major version, kept for backwards compatibility
+  static forMiddleware(options?: MultipleMikroOrmModuleOptions): DynamicModule {
     return {
       module: MikroOrmModule,
-      imports: [MikroOrmMiddlewareModule.forMiddleware(options)],
+      imports: [MultipleMikroOrmModule.forRoot(options)],
     };
   }
 
