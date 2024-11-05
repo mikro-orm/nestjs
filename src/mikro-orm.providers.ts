@@ -29,9 +29,14 @@ export function createMikroOrmProvider(
       }
 
       if (!options || Object.keys(options).length === 0) {
-        const config = await ConfigurationLoader.getConfiguration();
+        ConfigurationLoader.commonJSCompat({});
+        const configPathFromArg = ConfigurationLoader.configPathsFromArg();
+        const config = await ConfigurationLoader.getConfiguration(process.env.MIKRO_ORM_CONTEXT_NAME, configPathFromArg ?? ConfigurationLoader.getConfigPaths());
         config.set('logger', logger.log.bind(logger));
         options = config as unknown as MikroOrmModuleOptions;
+        if (configPathFromArg) {
+          config.getLogger().warn('deprecated', 'Path for config file was inferred from the command line arguments. Instead, you should set the MIKRO_ORM_CLI_CONFIG environment variable to specify the path, or if you really must use the command line arguments, import the config manually based on them, and pass it to init.', { label: 'D0001' });
+        }
       }
 
       return MikroORM.init(options);

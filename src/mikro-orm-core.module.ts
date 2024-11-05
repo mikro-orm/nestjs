@@ -153,10 +153,14 @@ export class MikroOrmCoreModule implements OnApplicationShutdown {
     }
 
     try {
-      let config;
+      let config: Configuration | undefined;
 
       if (!options || Object.keys(options).length === 0) {
-        config = await ConfigurationLoader.getConfiguration(false);
+        const configPathFromArg = ConfigurationLoader.configPathsFromArg();
+        config = await ConfigurationLoader.getConfiguration(process.env.MIKRO_ORM_CONTEXT_NAME, configPathFromArg ?? ConfigurationLoader.getConfigPaths());
+        if (configPathFromArg) {
+          config.getLogger().warn('deprecated', 'Path for config file was inferred from the command line arguments. Instead, you should set the MIKRO_ORM_CLI_CONFIG environment variable to specify the path, or if you really must use the command line arguments, import the config manually based on them, and pass it to init.', { label: 'D0001' });
+        }
       }
 
       if (!config && 'useFactory' in options!) {

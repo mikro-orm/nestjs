@@ -955,31 +955,41 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mikro-orm/core@npm:^6.2.7":
-  version: 6.2.7
-  resolution: "@mikro-orm/core@npm:6.2.7"
+"@mikro-orm/core@npm:^6.3.14-dev.67":
+  version: 6.3.14-dev.67
+  resolution: "@mikro-orm/core@npm:6.3.14-dev.67"
   dependencies:
     dataloader: "npm:2.2.2"
     dotenv: "npm:16.4.5"
     esprima: "npm:4.0.1"
     fs-extra: "npm:11.2.0"
     globby: "npm:11.1.0"
-    mikro-orm: "npm:6.2.7"
+    mikro-orm: "npm:6.3.14-dev.67"
     reflect-metadata: "npm:0.2.2"
-  checksum: 10c0/d11febf16453b77c413fac86ff081cdce30a6881f09d85453ec8df09e3a97064204b8f63a3f99ad16dfa23f52fdc024eeaa51aa8240a0c6e6aeb42a077440cf0
+  checksum: 10c0/4a3051478a0b19b9eb7102b6734f67bf8545bb52a3c7f65eaf50a61d2d150f99a3286abc24bf0d61a2866fa9f9a477160cda0603f6b9da9a987d875ee8f8c16e
   languageName: node
   linkType: hard
 
-"@mikro-orm/knex@npm:6.2.7":
-  version: 6.2.7
-  resolution: "@mikro-orm/knex@npm:6.2.7"
+"@mikro-orm/knex@npm:6.3.14-dev.67":
+  version: 6.3.14-dev.67
+  resolution: "@mikro-orm/knex@npm:6.3.14-dev.67"
   dependencies:
     fs-extra: "npm:11.2.0"
     knex: "npm:3.1.0"
     sqlstring: "npm:2.3.3"
   peerDependencies:
-    "@mikro-orm/core": ^6.0.0
-  checksum: 10c0/36b48a36a38e742cd035f3e387f44b840ab78d58bd07c1ef9d03705feb1d47b7b4c17e874eb437545016c55905858dfbdc21dd4bd50dfd78483e1617e34ab6b2
+    "@mikro-orm/core": 6.3.14-dev.67
+    better-sqlite3: "*"
+    libsql: "*"
+    mariadb: "*"
+  peerDependenciesMeta:
+    better-sqlite3:
+      optional: true
+    libsql:
+      optional: true
+    mariadb:
+      optional: true
+  checksum: 10c0/156ffe27c0285f1aa784f22c8b223a3a498eab3820e5fa04981f17dbc068b2cfc487a372885ac9586cc1c3dd4962dc289d184eaa7654fc57c14198a12d87189a
   languageName: node
   linkType: hard
 
@@ -987,8 +997,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@mikro-orm/nestjs@workspace:."
   dependencies:
-    "@mikro-orm/core": "npm:^6.2.7"
-    "@mikro-orm/sqlite": "npm:^6.2.7"
+    "@mikro-orm/core": "npm:^6.3.14-dev.67"
+    "@mikro-orm/sqlite": "npm:^6.3.14-dev.67"
     "@nestjs/common": "npm:^10.3.8"
     "@nestjs/core": "npm:^10.3.8"
     "@nestjs/platform-express": "npm:^10.3.8"
@@ -1015,17 +1025,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@mikro-orm/sqlite@npm:^6.2.7":
-  version: 6.2.7
-  resolution: "@mikro-orm/sqlite@npm:6.2.7"
+"@mikro-orm/sqlite@npm:^6.3.14-dev.67":
+  version: 6.3.14-dev.67
+  resolution: "@mikro-orm/sqlite@npm:6.3.14-dev.67"
   dependencies:
-    "@mikro-orm/knex": "npm:6.2.7"
+    "@mikro-orm/knex": "npm:6.3.14-dev.67"
     fs-extra: "npm:11.2.0"
     sqlite3: "npm:5.1.7"
     sqlstring-sqlite: "npm:0.1.1"
   peerDependencies:
-    "@mikro-orm/core": ^6.0.0
-  checksum: 10c0/adfa2f8dcbb383fe8f8fd24f24342133b8372f6c1cd1958810fc5003689956058d43199fb9baf0528289e6adfd3a83e92afe672a5439c2cec0e87a9cdc59b56f
+    "@mikro-orm/core": 6.3.14-dev.67
+  checksum: 10c0/1ff52e5a74e9774d3c6cd927bb29d11316a04238e63bf2d73e04c888fb59f4fa50501f9222ff6d61508e299773447dea1e0792d8cd75bddb88a535e76e7d50ab
   languageName: node
   linkType: hard
 
@@ -5387,10 +5397,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mikro-orm@npm:6.2.7":
-  version: 6.2.7
-  resolution: "mikro-orm@npm:6.2.7"
-  checksum: 10c0/1299f6d40a4f2e1246e54aa0f4d7613d711c5391ca26d766a063ede121dd53f9b32dfcb10b534e96515765bfe9f54b41b86127912507e7cb17b2e73503ae81d5
+"mikro-orm@npm:6.3.14-dev.67":
+  version: 6.3.14-dev.67
+  resolution: "mikro-orm@npm:6.3.14-dev.67"
+  checksum: 10c0/6d2c103e81c9a07aa2251a52e425f936739f77fc01845ebdc614cfcd74d211fea66cea976688a3689ac3b187178c1d0b860582599e1b1a8e5416abb24d304f76
   languageName: node
   linkType: hard
 

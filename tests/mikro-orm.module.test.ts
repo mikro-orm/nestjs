@@ -1,4 +1,4 @@
-import { EntityRepository, Options, EntityManager, MikroORM } from '@mikro-orm/core';
+import { EntityRepository, Options, EntityManager, MikroORM, Utils } from '@mikro-orm/core';
 import { SqliteDriver } from '@mikro-orm/sqlite';
 import { Inject, Logger, Module, Scope } from '@nestjs/common';
 import { ContextIdFactory } from '@nestjs/core';
@@ -82,6 +82,25 @@ describe('MikroORM Module', () => {
   });
 
   describe('Single Database', () => {
+    it('forRoot without options', async () => {
+      const spy = jest.spyOn(Utils, 'dynamicImport').mockImplementation(id => import(id));
+      const tmp = process.env.MIKRO_ORM_CLI_CONFIG;
+      process.env.MIKRO_ORM_CLI_CONFIG = `${__dirname}/test.config.ts`;
+
+      const module = await Test.createTestingModule({
+        imports: [MikroOrmModule.forRoot()],
+      }).compile();
+
+      const orm = module.get<MikroORM>(MikroORM);
+      expect(orm).toBeDefined();
+      expect(orm.config.get('contextName')).toBe('default');
+      expect(module.get<EntityManager>(EntityManager)).toBeDefined();
+      await orm.close();
+
+      process.env.MIKRO_ORM_CLI_CONFIG = tmp;
+      spy.mockRestore();
+    });
+
     it('forRoot', async () => {
       const module = await Test.createTestingModule({
         imports: [MikroOrmModule.forRoot(testOptions)],
