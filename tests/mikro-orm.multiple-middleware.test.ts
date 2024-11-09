@@ -3,15 +3,16 @@ import { SqliteDriver } from '@mikro-orm/sqlite';
 import {
   Controller,
   Get,
+  Module,
   type INestApplication,
   Injectable,
+  type NestMiddleware,
   MiddlewareConsumer,
-  Module, type NestMiddleware,
   NestModule,
 } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import request from 'supertest';
-import { InjectEntityManager, InjectMikroORM, MikroOrmModule } from '../src';
+import { InjectEntityManager, InjectMikroORM, MikroOrmModule, MultipleMikroOrmModule } from '../src';
 import { Bar } from './entities/bar.entity';
 import { Foo } from './entities/foo.entity';
 
@@ -23,9 +24,9 @@ const testOptions: Options = {
 };
 
 @Controller('/foo')
-export class FooController {
+class FooController {
 
-  constructor(@InjectMikroORM('database-foo') private database1: MikroORM) {}
+  constructor(@InjectMikroORM('database-multi-foo') private database1: MikroORM) {}
 
   @Get()
   foo() {
@@ -35,9 +36,9 @@ export class FooController {
 }
 
 @Controller('/bar')
-export class BarController {
+class BarController {
 
-  constructor(@InjectMikroORM('database-bar') private database2: MikroORM) {}
+  constructor(@InjectMikroORM('database-multi-bar') private database2: MikroORM) {}
 
   @Get()
   bar() {
@@ -49,10 +50,9 @@ export class BarController {
 @Injectable()
 export class TestMiddleware implements NestMiddleware {
 
-  constructor(@InjectEntityManager('database-foo') private readonly em: EntityManager) {}
+  constructor(@InjectEntityManager('database-multi-foo') private readonly em: EntityManager) {}
 
   use(req: unknown, res: unknown, next: (...args: any[]) => void) {
-    // Throws error "Using global EntityManager instance methods for context specific actions is disallowed"
     this.em.setFilterParams('id', { id: '1' });
 
     return next();
@@ -61,7 +61,7 @@ export class TestMiddleware implements NestMiddleware {
 }
 
 @Module({
-  imports: [MikroOrmModule.forFeature([Foo], 'database-foo')],
+  imports: [MikroOrmModule.forFeature([Foo], 'database-multi-foo')],
   controllers: [FooController],
 })
 class FooModule implements NestModule {
@@ -75,7 +75,7 @@ class FooModule implements NestModule {
 }
 
 @Module({
-  imports: [MikroOrmModule.forFeature([Bar], 'database-bar')],
+  imports: [MikroOrmModule.forFeature([Bar], 'database-multi-bar')],
   controllers: [BarController],
 })
 class BarModule {}
@@ -83,25 +83,25 @@ class BarModule {}
 @Module({
   imports: [
     MikroOrmModule.forRootAsync({
-      contextName: 'database-foo',
+      contextName: 'database-multi-foo',
       useFactory: () => ({
         registerRequestContext: false,
         ...testOptions,
       }),
     }),
     MikroOrmModule.forRoot({
-      contextName: 'database-bar',
+      contextName: 'database-multi-bar',
       registerRequestContext: false,
       ...testOptions,
     }),
-    MikroOrmModule.forMiddleware(),
+    MultipleMikroOrmModule.forRoot(),
     FooModule,
     BarModule,
   ],
 })
 class TestModule {}
 
-describe('Middleware executes request context for all MikroORM registered', () => {
+describe('Multiple Middleware executes request context for all MikroORM registered', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -114,8 +114,12 @@ describe('Middleware executes request context for all MikroORM registered', () =
     await app.init();
   });
 
-  it(`forRoutes(/foo) should return error`, () => {
-    return request(app.getHttpServer()).get('/foo').expect(500);
+  it(`forRoutes(/foo) should return 'true'`, () => {
+    return request(app.getHttpServer()).get('/foo').expect(200, 'true');
+  });
+
+  it(`forRoutes(/bar) should return 'true'`, () => {
+    return request(app.getHttpServer()).get('/bar').expect(200, 'true');
   });
 
   afterAll(async () => {
