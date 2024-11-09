@@ -23,7 +23,7 @@ const testOptions: Options = {
 };
 
 @Controller('/foo')
-export class FooController {
+class FooController {
 
   constructor(@InjectMikroORM('database-foo') private database1: MikroORM) {}
 
@@ -35,7 +35,7 @@ export class FooController {
 }
 
 @Controller('/bar')
-export class BarController {
+class BarController {
 
   constructor(@InjectMikroORM('database-bar') private database2: MikroORM) {}
 
@@ -47,7 +47,7 @@ export class BarController {
 }
 
 @Injectable()
-export class TestMiddleware implements NestMiddleware {
+class TestMiddleware implements NestMiddleware {
 
   constructor(@InjectEntityManager('database-foo') private readonly em: EntityManager) {}
 
