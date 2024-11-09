@@ -21,6 +21,12 @@ export const getMikroORMToken = (name: string) => `${name}_MikroORM`;
 export const InjectMikroORM = (name: string) => Inject(getMikroORMToken(name));
 
 /**
+ * Gets the injection token for the relevant MikroORMs provider.
+ * @returns The MikroORMs provider injection token for the supplied context name.
+ */
+export const InjectMikroORMs = () => Inject('MikroORMs');
+
+/**
  * Gets the injection token based on context name for the relevant EntityManager provider.
  * @param name The context name of the database connection.
  * @returns The EntityManager provider injection token for the supplied context name.
