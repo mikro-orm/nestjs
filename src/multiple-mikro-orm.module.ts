@@ -2,7 +2,7 @@ import { Global, Inject, Module, RequestMethod, type MiddlewareConsumer } from '
 
 import type { MikroORM } from '@mikro-orm/core';
 import { forRoutesPath } from './middleware.helper';
-import { CONTEXT_NAMES, getMikroORMToken, MULTPLE_MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
+import { CONTEXT_NAMES, getMikroORMToken, MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
 import { MultipleMikroOrmMiddleware } from './multiple-mikro-orm.middleware';
 import { MultipleMikroOrmModuleOptions } from './typings';
 
@@ -10,7 +10,7 @@ import { MultipleMikroOrmModuleOptions } from './typings';
 @Module({})
 export class MultipleMikroOrmModule {
 
-  constructor(@Inject(MULTPLE_MIKRO_ORM_MODULE_OPTIONS)
+  constructor(@Inject(MIKRO_ORM_MODULE_OPTIONS)
               private readonly options: MultipleMikroOrmModuleOptions) { }
 
   static forRoot(options?: MultipleMikroOrmModuleOptions) {
@@ -18,7 +18,7 @@ export class MultipleMikroOrmModule {
     return {
       module: MultipleMikroOrmModule,
       providers: [
-        { provide: MULTPLE_MIKRO_ORM_MODULE_OPTIONS, useValue: options || {} },
+        { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options || {} },
         {
           provide: 'MikroORMs',
           useFactory: (...args: MikroORM[]) => args,
