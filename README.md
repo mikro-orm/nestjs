@@ -407,7 +407,7 @@ export class PhotoService {
 }
 ```
 
-You can use `@InjectMikroORMs` decorator to get all registered MikroORMs:
+You can use the `@InjectMikroORMs` decorator to get all registered MikroORM instances:
 
 ```typescript
 @Injectable()
