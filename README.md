@@ -407,6 +407,17 @@ export class PhotoService {
 }
 ```
 
+You can use `@InjectMikroORMs` decorator to get all registered MikroORMs:
+
+```typescript
+@Injectable()
+export class MyService {
+
+  constructor(@InjectMikroORMs() private readonly orms: MikroORM[]) { }
+
+}
+```
+
 ## Testing
 
 The `nestjs-mikro-orm` package exposes `getRepositoryToken()` function that returns prepared token based on a given entity to allow mocking the repository.
