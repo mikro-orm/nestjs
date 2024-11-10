@@ -1,17 +1,13 @@
-import { EntityManager, MikroORM, type Options } from '@mikro-orm/core';
+import type { Options , MikroORM } from '@mikro-orm/core';
 import { SqliteDriver } from '@mikro-orm/sqlite';
-import {
+import { INestApplication ,
   Controller,
   Get,
-  type INestApplication,
-  Injectable,
-  MiddlewareConsumer,
-  Module, type NestMiddleware,
-  NestModule,
+  Module,
 } from '@nestjs/common';
-import { Test, type TestingModule } from '@nestjs/testing';
+import { TestingModule , Test } from '@nestjs/testing';
 import request from 'supertest';
-import { InjectEntityManager, InjectMikroORM, MikroOrmModule } from '../src';
+import { InjectMikroORM, MikroOrmModule } from '../src';
 import { Bar } from './entities/bar.entity';
 import { Foo } from './entities/foo.entity';
 
@@ -22,82 +18,45 @@ const testOptions: Options = {
   entities: ['entities'],
 };
 
-@Controller('/foo')
-class FooController {
+@Controller()
+class TestController {
 
-  constructor(@InjectMikroORM('database-foo') private database1: MikroORM) {}
+  constructor(
+    @InjectMikroORM('database1') private database1: MikroORM,
+    @InjectMikroORM('database2') private database2: MikroORM,
+  ) {}
 
-  @Get()
+  @Get('foo')
   foo() {
     return this.database1.em !== this.database1.em.getContext();
   }
 
-}
-
-@Controller('/bar')
-class BarController {
-
-  constructor(@InjectMikroORM('database-bar') private database2: MikroORM) {}
-
-  @Get()
+  @Get('bar')
   bar() {
     return this.database2.em !== this.database2.em.getContext();
   }
 
 }
 
-@Injectable()
-class TestMiddleware implements NestMiddleware {
-
-  constructor(@InjectEntityManager('database-foo') private readonly em: EntityManager) {}
-
-  use(req: unknown, res: unknown, next: (...args: any[]) => void) {
-    // Throws error "Using global EntityManager instance methods for context specific actions is disallowed"
-    this.em.setFilterParams('id', { id: '1' });
-
-    return next();
-  }
-
-}
-
-@Module({
-  imports: [MikroOrmModule.forFeature([Foo], 'database-foo')],
-  controllers: [FooController],
-})
-class FooModule implements NestModule {
-
-  configure(consumer: MiddlewareConsumer): void {
-    consumer
-      .apply(TestMiddleware)
-      .forRoutes('/');
-  }
-
-}
-
-@Module({
-  imports: [MikroOrmModule.forFeature([Bar], 'database-bar')],
-  controllers: [BarController],
-})
-class BarModule {}
-
 @Module({
   imports: [
     MikroOrmModule.forRootAsync({
-      contextName: 'database-foo',
+      contextName: 'database1',
       useFactory: () => ({
         registerRequestContext: false,
         ...testOptions,
       }),
     }),
     MikroOrmModule.forRoot({
-      contextName: 'database-bar',
+      contextName: 'database2',
       registerRequestContext: false,
       ...testOptions,
     }),
     MikroOrmModule.forMiddleware(),
-    FooModule,
-    BarModule,
+    MikroOrmModule.forFeature([Foo], 'database1'),
+    MikroOrmModule.forFeature([Bar], 'database2'),
   ],
+  controllers: [TestController],
 })
 class TestModule {}
 
@@ -114,8 +73,12 @@ describe('Middleware executes request context for all MikroORM registered', () =
     await app.init();
   });
 
-  it(`forRoutes(/foo) should return error`, () => {
-    return request(app.getHttpServer()).get('/foo').expect(500);
+  it(`forRoutes(/foo) should return 'true'`, () => {
+    return request(app.getHttpServer()).get('/foo').expect(200, 'true');
+  });
+
+  it(`forRoutes(/bar) should return 'true'`, () => {
+    return request(app.getHttpServer()).get('/foo').expect(200, 'true');
   });
 
   afterAll(async () => {

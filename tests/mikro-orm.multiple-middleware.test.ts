@@ -99,14 +99,14 @@ class BarModule {}
     BarModule,
   ],
 })
-class TestModule {}
+class TestMultipleModule {}
 
 describe('Multiple Middleware executes request context for all MikroORM registered', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [TestModule],
+      imports: [TestMultipleModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();

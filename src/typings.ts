@@ -9,7 +9,10 @@ export interface NestMiddlewareConsumer extends MiddlewareConsumer {
 type MikroOrmNestScopeOptions = {
   scope?: Scope;
 };
-
+/**
+ * @deprecated Use `MultipleMikroOrmModuleOptions`. This type will be removed in v7.
+ */
+export type MikroOrmMiddlewareModuleOptions = MultipleMikroOrmModuleOptions;
 export type MultipleMikroOrmModuleOptions = {
   /**
    * Routes to apply the middleware.

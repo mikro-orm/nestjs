@@ -4,12 +4,12 @@ import { MikroOrmCoreModule } from './mikro-orm-core.module';
 import { MultipleMikroOrmModule } from './multiple-mikro-orm.module';
 import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage';
 import { createMikroOrmRepositoryProviders } from './mikro-orm.providers';
-import type {
+import {
   EntityName,
-  MultipleMikroOrmModuleOptions,
   MikroOrmModuleAsyncOptions,
   MikroOrmModuleFeatureOptions,
   MikroOrmModuleSyncOptions,
+  MikroOrmMiddlewareModuleOptions,
 } from './typings';
 
 @Module({})
@@ -55,8 +55,10 @@ export class MikroOrmModule {
     };
   }
 
-  // Remove this in the next major version, kept for backwards compatibility
-  static forMiddleware(options?: MultipleMikroOrmModuleOptions): DynamicModule {
+  /**
+   * @deprecated Use `MultipleMikroOrmModule.forRoot()`. This signature will be removed in v7.
+   */
+  static forMiddleware(options?: MikroOrmMiddlewareModuleOptions): DynamicModule {
     return {
       module: MikroOrmModule,
       imports: [MultipleMikroOrmModule.forRoot(options)],
