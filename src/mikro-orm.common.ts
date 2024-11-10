@@ -21,8 +21,9 @@ export const getMikroORMToken = (name: string) => `${name}_MikroORM`;
 export const InjectMikroORM = (name: string) => Inject(getMikroORMToken(name));
 
 /**
- * Gets the injection token for the relevant MikroORMs provider.
- * @returns The MikroORMs provider injection token for the supplied context name.
+ * Injects the MikroORMs provider.
+ *
+ * @returns A decorator which will cause NestJS to inject the MikroORMs provider.
  */
 export const InjectMikroORMs = () => Inject('MikroORMs');
 
