@@ -10,7 +10,7 @@ type MikroOrmNestScopeOptions = {
   scope?: Scope;
 };
 /**
- * @deprecated Use `MultipleMikroOrmModuleOptions`. This type will be removed in v7.
+ * @deprecated Use `MultiMikroOrmModuleOptions`. This type will be removed in v7.
  */
 export type MikroOrmMiddlewareModuleOptions = MultiMikroOrmModuleOptions;
 export type MultiMikroOrmModuleOptions = {
