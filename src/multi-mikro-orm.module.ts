@@ -4,19 +4,19 @@ import type { MikroORM } from '@mikro-orm/core';
 import { forRoutesPath } from './middleware.helper';
 import { CONTEXT_NAMES, getMikroORMToken, MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
 import { MultipleMikroOrmMiddleware } from './multiple-mikro-orm.middleware';
-import { MultipleMikroOrmModuleOptions } from './typings';
+import { MultiMikroOrmModuleOptions } from './typings';
 
 @Global()
 @Module({})
-export class MultipleMikroOrmModule {
+export class MultiMikroOrmModule {
 
   constructor(@Inject(MIKRO_ORM_MODULE_OPTIONS)
-              private readonly options: MultipleMikroOrmModuleOptions) { }
+              private readonly options: MultiMikroOrmModuleOptions) { }
 
-  static forRoot(options?: MultipleMikroOrmModuleOptions) {
+  static forRoot(options?: MultiMikroOrmModuleOptions) {
     const inject = CONTEXT_NAMES.map(name => getMikroORMToken(name));
     return {
-      module: MultipleMikroOrmModule,
+      module: MultiMikroOrmModule,
       providers: [
         { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options || {} },
         {

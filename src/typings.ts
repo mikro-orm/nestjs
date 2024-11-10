@@ -12,8 +12,8 @@ type MikroOrmNestScopeOptions = {
 /**
  * @deprecated Use `MultipleMikroOrmModuleOptions`. This type will be removed in v7.
  */
-export type MikroOrmMiddlewareModuleOptions = MultipleMikroOrmModuleOptions;
-export type MultipleMikroOrmModuleOptions = {
+export type MikroOrmMiddlewareModuleOptions = MultiMikroOrmModuleOptions;
+export type MultiMikroOrmModuleOptions = {
   /**
    * Routes to apply the middleware.
    *
@@ -27,7 +27,7 @@ export type MultipleMikroOrmModuleOptions = {
 export type MikroOrmModuleOptions<D extends IDatabaseDriver = IDatabaseDriver> = {
   registerRequestContext?: boolean;
   autoLoadEntities?: boolean;
-} & Options<D> & MultipleMikroOrmModuleOptions;
+} & Options<D> & MultiMikroOrmModuleOptions;
 
 export interface MikroOrmModuleFeatureOptions {
   entities?: EntityName<AnyEntity>[];

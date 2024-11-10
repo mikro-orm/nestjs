@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import request from 'supertest';
-import { InjectEntityManager, InjectMikroORM, MikroOrmModule, MultipleMikroOrmModule } from '../src';
+import { InjectEntityManager, InjectMikroORM, MikroOrmModule, MultiMikroOrmModule } from '../src';
 import { Bar } from './entities/bar.entity';
 import { Foo } from './entities/foo.entity';
 
@@ -94,19 +94,19 @@ class BarModule {}
       registerRequestContext: false,
       ...testOptions,
     }),
-    MultipleMikroOrmModule.forRoot(),
+    MultiMikroOrmModule.forRoot(),
     FooModule,
     BarModule,
   ],
 })
-class TestMultipleModule {}
+class TestMultiModule {}
 
 describe('Multiple Middleware executes request context for all MikroORM registered', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [TestMultipleModule],
+      imports: [TestMultiModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();

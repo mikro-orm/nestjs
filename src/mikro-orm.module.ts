@@ -1,7 +1,7 @@
 import { Utils, type AnyEntity } from '@mikro-orm/core';
 import { Module, type DynamicModule } from '@nestjs/common';
 import { MikroOrmCoreModule } from './mikro-orm-core.module';
-import { MultipleMikroOrmModule } from './multiple-mikro-orm.module';
+import { MultiMikroOrmModule } from './multi-mikro-orm.module';
 import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage';
 import { createMikroOrmRepositoryProviders } from './mikro-orm.providers';
 import {
@@ -61,7 +61,7 @@ export class MikroOrmModule {
   static forMiddleware(options?: MikroOrmMiddlewareModuleOptions): DynamicModule {
     return {
       module: MikroOrmModule,
-      imports: [MultipleMikroOrmModule.forRoot(options)],
+      imports: [MultiMikroOrmModule.forRoot(options)],
     };
   }
 
