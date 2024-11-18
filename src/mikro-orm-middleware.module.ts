@@ -1,22 +1,22 @@
-import { Global, Inject, Module, RequestMethod, type MiddlewareConsumer } from '@nestjs/common';
+import { Global, Inject, Module, RequestMethod, type MiddlewareConsumer, NestModule } from '@nestjs/common';
 
 import type { MikroORM } from '@mikro-orm/core';
 import { forRoutesPath } from './middleware.helper';
 import { CONTEXT_NAMES, getMikroORMToken, MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
 import { MultipleMikroOrmMiddleware } from './multiple-mikro-orm.middleware';
-import { MultiMikroOrmModuleOptions } from './typings';
+import { MikroOrmMiddlewareModuleOptions } from './typings';
 
 @Global()
 @Module({})
-export class MultiMikroOrmModule {
+export class MikroOrmMiddlewareModule implements NestModule {
 
   constructor(@Inject(MIKRO_ORM_MODULE_OPTIONS)
-              private readonly options: MultiMikroOrmModuleOptions) { }
+              private readonly options: MikroOrmMiddlewareModuleOptions) { }
 
-  static forRoot(options?: MultiMikroOrmModuleOptions) {
+  static forRoot(options?: MikroOrmMiddlewareModuleOptions) {
     const inject = CONTEXT_NAMES.map(name => getMikroORMToken(name));
     return {
-      module: MultiMikroOrmModule,
+      module: MikroOrmMiddlewareModule,
       providers: [
         { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options || {} },
         {

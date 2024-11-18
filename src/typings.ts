@@ -9,11 +9,7 @@ export interface NestMiddlewareConsumer extends MiddlewareConsumer {
 type MikroOrmNestScopeOptions = {
   scope?: Scope;
 };
-/**
- * @deprecated Use `MultiMikroOrmModuleOptions`. This type will be removed in v7.
- */
-export type MikroOrmMiddlewareModuleOptions = MultiMikroOrmModuleOptions;
-export type MultiMikroOrmModuleOptions = {
+export type MikroOrmMiddlewareModuleOptions = {
   /**
    * Routes to apply the middleware.
    *
@@ -27,7 +23,7 @@ export type MultiMikroOrmModuleOptions = {
 export type MikroOrmModuleOptions<D extends IDatabaseDriver = IDatabaseDriver> = {
   registerRequestContext?: boolean;
   autoLoadEntities?: boolean;
-} & Options<D> & MultiMikroOrmModuleOptions;
+} & Options<D> & MikroOrmMiddlewareModuleOptions;
 
 export interface MikroOrmModuleFeatureOptions {
   entities?: EntityName<AnyEntity>[];

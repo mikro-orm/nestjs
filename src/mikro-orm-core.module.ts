@@ -1,5 +1,15 @@
 import { Configuration, ConfigurationLoader, EntityManager, MikroORM, type Dictionary } from '@mikro-orm/core';
-import { Global, Inject, Module, RequestMethod, type DynamicModule, type MiddlewareConsumer, type OnApplicationShutdown, type Type } from '@nestjs/common';
+import {
+  Global,
+  Inject,
+  Module,
+  RequestMethod,
+  type DynamicModule,
+  type MiddlewareConsumer,
+  type OnApplicationShutdown,
+  type Type,
+  NestModule,
+} from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 
 import { forRoutesPath } from './middleware.helper';
@@ -31,7 +41,7 @@ const PACKAGES = {
 
 @Global()
 @Module({})
-export class MikroOrmCoreModule implements OnApplicationShutdown {
+export class MikroOrmCoreModule implements NestModule, OnApplicationShutdown {
 
   constructor(@Inject(MIKRO_ORM_MODULE_OPTIONS)
               private readonly options: MikroOrmModuleOptions,

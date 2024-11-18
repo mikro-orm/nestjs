@@ -1,7 +1,7 @@
 import { Utils, type AnyEntity } from '@mikro-orm/core';
 import { Module, type DynamicModule } from '@nestjs/common';
 import { MikroOrmCoreModule } from './mikro-orm-core.module';
-import { MultiMikroOrmModule } from './multi-mikro-orm.module';
+import { MikroOrmMiddlewareModule } from './mikro-orm-middleware.module';
 import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage';
 import { createMikroOrmRepositoryProviders } from './mikro-orm.providers';
 import {
@@ -23,18 +23,12 @@ export class MikroOrmModule {
     MikroOrmEntitiesStorage.clear(contextName);
   }
 
-  static forRoot(options?: MikroOrmModuleSyncOptions): DynamicModule {
-    return {
-      module: MikroOrmModule,
-      imports: [MikroOrmCoreModule.forRoot(options)],
-    };
+  static forRoot(options?: MikroOrmModuleSyncOptions): DynamicModule | Promise<DynamicModule> {
+    return MikroOrmCoreModule.forRoot(options);
   }
 
-  static forRootAsync(options: MikroOrmModuleAsyncOptions): DynamicModule {
-    return {
-      module: MikroOrmModule,
-      imports: [MikroOrmCoreModule.forRootAsync(options)],
-    };
+  static forRootAsync(options: MikroOrmModuleAsyncOptions): DynamicModule | Promise<DynamicModule> {
+    return MikroOrmCoreModule.forRootAsync(options);
   }
 
   static forFeature(options: EntityName<AnyEntity>[] | MikroOrmModuleFeatureOptions, contextName?: string): DynamicModule {
@@ -55,14 +49,8 @@ export class MikroOrmModule {
     };
   }
 
-  /**
-   * @deprecated Use `MultipleMikroOrmModule.forRoot()`. This signature will be removed in v7.
-   */
   static forMiddleware(options?: MikroOrmMiddlewareModuleOptions): DynamicModule {
-    return {
-      module: MikroOrmModule,
-      imports: [MultiMikroOrmModule.forRoot(options)],
-    };
+    return MikroOrmMiddlewareModule.forRoot(options);
   }
 
 }
