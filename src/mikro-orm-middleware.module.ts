@@ -1,4 +1,4 @@
-import { Global, Inject, Module, RequestMethod, type MiddlewareConsumer, NestModule } from '@nestjs/common';
+import { Global, Inject, Module, RequestMethod, type MiddlewareConsumer, type NestModule } from '@nestjs/common';
 
 import type { MikroORM } from '@mikro-orm/core';
 import { forRoutesPath } from './middleware.helper';

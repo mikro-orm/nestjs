@@ -6,9 +6,9 @@ import {
   RequestMethod,
   type DynamicModule,
   type MiddlewareConsumer,
+  type NestModule,
   type OnApplicationShutdown,
   type Type,
-  NestModule,
 } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 
