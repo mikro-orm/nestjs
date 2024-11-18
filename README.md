@@ -357,7 +357,7 @@ You can define multiple database connections by registering multiple `MikroOrmMo
       registerRequestContext: false, // disable automatatic middleware
       ...
     }),
-    MultiMikroOrmModule.forRoot()
+    MikroOrmModule.forMiddleware()
   ],
   controllers: [AppController],
   providers: [AppService],

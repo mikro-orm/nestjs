@@ -9,6 +9,7 @@ export interface NestMiddlewareConsumer extends MiddlewareConsumer {
 type MikroOrmNestScopeOptions = {
   scope?: Scope;
 };
+
 export type MikroOrmMiddlewareModuleOptions = {
   /**
    * Routes to apply the middleware.
