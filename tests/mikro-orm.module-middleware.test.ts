@@ -6,9 +6,9 @@ import {
   Module,
   type INestApplication,
   Injectable,
+  type MiddlewareConsumer,
   type NestMiddleware,
-  MiddlewareConsumer,
-  NestModule,
+  type NestModule,
 } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import request from 'supertest';
