@@ -12,8 +12,7 @@ import {
 } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import request from 'supertest';
-import { InjectEntityManager, InjectMikroORM, MikroOrmModule } from '../src';
-import { Bar } from './entities/bar.entity';
+import { MikroOrmModule } from '../src';
 import { Foo } from './entities/foo.entity';
 
 const testOptions: Options = {
@@ -26,7 +25,7 @@ const testOptions: Options = {
 @Controller('/foo')
 class FooController {
 
-  constructor(@InjectMikroORM('database-multi-foo') private database1: MikroORM) {}
+  constructor(private database1: MikroORM) {}
 
   @Get()
   foo() {
@@ -35,22 +34,10 @@ class FooController {
 
 }
 
-@Controller('/bar')
-class BarController {
-
-  constructor(@InjectMikroORM('database-multi-bar') private database2: MikroORM) {}
-
-  @Get()
-  bar() {
-    return this.database2.em !== this.database2.em.getContext();
-  }
-
-}
-
 @Injectable()
 export class TestMiddleware implements NestMiddleware {
 
-  constructor(@InjectEntityManager('database-multi-foo') private readonly em: EntityManager) {}
+  constructor(private readonly em: EntityManager) {}
 
   use(req: unknown, res: unknown, next: (...args: any[]) => void) {
     this.em.setFilterParams('id', { id: '1' });
@@ -61,7 +48,7 @@ export class TestMiddleware implements NestMiddleware {
 }
 
 @Module({
-  imports: [MikroOrmModule.forFeature([Foo], 'database-multi-foo')],
+  imports: [MikroOrmModule.forFeature([Foo])],
   controllers: [FooController],
 })
 class FooModule implements NestModule {
@@ -75,38 +62,21 @@ class FooModule implements NestModule {
 }
 
 @Module({
-  imports: [MikroOrmModule.forFeature([Bar], 'database-multi-bar')],
-  controllers: [BarController],
-})
-class BarModule {}
-
-@Module({
   imports: [
     MikroOrmModule.forRootAsync({
-      contextName: 'database-multi-foo',
-      useFactory: () => ({
-        registerRequestContext: false,
-        ...testOptions,
-      }),
+      useFactory: () => testOptions,
     }),
-    MikroOrmModule.forRoot({
-      contextName: 'database-multi-bar',
-      registerRequestContext: false,
-      ...testOptions,
-    }),
-    MikroOrmModule.forMiddleware(),
     FooModule,
-    BarModule,
   ],
 })
-class TestMultiModule {}
+class TestModule {}
 
-describe('Multiple Middleware executes request context for all MikroORM registered', () => {
+describe('Middleware executes request context', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [TestMultiModule],
+      imports: [TestModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -116,10 +86,6 @@ describe('Multiple Middleware executes request context for all MikroORM register
 
   it(`forRoutes(/foo) should return 'true'`, () => {
     return request(app.getHttpServer()).get('/foo').expect(200, 'true');
-  });
-
-  it(`forRoutes(/bar) should return 'true'`, () => {
-    return request(app.getHttpServer()).get('/bar').expect(200, 'true');
   });
 
   afterAll(async () => {

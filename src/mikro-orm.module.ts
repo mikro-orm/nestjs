@@ -4,12 +4,12 @@ import { MikroOrmCoreModule } from './mikro-orm-core.module';
 import { MikroOrmMiddlewareModule } from './mikro-orm-middleware.module';
 import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage';
 import { createMikroOrmRepositoryProviders } from './mikro-orm.providers';
-import type {
+import {
   EntityName,
-  MikroOrmMiddlewareModuleOptions,
   MikroOrmModuleAsyncOptions,
   MikroOrmModuleFeatureOptions,
   MikroOrmModuleSyncOptions,
+  MikroOrmMiddlewareModuleOptions,
 } from './typings';
 
 @Module({})
@@ -23,18 +23,12 @@ export class MikroOrmModule {
     MikroOrmEntitiesStorage.clear(contextName);
   }
 
-  static forRoot(options?: MikroOrmModuleSyncOptions): DynamicModule {
-    return {
-      module: MikroOrmModule,
-      imports: [MikroOrmCoreModule.forRoot(options)],
-    };
+  static forRoot(options?: MikroOrmModuleSyncOptions): DynamicModule | Promise<DynamicModule> {
+    return MikroOrmCoreModule.forRoot(options);
   }
 
-  static forRootAsync(options: MikroOrmModuleAsyncOptions): DynamicModule {
-    return {
-      module: MikroOrmModule,
-      imports: [MikroOrmCoreModule.forRootAsync(options)],
-    };
+  static forRootAsync(options: MikroOrmModuleAsyncOptions): DynamicModule | Promise<DynamicModule> {
+    return MikroOrmCoreModule.forRootAsync(options);
   }
 
   static forFeature(options: EntityName<AnyEntity>[] | MikroOrmModuleFeatureOptions, contextName?: string): DynamicModule {
@@ -56,10 +50,7 @@ export class MikroOrmModule {
   }
 
   static forMiddleware(options?: MikroOrmMiddlewareModuleOptions): DynamicModule {
-    return {
-      module: MikroOrmModule,
-      imports: [MikroOrmMiddlewareModule.forMiddleware(options)],
-    };
+    return MikroOrmMiddlewareModule.forRoot(options);
   }
 
 }
