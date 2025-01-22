@@ -1,4 +1,4 @@
-import { ConfigurationLoader, EntityManager, MetadataStorage, MikroORM, type AnyEntity, type EntityClass, type EntityClassGroup, type EntitySchema } from '@mikro-orm/core';
+import { ConfigurationLoader, EntityManager, MetadataStorage, MikroORM, type AnyEntity, type EntityClass, type EntityClassGroup, type EntitySchema, type ForkOptions } from '@mikro-orm/core';
 import { MIKRO_ORM_MODULE_OPTIONS, getEntityManagerToken, getMikroORMToken, getRepositoryToken, logger } from './mikro-orm.common';
 
 import { Scope, type InjectionToken, type Provider, type Type } from '@nestjs/common';
@@ -44,6 +44,7 @@ export function createEntityManagerProvider(
   scope = Scope.DEFAULT,
   entityManager: Type = EntityManager,
   contextName?: string,
+  forkOptions?: ForkOptions,
 ): Provider<EntityManager> {
   if (!contextName && entityManager !== EntityManager) {
     return {
@@ -57,7 +58,7 @@ export function createEntityManagerProvider(
   return {
     provide: contextName ? getEntityManagerToken(contextName) : entityManager,
     scope,
-    useFactory: (orm: MikroORM) => scope === Scope.DEFAULT ? orm.em : orm.em.fork(),
+    useFactory: (orm: MikroORM) => scope === Scope.DEFAULT ? orm.em : orm.em.fork(forkOptions),
     inject: [contextName ? getMikroORMToken(contextName) : MikroORM],
   };
 }
