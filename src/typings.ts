@@ -1,4 +1,4 @@
-import type { AnyEntity, EntityName as CoreEntityName, EntitySchema, IDatabaseDriver, Options } from '@mikro-orm/core';
+import type { AnyEntity, EntityName as CoreEntityName, EntitySchema, ForkOptions, IDatabaseDriver, Options } from '@mikro-orm/core';
 import type { MiddlewareConsumer, ModuleMetadata, Scope, Type } from '@nestjs/common';
 import type { AbstractHttpAdapter } from '@nestjs/core';
 
@@ -15,6 +15,14 @@ type MikroOrmNestScopeOptions = {
    * @see [NestJS Scope Hierarchy](https://docs.nestjs.com/fundamentals/injection-scopes#scope-hierarchy)
    */
   scope?: Scope;
+  /**
+   * An optional configuration object to use when forking the Event Manager if it is configured with a scope other than Scope.DEFAULT
+   *
+   * This configuration option has no effect when the scope is set to Scope.DEFAULT.
+   *
+   * https://mikro-orm.io/api/core/interface/ForkOptions
+   */
+  forkOptions?: ForkOptions;
 };
 
 export type MikroOrmMiddlewareModuleOptions = {
