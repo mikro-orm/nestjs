@@ -1,4 +1,12 @@
-import type { AnyEntity, EntityName as CoreEntityName, EntitySchema, ForkOptions, IDatabaseDriver, Options } from '@mikro-orm/core';
+import type {
+  AnyEntity,
+  Constructor,
+  EntityName as CoreEntityName,
+  EntitySchema,
+  ForkOptions,
+  IDatabaseDriver,
+  Options,
+} from '@mikro-orm/core';
 import type { MiddlewareConsumer, ModuleMetadata, Scope, Type } from '@nestjs/common';
 import type { AbstractHttpAdapter } from '@nestjs/core';
 
@@ -83,6 +91,7 @@ export interface MikroOrmModuleAsyncOptions<D extends IDatabaseDriver = IDatabas
   useExisting?: Type<MikroOrmOptionsFactory<D>>;
   useClass?: Type<MikroOrmOptionsFactory<D>>;
   useFactory?: (...args: any[]) => Promise<Omit<MikroOrmModuleOptions<D>, 'contextName'>> | Omit<MikroOrmModuleOptions<D>, 'contextName'>;
+  driver?: Constructor<D>;
   inject?: any[];
 }
 

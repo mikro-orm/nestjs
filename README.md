@@ -111,6 +111,27 @@ export class PhotoService {
 }
 ```
 
+## Driver-specific imports
+
+When you try to inject the `EntityManager` or `MikroORM` symbols exported from the driver package, Nest.js needs to be aware of those typed. In other words, those driver specific exports need to be specifically registered in the DI container. This module uses automated discovery of the driver type in order to do that, but it fails to work when you use `useFactory` which requires some dependencies.
+
+Instead of relying on this discovery, you can provide the driver type explicitly:
+
+```typescript
+@Module({
+  imports: [
+    MikroOrmModule.forRootAsync({
+      useFactory: (configService: ConfigService) => configService.getOrThrow(ConfigKey.ORM),
+      inject: [ConfigService],
+      driver: PostgreSqlDriver,
+    }),
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+```
+
 ## Auto entities automatically
 
 Manually adding entities to the entities array of the connection options can be 
@@ -255,6 +276,7 @@ export class AppModule {}
 Or, if you're using the Async provider:
 ```typescript
 import { Scope } from '@nestjs/common';
+import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 
 @Module({
   imports: [

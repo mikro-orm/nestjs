@@ -199,6 +199,7 @@ describe('MikroORM Module', () => {
             ...testOptions,
             logger: logger.log.bind(logger),
           }),
+          driver: SqliteDriver,
           inject: ['my-logger'],
           providers: [myLoggerProvider],
         })],
@@ -316,24 +317,26 @@ describe('MikroORM Module', () => {
     it('forRootAsync :useFactory', async () => {
       const module = await Test.createTestingModule({
         imports: [
-          MikroOrmModule.forRootAsync({
-            contextName: 'database1',
-            useFactory: (logger: Logger) => ({
-              ...testOptions,
-              logger: logger.log.bind(logger),
-            }),
-            inject: ['my-logger'],
-            providers: [myLoggerProvider],
-          }),
-          MikroOrmModule.forRootAsync({
-            contextName: 'database2',
-            useFactory: (logger: Logger) => ({
-              ...testOptions,
-              logger: logger.log.bind(logger),
-            }),
-            inject: ['my-logger'],
-            providers: [myLoggerProvider],
-          }),
+          ...MikroOrmModule.forRootAsync([
+            {
+              contextName: 'database1',
+              useFactory: (logger: Logger) => ({
+                ...testOptions,
+                logger: logger.log.bind(logger),
+              }),
+              inject: ['my-logger'],
+              providers: [myLoggerProvider],
+            },
+            {
+              contextName: 'database2',
+              useFactory: (logger: Logger) => ({
+                ...testOptions,
+                logger: logger.log.bind(logger),
+              }),
+              inject: ['my-logger'],
+              providers: [myLoggerProvider],
+            },
+          ]),
         ],
       }).compile();
 

@@ -49,6 +49,31 @@ export class MikroOrmCoreModule implements NestModule, OnApplicationShutdown {
 
   static async forRoot(options?: MikroOrmModuleSyncOptions): Promise<DynamicModule> {
     const contextName = this.setContextName(options?.contextName);
+
+    if (options?.driver && !contextName) {
+      const packageName = PACKAGES[options.driver.name as keyof typeof PACKAGES];
+      const driverPackage = await tryRequire(packageName);
+
+      if (driverPackage) {
+        return {
+          module: MikroOrmCoreModule,
+          providers: [
+            { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options || {} },
+            createMikroOrmProvider(contextName),
+            createMikroOrmProvider(contextName, driverPackage.MikroORM),
+            createEntityManagerProvider(options?.scope, EntityManager),
+            createEntityManagerProvider(options?.scope, driverPackage.EntityManager),
+          ],
+          exports: [
+            MikroORM,
+            EntityManager,
+            driverPackage.EntityManager,
+            driverPackage.MikroORM,
+          ],
+        };
+      }
+    }
+
     const knex = await tryRequire('@mikro-orm/knex');
     const mongo = await tryRequire('@mikro-orm/mongodb');
     const em = await this.createEntityManager(options);
@@ -100,6 +125,33 @@ export class MikroOrmCoreModule implements NestModule, OnApplicationShutdown {
 
   static async forRootAsync(options: MikroOrmModuleAsyncOptions): Promise<DynamicModule> {
     const contextName = this.setContextName(options?.contextName);
+
+    if (options?.driver && !contextName) {
+      const packageName = PACKAGES[options.driver.name as keyof typeof PACKAGES];
+      const driverPackage = await tryRequire(packageName);
+
+      if (driverPackage) {
+        return {
+          module: MikroOrmCoreModule,
+          imports: options.imports || [],
+          providers: [
+            ...(options.providers || []),
+            ...createAsyncProviders({ ...options, contextName: options.contextName }),
+            createMikroOrmProvider(contextName),
+            createMikroOrmProvider(contextName, driverPackage.MikroORM),
+            createEntityManagerProvider(options?.scope, EntityManager),
+            createEntityManagerProvider(options?.scope, driverPackage.EntityManager),
+          ],
+          exports: [
+            MikroORM,
+            EntityManager,
+            driverPackage.EntityManager,
+            driverPackage.MikroORM,
+          ],
+        };
+      }
+    }
+
     const knex = await tryRequire('@mikro-orm/knex');
     const mongo = await tryRequire('@mikro-orm/mongodb');
     const em = await this.createEntityManager(options);
