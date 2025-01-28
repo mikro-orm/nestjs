@@ -10,6 +10,7 @@ import {
   MikroOrmModuleFeatureOptions,
   MikroOrmModuleSyncOptions,
   MikroOrmMiddlewareModuleOptions,
+  MaybePromise,
 } from './typings';
 
 @Module({})
@@ -23,11 +24,23 @@ export class MikroOrmModule {
     MikroOrmEntitiesStorage.clear(contextName);
   }
 
-  static forRoot(options?: MikroOrmModuleSyncOptions): DynamicModule | Promise<DynamicModule> {
+  static forRoot(options?: MikroOrmModuleSyncOptions): MaybePromise<DynamicModule>;
+  static forRoot(options?: MikroOrmModuleSyncOptions[]): MaybePromise<DynamicModule>[];
+  static forRoot(options?: MikroOrmModuleSyncOptions | MikroOrmModuleSyncOptions[]): MaybePromise<DynamicModule> | MaybePromise<DynamicModule>[] {
+    if (Array.isArray(options)) {
+      return options.map(o => MikroOrmCoreModule.forRoot(o));
+    }
+
     return MikroOrmCoreModule.forRoot(options);
   }
 
-  static forRootAsync(options: MikroOrmModuleAsyncOptions): DynamicModule | Promise<DynamicModule> {
+  static forRootAsync(options: MikroOrmModuleAsyncOptions): MaybePromise<DynamicModule>;
+  static forRootAsync(options: MikroOrmModuleAsyncOptions[]): MaybePromise<DynamicModule>[];
+  static forRootAsync(options: MikroOrmModuleAsyncOptions | MikroOrmModuleAsyncOptions[]): MaybePromise<DynamicModule> | MaybePromise<DynamicModule>[] {
+    if (Array.isArray(options)) {
+      return options.map(o => MikroOrmCoreModule.forRoot(o));
+    }
+
     return MikroOrmCoreModule.forRootAsync(options);
   }
 

@@ -365,6 +365,21 @@ You can define multiple database connections by registering multiple `MikroOrmMo
 export class AppModule {}
 ```
 
+Since MikroORM v6.4, you can also define [multiple configurations](https://mikro-orm.io/docs/quick-start#configuration-file-structure) as part of a single ORM config. If you want to use such a combined config file, you need to destructure the result, since it will be also an array:
+
+```typescript
+@Module({
+  imports: [
+    // `config` exports an array of configs
+    ...MikroOrmModule.forRoot(config),
+    MikroOrmModule.forMiddleware()
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+```
+
 To access different `MikroORM`/`EntityManager` connections you have to use the new injection tokens `@InjectMikroORM()`/`@InjectEntityManager()` where you are required to pass the `contextName` in:
 
 ```ts

@@ -2,6 +2,8 @@ import type { AnyEntity, EntityName as CoreEntityName, EntitySchema, ForkOptions
 import type { MiddlewareConsumer, ModuleMetadata, Scope, Type } from '@nestjs/common';
 import type { AbstractHttpAdapter } from '@nestjs/core';
 
+export type MaybePromise<T> = T | Promise<T>;
+
 export interface NestMiddlewareConsumer extends MiddlewareConsumer {
   httpAdapter: AbstractHttpAdapter;
 }
