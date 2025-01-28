@@ -214,7 +214,7 @@ describe('MikroORM Module', () => {
     it('forFeature should return repository', async () => {
       const module = await Test.createTestingModule({
         imports: [
-          MikroOrmModule.forRoot(testOptions),
+          ...MikroOrmModule.forRoot([testOptions]),
           MikroOrmModule.forFeature([Foo]),
         ],
       }).compile();
