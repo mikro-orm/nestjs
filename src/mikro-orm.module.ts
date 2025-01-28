@@ -38,7 +38,7 @@ export class MikroOrmModule {
   static forRootAsync(options: MikroOrmModuleAsyncOptions[]): MaybePromise<DynamicModule>[];
   static forRootAsync(options: MikroOrmModuleAsyncOptions | MikroOrmModuleAsyncOptions[]): MaybePromise<DynamicModule> | MaybePromise<DynamicModule>[] {
     if (Array.isArray(options)) {
-      return options.map(o => MikroOrmCoreModule.forRoot(o));
+      return options.map(o => MikroOrmCoreModule.forRootAsync(o));
     }
 
     return MikroOrmCoreModule.forRootAsync(options);
