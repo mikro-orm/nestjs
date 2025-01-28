@@ -235,7 +235,10 @@ export class MikroOrmCoreModule implements NestModule, OnApplicationShutdown {
 
       return config?.getDriver().createEntityManager();
     } catch {
-      // ignore
+      if (options && 'useFactory' in options && 'inject' in options && (options.inject as unknown[]).length > 0) {
+        // eslint-disable-next-line no-console
+        console.warn('Support for driver specific imports in modules defined with `useFactory` and `inject` requires an explicit `driver` option. See https://github.com/mikro-orm/nestjs/pull/204');
+      }
     }
   }
 

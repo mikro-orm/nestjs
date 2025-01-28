@@ -212,6 +212,23 @@ describe('MikroORM Module', () => {
       await module.get<MikroORM>(MikroORM).close();
     });
 
+    it('useFactory with injection prints a warning', async () => {
+      const warnSpy = jest.spyOn(console, 'warn');
+      warnSpy.mockImplementation();
+      const module = await Test.createTestingModule({
+        imports: [MikroOrmModule.forRootAsync({
+          useFactory: (logger: Logger) => ({
+            ...testOptions,
+            logger: logger.log.bind(logger),
+          }),
+          inject: ['my-logger'],
+          providers: [myLoggerProvider],
+        })],
+      }).compile();
+      expect(warnSpy).toBeCalledWith('Support for driver specific imports in modules defined with `useFactory` and `inject` requires an explicit `driver` option. See https://github.com/mikro-orm/nestjs/pull/204');
+      await module.get<MikroORM>(MikroORM).close();
+    });
+
     it('forFeature should return repository', async () => {
       const module = await Test.createTestingModule({
         imports: [
