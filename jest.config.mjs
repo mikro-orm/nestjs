@@ -1,7 +1,4 @@
-import type { Config } from '@jest/types';
-
-// Sync object
-const config: Config.InitialOptions = {
+export default {
   testTimeout: 30000,
   transform: {
     '^.+\\.tsx?$': ['ts-jest', {
@@ -18,5 +15,3 @@ const config: Config.InitialOptions = {
     '<rootDir>/package.json',
   ],
 };
-
-export default config;
