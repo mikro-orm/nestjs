@@ -31,7 +31,7 @@ export function createMikroOrmProvider(
       if (!options || Object.keys(options).length === 0) {
         const config = await ConfigurationLoader.getConfiguration();
         config.set('logger', logger.log.bind(logger));
-        options = config as unknown as MikroOrmModuleOptions;
+        options = config.getAll();
       }
 
       return MikroORM.init(options);
