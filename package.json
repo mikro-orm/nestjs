@@ -51,7 +51,7 @@
     "@nestjs/core": "^11.0.5",
     "@nestjs/platform-express": "^11.0.5",
     "@nestjs/testing": "^11.0.5",
-    "@stylistic/eslint-plugin-ts": "^3.0.1",
+    "@stylistic/eslint-plugin-ts": "^4.0.0",
     "@types/jest": "^29.5.12",
     "@types/node": "^22.0.0",
     "@types/supertest": "^6.0.2",
