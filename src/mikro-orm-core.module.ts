@@ -29,7 +29,7 @@ async function tryRequire(name: string): Promise<Dictionary | undefined> {
 
 // TODO: provide the package name via some platform method, prefer that over the static map when available
 const PACKAGES = {
-  MongoDriver: '@mikro-orm/mongo',
+  MongoDriver: '@mikro-orm/mongodb',
   MySqlDriver: '@mikro-orm/mysql',
   MsSqlDriver: '@mikro-orm/mssql',
   MariaDbDriver: '@mikro-orm/mariadb',
