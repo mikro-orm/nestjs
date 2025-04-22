@@ -178,7 +178,7 @@ But middlewares are executed only for regular HTTP request handles, what if we n
 a request scoped method outside of that? One example of that is queue handlers or 
 scheduled tasks. 
 
-We can use the `@UseRequestContext()` decorator. It requires you to first inject the
+We can use the `@CreateRequestContext()` decorator. It requires you to first inject the
 `MikroORM` instance to current context, it will be then used to create the context 
 for you. Under the hood, the decorator will register new request context for your 
 method and execute it inside the context. 
@@ -189,7 +189,7 @@ export class MyService {
 
   constructor(private readonly orm: MikroORM) { }
 
-  @UseRequestContext()
+  @CreateRequestContext()
   async doSomething() {
     // this will be executed in a separate context
   }
