@@ -132,7 +132,7 @@ Instead of relying on this discovery, you can provide the driver type explicitly
 export class AppModule {}
 ```
 
-## Auto entities automatically
+## Load entities automatically
 
 Manually adding entities to the entities array of the connection options can be 
 tedious. In addition, referencing entities from the root module breaks application 
