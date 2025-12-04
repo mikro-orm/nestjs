@@ -1,4 +1,4 @@
-import { Utils, type AnyEntity } from '@mikro-orm/core';
+import { type AnyEntity } from '@mikro-orm/core';
 import { Module, type DynamicModule } from '@nestjs/common';
 import { MikroOrmCoreModule } from './mikro-orm-core.module';
 import { MikroOrmMiddlewareModule } from './mikro-orm-middleware.module';
@@ -50,7 +50,7 @@ export class MikroOrmModule {
     const providers = createMikroOrmRepositoryProviders(entities, name);
 
     for (const e of entities) {
-      if (!Utils.isString(e)) {
+      if (typeof e !== 'string') {
         MikroOrmEntitiesStorage.addEntity(e, name);
       }
     }
