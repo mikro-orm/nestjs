@@ -1,14 +1,22 @@
 import { EntityManager, MetadataStorage, MikroORM, type AnyEntity, type ForkOptions } from '@mikro-orm/core';
 import { Scope, type InjectionToken, type Provider, type Type } from '@nestjs/common';
 
-import { MIKRO_ORM_MODULE_OPTIONS, getEntityManagerToken, getMikroORMToken, getRepositoryToken, logger } from './mikro-orm.common.js';
+import {
+  MIKRO_ORM_MODULE_OPTIONS,
+  getEntityManagerToken,
+  getMikroORMToken,
+  getRepositoryToken,
+  logger,
+} from './mikro-orm.common.js';
 import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage.js';
-import type { EntityName, MikroOrmModuleAsyncOptions, MikroOrmModuleOptions, MikroOrmOptionsFactory } from './typings.js';
+import type {
+  EntityName,
+  MikroOrmModuleAsyncOptions,
+  MikroOrmModuleOptions,
+  MikroOrmOptionsFactory,
+} from './typings.js';
 
-export function createMikroOrmProvider(
-  contextName?: string,
-  type: Type = MikroORM,
-): Provider {
+export function createMikroOrmProvider(contextName?: string, type: Type = MikroORM): Provider {
   if (!contextName && type !== MikroORM) {
     return {
       provide: type,
@@ -23,8 +31,14 @@ export function createMikroOrmProvider(
       options = { logger: logger.log.bind(logger), ...options };
 
       if (options.autoLoadEntities) {
-        options.entities = [...(options.entities || []), ...MikroOrmEntitiesStorage.getEntities(contextName)] as string[];
-        options.entitiesTs = [...(options.entitiesTs || []), ...MikroOrmEntitiesStorage.getEntities(contextName)] as string[];
+        options.entities = [
+          ...(options.entities || []),
+          ...MikroOrmEntitiesStorage.getEntities(contextName),
+        ] as string[];
+        options.entitiesTs = [
+          ...(options.entitiesTs || []),
+          ...MikroOrmEntitiesStorage.getEntities(contextName),
+        ] as string[];
         delete options.autoLoadEntities;
       }
 
@@ -52,7 +66,7 @@ export function createEntityManagerProvider(
   return {
     provide: contextName ? getEntityManagerToken(contextName) : entityManager,
     scope,
-    useFactory: (orm: MikroORM) => scope === Scope.DEFAULT ? orm.em : orm.em.fork(forkOptions),
+    useFactory: (orm: MikroORM) => (scope === Scope.DEFAULT ? orm.em : orm.em.fork(forkOptions)),
     inject: [contextName ? getMikroORMToken(contextName) : MikroORM],
   };
 }
@@ -63,9 +77,7 @@ export function createMikroOrmAsyncOptionsProvider(options: MikroOrmModuleAsyncO
       provide: MIKRO_ORM_MODULE_OPTIONS,
       useFactory: async (...args: any[]) => {
         const factoryOptions = await options.useFactory!(...args);
-        return options.contextName
-          ? { contextName: options.contextName, ...factoryOptions }
-          : factoryOptions;
+        return options.contextName ? { contextName: options.contextName, ...factoryOptions } : factoryOptions;
       },
       inject: options.inject || [],
     };
@@ -79,7 +91,8 @@ export function createMikroOrmAsyncOptionsProvider(options: MikroOrmModuleAsyncO
 
   return {
     provide: MIKRO_ORM_MODULE_OPTIONS,
-    useFactory: async (optionsFactory: MikroOrmOptionsFactory) => await optionsFactory.createMikroOrmOptions(options.contextName),
+    useFactory: async (optionsFactory: MikroOrmOptionsFactory) =>
+      await optionsFactory.createMikroOrmOptions(options.contextName),
     inject,
   };
 }
@@ -90,13 +103,12 @@ export function createAsyncProviders(options: MikroOrmModuleAsyncOptions): Provi
   }
 
   if (options.useClass) {
-    return [
-      createMikroOrmAsyncOptionsProvider(options),
-      { provide: options.useClass, useClass: options.useClass },
-    ];
+    return [createMikroOrmAsyncOptionsProvider(options), { provide: options.useClass, useClass: options.useClass }];
   }
 
-  throw new Error('Invalid MikroORM async options: one of `useClass`, `useExisting` or `useFactory` should be defined.');
+  throw new Error(
+    'Invalid MikroORM async options: one of `useClass`, `useExisting` or `useFactory` should be defined.',
+  );
 }
 
 export function createMikroOrmRepositoryProviders(entities: EntityName<AnyEntity>[], contextName?: string): Provider[] {

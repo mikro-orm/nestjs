@@ -27,31 +27,26 @@ const testOptions: Options = {
 
 @Controller('/foo')
 class FooController {
-
   constructor(@InjectMikroORM('database-multi-foo') private database1: MikroORM) {}
 
   @Get()
   foo() {
     return this.database1.em !== this.database1.em.getContext();
   }
-
 }
 
 @Controller('/bar')
 class BarController {
-
   constructor(@InjectMikroORM('database-multi-bar') private database2: MikroORM) {}
 
   @Get()
   bar() {
     return this.database2.em !== this.database2.em.getContext();
   }
-
 }
 
 @Injectable()
 export class TestMiddleware implements NestMiddleware {
-
   constructor(@InjectEntityManager('database-multi-foo') private readonly em: EntityManager) {}
 
   use(req: unknown, res: unknown, next: (...args: any[]) => void) {
@@ -59,7 +54,6 @@ export class TestMiddleware implements NestMiddleware {
 
     return next();
   }
-
 }
 
 @Module({
@@ -67,13 +61,9 @@ export class TestMiddleware implements NestMiddleware {
   controllers: [FooController],
 })
 class FooModule implements NestModule {
-
   configure(consumer: MiddlewareConsumer): void {
-    consumer
-      .apply(TestMiddleware)
-      .forRoutes('/');
+    consumer.apply(TestMiddleware).forRoutes('/');
   }
-
 }
 
 @Module({

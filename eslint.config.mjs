@@ -1,5 +1,4 @@
 import importPlugin from 'eslint-plugin-import';
-import stylistic from '@stylistic/eslint-plugin';
 import eslint from '@eslint/js';
 import globals from 'globals';
 import tsEslint from 'typescript-eslint';
@@ -14,7 +13,6 @@ export default tsEslint.config(
     plugins: {
       '@typescript-eslint': tsEslint.plugin,
       import: importPlugin,
-      '@stylistic': stylistic,
     },
     languageOptions: {
       globals: {
@@ -39,13 +37,21 @@ export default tsEslint.config(
       '@typescript-eslint/no-unsafe-declaration-merging': 'off',
       '@typescript-eslint/ban-ts-comment': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
-      '@typescript-eslint/naming-convention': ['error', {
-        selector: 'default', format: null,
-      }, {
-        selector: 'variable', format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
-      }, {
-        selector: 'typeLike', format: ['PascalCase'],
-      }],
+      '@typescript-eslint/naming-convention': [
+        'error',
+        {
+          selector: 'default',
+          format: null,
+        },
+        {
+          selector: 'variable',
+          format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
+        },
+        {
+          selector: 'typeLike',
+          format: ['PascalCase'],
+        },
+      ],
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-empty-interface': 'off',
       '@typescript-eslint/adjacent-overload-signatures': 'error',
@@ -59,30 +65,14 @@ export default tsEslint.config(
       '@typescript-eslint/no-use-before-define': 'error',
       '@typescript-eslint/no-var-requires': 'error',
       '@typescript-eslint/triple-slash-reference': 'error',
-      '@stylistic/type-annotation-spacing': 'error',
       '@typescript-eslint/array-type': 'error',
       '@typescript-eslint/no-unnecessary-qualifier': 'error',
       '@typescript-eslint/no-unnecessary-type-arguments': 'off',
       '@typescript-eslint/no-require-imports': 'off',
       '@typescript-eslint/no-empty-object-type': 'off',
       '@typescript-eslint/no-unsafe-function-type': 'off',
-      '@stylistic/quotes': ['error', 'single', { avoidEscape: true, allowTemplateLiterals: 'always' }],
-      '@stylistic/semi': ['error', 'always'],
       '@typescript-eslint/no-useless-constructor': 'error',
       '@typescript-eslint/no-redeclare': ['error'],
-      '@stylistic/member-delimiter-style': ['error', {
-        multiline: { delimiter: 'semi', requireLast: true },
-        singleline: { delimiter: 'semi', requireLast: false },
-      }],
-      '@stylistic/space-before-function-paren': ['error', {
-        anonymous: 'always',
-        named: 'never',
-        asyncArrow: 'always',
-      }],
-      '@stylistic/space-infix-ops': 'error',
-      '@stylistic/comma-spacing': 'error',
-      'arrow-parens': ['error', 'as-needed'],
-      'arrow-spacing': 'error',
       'space-infix-ops': 'off',
       'no-var': 'error',
       'prefer-const': 'error',
@@ -147,24 +137,14 @@ export default tsEslint.config(
       eqeqeq: ['error', 'always', { null: 'ignore' }],
       'no-console': 'error',
       'no-duplicate-imports': 'off',
-      'no-multiple-empty-lines': 'error',
       'no-throw-literal': 'error',
-      'no-trailing-spaces': 'error',
       'no-undef-init': 'error',
       'object-shorthand': 'error',
-      'quote-props': ['error', 'consistent-as-needed'],
-      'spaced-comment': 'error',
       yoda: 'error',
       curly: 'error',
       'object-curly-spacing': ['error', 'always'],
       'lines-between-class-members': ['error', 'always', { exceptAfterSingleLine: true }],
-      'padded-blocks': ['error', { classes: 'always' }],
       'no-else-return': 'error',
-      'block-spacing': ['error', 'always'],
-      'space-before-blocks': ['error', 'always'],
-      'brace-style': ['error', '1tbs', { allowSingleLine: true }],
-      'keyword-spacing': ['error', { before: true, after: true }],
-      'space-in-parens': ['error', 'never'],
     },
   },
   {

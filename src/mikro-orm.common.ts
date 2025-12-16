@@ -47,7 +47,7 @@ export const InjectEntityManager = (name: string) => Inject(getEntityManagerToke
  * @param name An optional context name - required for multiple database connections. See: [Multiple Database Connections](https://mikro-orm.io/docs/usage-with-nestjs#multiple-database-connections)
  * @returns The EntityRepository provider injection token based on the supplied entity and context name.
  */
-export const getRepositoryToken = <T extends object> (entity: EntityName<T>, name?: string) => {
+export const getRepositoryToken = <T extends object>(entity: EntityName<T>, name?: string) => {
   const suffix = name ? `_${name}` : '';
   return `${Utils.className(entity)}Repository${suffix}`;
 };
@@ -58,4 +58,5 @@ export const getRepositoryToken = <T extends object> (entity: EntityName<T>, nam
  * @param name An optional context name - required for multiple database connections. See: [Multiple Database Connections](https://mikro-orm.io/docs/usage-with-nestjs#multiple-database-connections)
  * @returns A parameter decorator which will cause NestJS to inject the relevant EntityRepository provider.
  */
-export const InjectRepository = <T extends object> (entity: EntityName<T>, name?: string) => Inject(getRepositoryToken(entity, name));
+export const InjectRepository = <T extends object>(entity: EntityName<T>, name?: string) =>
+  Inject(getRepositoryToken(entity, name));

@@ -1,6 +1,6 @@
 # Contributing to MikroORM
 
-As an open source project, the best way to support MikroORM is to contribute to its development. 
+As an open source project, the best way to support MikroORM is to contribute to its development.
 You can start with reporting new issues, improving the docs, or - if you feel confident enough
 to dive into the source code - send a pull request!
 
@@ -8,10 +8,10 @@ to dive into the source code - send a pull request!
 
 ## Got a Question or Problem?
 
-First take a look at documentation, then try to go thru existing issues. If you have a general 
-question about how something works, better place to ask is our 
+First take a look at documentation, then try to go thru existing issues. If you have a general
+question about how something works, better place to ask is our
 [Slack channel](https://join.slack.com/t/mikroorm/shared_invite/enQtNTM1ODYzMzM4MDk3LWM4ZDExMjU5ZDhmNjA2MmM3MWMwZmExNjhhNDdiYTMwNWM0MGY5ZTE3ZjkyZTMzOWExNDgyYmMzNDE1NDI5NjA)
-or [Stack overflow](https://stackoverflow.com/tags/mikro-orm/). 
+or [Stack overflow](https://stackoverflow.com/tags/mikro-orm/).
 
 ## Found a bug?
 
@@ -20,18 +20,18 @@ or even better, by [submitting a Pull Request](https://github.com/mikro-orm/mikr
 
 ## Missing a feature?
 
-You can *request* a new feature by [submitting an issue](https://github.com/mikro-orm/mikro-orm/issues/new) to this GitHub 
-Repository. If you would like to *implement* a new feature, please submit an issue with a proposal for your work first, 
+You can _request_ a new feature by [submitting an issue](https://github.com/mikro-orm/mikro-orm/issues/new) to this GitHub
+Repository. If you would like to _implement_ a new feature, please submit an issue with a proposal for your work first,
 so we can discuss what is the best way to implement, as well as to be sure nobody else works on that already.
 
 ## Submission guidelines
 
 ### Submitting an issue
 
-Before you submit an issue, please search the issue tracker, maybe an issue for your problem already exists and the discussion 
+Before you submit an issue, please search the issue tracker, maybe an issue for your problem already exists and the discussion
 might inform you of workarounds readily available.
 
-Please provide steps to reproduce for found bug or ideally fork the repository and add failing test that demonstrates what 
+Please provide steps to reproduce for found bug or ideally fork the repository and add failing test that demonstrates what
 is wrong. This will help to understand and fix the issue faster.
 
 ### Submitting a pull request
@@ -46,30 +46,30 @@ Before you submit your pull request consider the following guidelines:
 - Fork the project, install NPM dependencies and start docker to have all databases ready.
   [run-rs](https://www.npmjs.com/package/run-rs) is used to manage mongodb replica set.
   On windows you might need to execute `run-rs` directly as well as adjust some configuration,
-  refer to their docs for more information. 
+  refer to their docs for more information.
 
-    ```sh
-    yarn
-    docker-compose up -d
-    yarn run-rs
-    ```
+  ```sh
+  yarn
+  docker-compose up -d
+  yarn run-rs
+  ```
 
 - Run tests before you start working, to be sure they all pass and your setup is working correctly:
 
-     ```sh
-     yarn test
-     ```
+  ```sh
+  yarn test
+  ```
 
 - This project aims to have 100% code coverage, so be sure to **include appropriate test cases**.
 - Follow defined [coding standard](#coding-standard), use `yarn lint` command to check it.
-- Commit your changes using a descriptive commit message that follows defined [commit message conventions](#commit). 
+- Commit your changes using a descriptive commit message that follows defined [commit message conventions](#commit).
   Adherence to these conventions is necessary because release notes are automatically generated from these messages.
 - Push the code to your forked repository and create a pull request on GitHub.
 - If somebody from project contributors suggest changes then:
   - Make the required updates.
   - Re-run all test suites to ensure tests are still passing.
-  - Rebase your branch and force push to your GitHub repository (this will update your Pull Request). Basically you can 
-    use `git commit -a --amend` and `git push --force origin my-fix-branch` in order to keep single commit in the feature 
+  - Rebase your branch and force push to your GitHub repository (this will update your Pull Request). Basically you can
+    use `git commit -a --amend` and `git push --force origin my-fix-branch` in order to keep single commit in the feature
     branch.
 
 That's it! Thank you for your contribution!
@@ -80,7 +80,7 @@ To ensure consistency throughout the source code, keep these rules in mind as yo
 
 - All features or bug fixes **must be tested**, ideally by both unit tests and integration tests.
 - If you are implementing new feature or extending public API, you should **document it**.
-- Follow defined rules in [.eslintrc.js](.eslintrc.js). All these will be checked by GitHub Actions 
+- Follow defined rules in [.eslintrc.js](.eslintrc.js). All these will be checked by GitHub Actions
   when you submit your PR.
 
 Some highlights:
@@ -93,12 +93,12 @@ Some highlights:
 
 ## Commit Message Guidelines
 
-The project have very precise rules over how git commit messages can be formatted. This leads to 
+The project have very precise rules over how git commit messages can be formatted. This leads to
 **more readable messages** that are easy to follow when looking through the **project history**.
 But also, git history is used to **generate the change log**.
 
-The commit message format is borrowed from Angular projects and you can find 
-[more details in this document][commit-message-format]. 
+The commit message format is borrowed from Angular projects and you can find
+[more details in this document][commit-message-format].
 
 ## CI
 
@@ -110,7 +110,7 @@ We automatically run all pull requests through [GitHub Actions](https://github.c
 
 If you break the tests, we cannot merge your code, so please make sure that your code is working before opening a pull request.
 
-Also try to not introduce new code complexity and duplication issues. You can run the 
+Also try to not introduce new code complexity and duplication issues. You can run the
 static analysis tool locally - to do so, [follow this guideline][code-climate-guide].
 
 [commit-message-format]: https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit#
