@@ -11,16 +11,18 @@ import {
   type NestModule,
 } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { ReflectMetadataProvider } from '@mikro-orm/decorators/legacy';
 import request from 'supertest';
-import { InjectEntityManager, InjectMikroORM, MikroOrmModule } from '../src';
-import { Bar } from './entities/bar.entity';
-import { Foo } from './entities/foo.entity';
+import { InjectEntityManager, InjectMikroORM, MikroOrmModule } from '../src/index.js';
+import { Bar } from './entities/bar.entity.js';
+import { Foo } from './entities/foo.entity.js';
 
 const testOptions: Options = {
   dbName: ':memory:',
   driver: SqliteDriver,
   baseDir: __dirname,
   entities: ['entities'],
+  metadataProvider: ReflectMetadataProvider,
 };
 
 @Controller('/foo')

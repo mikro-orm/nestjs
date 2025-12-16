@@ -12,8 +12,8 @@ import {
 } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import request from 'supertest';
-import { MikroOrmModule } from '../src';
-import { Foo } from './entities/foo.entity';
+import { MikroOrmModule } from '../src/mikro-orm.module.js';
+import { Foo } from './entities/foo.entity.js';
 
 const testOptions: Options = {
   dbName: ':memory:',

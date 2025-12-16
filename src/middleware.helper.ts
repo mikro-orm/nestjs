@@ -1,5 +1,5 @@
-import type { MikroOrmMiddlewareModuleOptions, NestMiddlewareConsumer } from './typings';
 import { type MiddlewareConsumer, HttpStatus } from '@nestjs/common';
+import type { MikroOrmMiddlewareModuleOptions, NestMiddlewareConsumer } from './typings.js';
 
 export function forRoutesPath(options: MikroOrmMiddlewareModuleOptions, consumer: MiddlewareConsumer) {
   if (options.forRoutesPath) {
