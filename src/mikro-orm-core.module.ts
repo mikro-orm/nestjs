@@ -13,7 +13,12 @@ import {
 import { ModuleRef } from '@nestjs/core';
 
 import { forRoutesPath } from './middleware.helper.js';
-import { CONTEXT_NAMES, getEntityManagerToken, getMikroORMToken, MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common.js';
+import {
+  CONTEXT_NAMES,
+  getEntityManagerToken,
+  getMikroORMToken,
+  MIKRO_ORM_MODULE_OPTIONS,
+} from './mikro-orm.common.js';
 import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage.js';
 import { MikroOrmMiddleware } from './mikro-orm.middleware.js';
 import { createAsyncProviders, createEntityManagerProvider, createMikroOrmProvider } from './mikro-orm.providers.js';
@@ -22,12 +27,11 @@ import type { MikroOrmModuleOptions, MikroOrmModuleAsyncOptions, MikroOrmModuleS
 @Global()
 @Module({})
 export class MikroOrmCoreModule implements NestModule, OnApplicationShutdown {
-
   constructor(
     @Inject(MIKRO_ORM_MODULE_OPTIONS)
     private readonly options: MikroOrmModuleOptions,
     private readonly moduleRef: ModuleRef,
-  ) { }
+  ) {}
 
   static async forRoot(options: MikroOrmModuleSyncOptions): Promise<DynamicModule> {
     const contextName = this.setContextName(options.contextName);
@@ -43,12 +47,7 @@ export class MikroOrmCoreModule implements NestModule, OnApplicationShutdown {
           createEntityManagerProvider(options.scope, EntityManager),
           createEntityManagerProvider(options.scope, em.constructor as Constructor<EntityManager>),
         ],
-        exports: [
-          MikroORM,
-          EntityManager,
-          em.constructor,
-          em.getDriver().getORMClass(),
-        ],
+        exports: [MikroORM, EntityManager, em.constructor, em.getDriver().getORMClass()],
       };
     }
 
@@ -85,12 +84,7 @@ export class MikroOrmCoreModule implements NestModule, OnApplicationShutdown {
           createEntityManagerProvider(options.scope, EntityManager),
           createEntityManagerProvider(options.scope, em.constructor as Constructor<EntityManager>),
         ],
-        exports: [
-          MikroORM,
-          EntityManager,
-          em.constructor,
-          em.getDriver().getORMClass(),
-        ],
+        exports: [MikroORM, EntityManager, em.constructor, em.getDriver().getORMClass()],
       };
     }
 
@@ -117,7 +111,9 @@ export class MikroOrmCoreModule implements NestModule, OnApplicationShutdown {
    * Tries to create the driver instance to use the actual entity manager implementation for DI symbol.
    * This helps with dependency resolution issues when importing the EM from driver package (e.g. `SqlEntityManager`).
    */
-  private static async createEntityManager(options: MikroOrmModuleSyncOptions | MikroOrmModuleAsyncOptions): Promise<EntityManager<DatabaseDriver<any>> | undefined> {
+  private static async createEntityManager(
+    options: MikroOrmModuleSyncOptions | MikroOrmModuleAsyncOptions,
+  ): Promise<EntityManager<DatabaseDriver<any>> | undefined> {
     if (options.contextName) {
       return undefined;
     }
@@ -139,9 +135,17 @@ export class MikroOrmCoreModule implements NestModule, OnApplicationShutdown {
 
       return config?.getDriver().createEntityManager() as EntityManager<DatabaseDriver<any>>;
     } catch {
-      if (options && 'useFactory' in options && 'inject' in options && !options.driver && (options.inject as unknown[]).length > 0) {
+      if (
+        options &&
+        'useFactory' in options &&
+        'inject' in options &&
+        !options.driver &&
+        (options.inject as unknown[]).length > 0
+      ) {
         // eslint-disable-next-line no-console
-        console.warn('Support for driver specific imports in modules defined with `useFactory` and `inject` requires an explicit `driver` option. See https://github.com/mikro-orm/nestjs/pull/204');
+        console.warn(
+          'Support for driver specific imports in modules defined with `useFactory` and `inject` requires an explicit `driver` option. See https://github.com/mikro-orm/nestjs/pull/204',
+        );
       }
     }
   }
@@ -181,5 +185,4 @@ export class MikroOrmCoreModule implements NestModule, OnApplicationShutdown {
 
     return contextName;
   }
-
 }

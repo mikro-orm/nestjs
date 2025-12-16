@@ -9,9 +9,10 @@ import type { MikroOrmMiddlewareModuleOptions } from './typings.js';
 @Global()
 @Module({})
 export class MikroOrmMiddlewareModule implements NestModule {
-
-  constructor(@Inject(MIKRO_ORM_MODULE_OPTIONS)
-              private readonly options: MikroOrmMiddlewareModuleOptions) { }
+  constructor(
+    @Inject(MIKRO_ORM_MODULE_OPTIONS)
+    private readonly options: MikroOrmMiddlewareModuleOptions,
+  ) {}
 
   static forRoot(options?: MikroOrmMiddlewareModuleOptions) {
     const inject = CONTEXT_NAMES.map(name => getMikroORMToken(name));
@@ -34,5 +35,4 @@ export class MikroOrmMiddlewareModule implements NestModule {
       .apply(MultipleMikroOrmMiddleware)
       .forRoutes({ path: forRoutesPath(this.options, consumer), method: RequestMethod.ALL });
   }
-
 }

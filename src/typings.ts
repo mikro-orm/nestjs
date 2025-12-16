@@ -56,7 +56,8 @@ export type MikroOrmModuleOptions<D extends IDatabaseDriver = IDatabaseDriver> =
    * @default false
    */
   autoLoadEntities?: boolean;
-} & Options<D> & MikroOrmMiddlewareModuleOptions;
+} & Options<D> &
+  MikroOrmMiddlewareModuleOptions;
 
 export interface MikroOrmModuleFeatureOptions {
   /**
@@ -77,9 +78,10 @@ export interface MikroOrmOptionsFactory<D extends IDatabaseDriver = IDatabaseDri
   createMikroOrmOptions(contextName?: string): Promise<MikroOrmModuleOptions<D>> | MikroOrmModuleOptions<D>;
 }
 
-export interface MikroOrmModuleSyncOptions extends MikroOrmModuleOptions, MikroOrmNestScopeOptions { }
+export interface MikroOrmModuleSyncOptions extends MikroOrmModuleOptions, MikroOrmNestScopeOptions {}
 
-export interface MikroOrmModuleAsyncOptions<D extends IDatabaseDriver = IDatabaseDriver> extends Pick<ModuleMetadata, 'imports' | 'providers'>, MikroOrmNestScopeOptions {
+export interface MikroOrmModuleAsyncOptions<D extends IDatabaseDriver = IDatabaseDriver>
+  extends Pick<ModuleMetadata, 'imports' | 'providers'>, MikroOrmNestScopeOptions {
   /**
    * The context name (database connection) to specify for this instance.
    *
@@ -90,7 +92,9 @@ export interface MikroOrmModuleAsyncOptions<D extends IDatabaseDriver = IDatabas
   contextName?: string;
   useExisting?: Type<MikroOrmOptionsFactory<D>>;
   useClass?: Type<MikroOrmOptionsFactory<D>>;
-  useFactory?: (...args: any[]) => Promise<Omit<MikroOrmModuleOptions<D>, 'contextName'>> | Omit<MikroOrmModuleOptions<D>, 'contextName'>;
+  useFactory?: (
+    ...args: any[]
+  ) => Promise<Omit<MikroOrmModuleOptions<D>, 'contextName'>> | Omit<MikroOrmModuleOptions<D>, 'contextName'>;
   driver?: Constructor<D>;
   inject?: any[];
 }
