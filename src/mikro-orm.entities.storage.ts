@@ -2,7 +2,6 @@ import type { AnyEntity } from '@mikro-orm/core';
 import type { EntityName } from './typings.js';
 
 export class MikroOrmEntitiesStorage {
-
   private static readonly storage = new Map<string, Set<EntityName<AnyEntity>>>();
   private static shouldClear = false;
 
@@ -38,5 +37,4 @@ export class MikroOrmEntitiesStorage {
   static clearLater() {
     this.shouldClear = true;
   }
-
 }

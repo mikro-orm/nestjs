@@ -5,7 +5,14 @@ import { ReflectMetadataProvider } from '@mikro-orm/decorators/legacy';
 import { Inject, Logger, Module, Scope } from '@nestjs/common';
 import { ContextIdFactory } from '@nestjs/core';
 import { TestingModule, Test } from '@nestjs/testing';
-import { MikroOrmOptionsFactory, CONTEXT_NAMES, MikroOrmModule, getEntityManagerToken, getMikroORMToken, getRepositoryToken } from '../src/index.js';
+import {
+  MikroOrmOptionsFactory,
+  CONTEXT_NAMES,
+  MikroOrmModule,
+  getEntityManagerToken,
+  getMikroORMToken,
+  getRepositoryToken,
+} from '../src/index.js';
 import { Bar } from './entities/bar.entity.js';
 import { Foo } from './entities/foo.entity.js';
 
@@ -19,8 +26,7 @@ const testOptions = defineConfig({
 const myLoggerProvider = { provide: 'my-logger', useValue: new Logger() };
 
 class ConfigService implements MikroOrmOptionsFactory {
-
-  constructor(@Inject('my-logger') private readonly logger: Logger) { }
+  constructor(@Inject('my-logger') private readonly logger: Logger) {}
 
   createMikroOrmOptions(contextName?: string): Options {
     const options = {
@@ -30,7 +36,6 @@ class ConfigService implements MikroOrmOptionsFactory {
 
     return contextName ? { contextName, ...options } : options;
   }
-
 }
 
 @Module({ providers: [ConfigService, myLoggerProvider], exports: [ConfigService] })
@@ -45,13 +50,11 @@ const getEntityManagerLoop = async (module: TestingModule): Promise<Set<number |
 
   for (let i = 0; i < 5; i++) {
     const contextId = ContextIdFactory.create();
-    vi.spyOn(ContextIdFactory, 'getByRequest')
-      .mockImplementation(() => contextId);
+    vi.spyOn(ContextIdFactory, 'getByRequest').mockImplementation(() => contextId);
 
-    (await Promise.all([
-      module.resolve(EntityManager, contextId),
-      module.resolve(EntityManager, contextId),
-    ])).forEach(em => generatedIds.add(em.id));
+    (await Promise.all([module.resolve(EntityManager, contextId), module.resolve(EntityManager, contextId)])).forEach(
+      em => generatedIds.add(em.id),
+    );
   }
 
   return generatedIds;
@@ -76,7 +79,6 @@ const checkProviders = async (module: TestingModule) => {
 };
 
 describe('MikroORM Module', () => {
-
   beforeEach(() => {
     // Clear context names before each run, so we do not throw existing exception
     CONTEXT_NAMES.splice(0, CONTEXT_NAMES.length);
@@ -97,10 +99,13 @@ describe('MikroORM Module', () => {
 
     it('forRootAsync :useClass', async () => {
       const module = await Test.createTestingModule({
-        imports: [ConfigModule, MikroOrmModule.forRootAsync({
-          useClass: ConfigService,
-          providers: [myLoggerProvider],
-        })],
+        imports: [
+          ConfigModule,
+          MikroOrmModule.forRootAsync({
+            useClass: ConfigService,
+            providers: [myLoggerProvider],
+          }),
+        ],
       }).compile();
 
       const orm = module.get<MikroORM>(MikroORM);
@@ -112,10 +117,13 @@ describe('MikroORM Module', () => {
 
     it('forRootAsync :useExisting', async () => {
       const module = await Test.createTestingModule({
-        imports: [ConfigModule, MikroOrmModule.forRootAsync({
-          useExisting: ConfigService,
-          imports: [ConfigModule],
-        })],
+        imports: [
+          ConfigModule,
+          MikroOrmModule.forRootAsync({
+            useExisting: ConfigService,
+            imports: [ConfigModule],
+          }),
+        ],
       }).compile();
 
       const orm = module.get<MikroORM>(MikroORM);
@@ -127,15 +135,17 @@ describe('MikroORM Module', () => {
 
     it('forRootAsync :useFactory', async () => {
       const module = await Test.createTestingModule({
-        imports: [MikroOrmModule.forRootAsync({
-          useFactory: (logger: Logger) => ({
-            ...testOptions,
-            logger: logger.log.bind(logger),
+        imports: [
+          MikroOrmModule.forRootAsync({
+            useFactory: (logger: Logger) => ({
+              ...testOptions,
+              logger: logger.log.bind(logger),
+            }),
+            driver: testOptions.driver,
+            inject: ['my-logger'],
+            providers: [myLoggerProvider],
           }),
-          driver: testOptions.driver,
-          inject: ['my-logger'],
-          providers: [myLoggerProvider],
-        })],
+        ],
       }).compile();
 
       const orm = module.get<MikroORM>(MikroORM);
@@ -147,10 +157,12 @@ describe('MikroORM Module', () => {
 
     it('forRoot should return a new em each request with request scope', async () => {
       const module = await Test.createTestingModule({
-        imports: [MikroOrmModule.forRoot({
-          ...testOptions,
-          scope: Scope.REQUEST,
-        })],
+        imports: [
+          MikroOrmModule.forRoot({
+            ...testOptions,
+            scope: Scope.REQUEST,
+          }),
+        ],
       }).compile();
 
       const idSet = await getEntityManagerLoop(module);
@@ -162,16 +174,18 @@ describe('MikroORM Module', () => {
 
     it('forRootAsync should return a new em each request with request scope', async () => {
       const module = await Test.createTestingModule({
-        imports: [MikroOrmModule.forRootAsync({
-          useFactory: (logger: Logger) => ({
-            ...testOptions,
-            logger: logger.log.bind(logger),
+        imports: [
+          MikroOrmModule.forRootAsync({
+            useFactory: (logger: Logger) => ({
+              ...testOptions,
+              logger: logger.log.bind(logger),
+            }),
+            driver: testOptions.driver,
+            inject: ['my-logger'],
+            providers: [myLoggerProvider],
+            scope: Scope.REQUEST,
           }),
-          driver: testOptions.driver,
-          inject: ['my-logger'],
-          providers: [myLoggerProvider],
-          scope: Scope.REQUEST,
-        })],
+        ],
       }).compile();
 
       const idSet = await getEntityManagerLoop(module);
@@ -202,9 +216,11 @@ describe('MikroORM Module', () => {
 
     it('forRoot should return the same em each request with default scope', async () => {
       const module = await Test.createTestingModule({
-        imports: [MikroOrmModule.forRoot({
-          ...testOptions,
-        })],
+        imports: [
+          MikroOrmModule.forRoot({
+            ...testOptions,
+          }),
+        ],
       }).compile();
 
       const idSet = await getEntityManagerLoop(module);
@@ -216,15 +232,17 @@ describe('MikroORM Module', () => {
 
     it('forRootAsync should return the same em each request with default scope', async () => {
       const module = await Test.createTestingModule({
-        imports: [MikroOrmModule.forRootAsync({
-          useFactory: (logger: Logger) => ({
-            ...testOptions,
-            logger: logger.log.bind(logger),
+        imports: [
+          MikroOrmModule.forRootAsync({
+            useFactory: (logger: Logger) => ({
+              ...testOptions,
+              logger: logger.log.bind(logger),
+            }),
+            driver: SqliteDriver,
+            inject: ['my-logger'],
+            providers: [myLoggerProvider],
           }),
-          driver: SqliteDriver,
-          inject: ['my-logger'],
-          providers: [myLoggerProvider],
-        })],
+        ],
       }).compile();
 
       const idSet = await getEntityManagerLoop(module);
@@ -238,26 +256,27 @@ describe('MikroORM Module', () => {
       const warnSpy = vi.spyOn(console, 'warn');
       warnSpy.mockImplementation(() => ({}));
       const module = await Test.createTestingModule({
-        imports: [MikroOrmModule.forRootAsync({
-          useFactory: (logger: Logger) => ({
-            ...testOptions,
-            logger: logger.log.bind(logger),
+        imports: [
+          MikroOrmModule.forRootAsync({
+            useFactory: (logger: Logger) => ({
+              ...testOptions,
+              logger: logger.log.bind(logger),
+            }),
+            inject: ['my-logger'],
+            providers: [myLoggerProvider],
           }),
-          inject: ['my-logger'],
-          providers: [myLoggerProvider],
-        })],
+        ],
       }).compile();
-      expect(warnSpy).toBeCalledWith('Support for driver specific imports in modules defined with `useFactory` and `inject` requires an explicit `driver` option. See https://github.com/mikro-orm/nestjs/pull/204');
+      expect(warnSpy).toBeCalledWith(
+        'Support for driver specific imports in modules defined with `useFactory` and `inject` requires an explicit `driver` option. See https://github.com/mikro-orm/nestjs/pull/204',
+      );
       await module.get<MikroORM>(MikroORM).close();
       warnSpy.mockRestore();
     });
 
     it('forFeature should return repository', async () => {
       const module = await Test.createTestingModule({
-        imports: [
-          ...MikroOrmModule.forRoot([testOptions]),
-          MikroOrmModule.forFeature([Foo]),
-        ],
+        imports: [...MikroOrmModule.forRoot([testOptions]), MikroOrmModule.forFeature([Foo])],
       }).compile();
 
       const orm = module.get<MikroORM>(MikroORM);
@@ -297,7 +316,6 @@ describe('MikroORM Module', () => {
   });
 
   describe('Multiple Databases', () => {
-
     it('forRoot', async () => {
       const module = await Test.createTestingModule({
         imports: [
@@ -348,7 +366,8 @@ describe('MikroORM Module', () => {
             contextName: 'database2',
             useExisting: ConfigService,
             imports: [ConfigModule],
-          })],
+          }),
+        ],
       }).compile();
 
       await checkProviders(module);
@@ -450,5 +469,3 @@ describe('MikroORM Module', () => {
     });
   });
 });
-
-
