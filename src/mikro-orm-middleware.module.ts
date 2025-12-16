@@ -1,10 +1,10 @@
 import { Global, Inject, Module, RequestMethod, type MiddlewareConsumer, type NestModule } from '@nestjs/common';
-
 import type { MikroORM } from '@mikro-orm/core';
-import { forRoutesPath } from './middleware.helper';
-import { CONTEXT_NAMES, getMikroORMToken, MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
-import { MultipleMikroOrmMiddleware } from './multiple-mikro-orm.middleware';
-import { MikroOrmMiddlewareModuleOptions } from './typings';
+
+import { forRoutesPath } from './middleware.helper.js';
+import { CONTEXT_NAMES, getMikroORMToken, MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common.js';
+import { MultipleMikroOrmMiddleware } from './multiple-mikro-orm.middleware.js';
+import type { MikroOrmMiddlewareModuleOptions } from './typings.js';
 
 @Global()
 @Module({})

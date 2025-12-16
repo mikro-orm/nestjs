@@ -1,17 +1,17 @@
 import { type AnyEntity } from '@mikro-orm/core';
 import { Module, type DynamicModule } from '@nestjs/common';
-import { MikroOrmCoreModule } from './mikro-orm-core.module';
-import { MikroOrmMiddlewareModule } from './mikro-orm-middleware.module';
-import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage';
-import { createMikroOrmRepositoryProviders } from './mikro-orm.providers';
-import {
+import { MikroOrmCoreModule } from './mikro-orm-core.module.js';
+import { MikroOrmMiddlewareModule } from './mikro-orm-middleware.module.js';
+import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage.js';
+import { createMikroOrmRepositoryProviders } from './mikro-orm.providers.js';
+import type {
   EntityName,
   MikroOrmModuleAsyncOptions,
   MikroOrmModuleFeatureOptions,
   MikroOrmModuleSyncOptions,
   MikroOrmMiddlewareModuleOptions,
   MaybePromise,
-} from './typings';
+} from './typings.js';
 
 @Module({})
 export class MikroOrmModule {
@@ -24,9 +24,9 @@ export class MikroOrmModule {
     MikroOrmEntitiesStorage.clear(contextName);
   }
 
-  static forRoot(options?: MikroOrmModuleSyncOptions): MaybePromise<DynamicModule>;
-  static forRoot(options?: MikroOrmModuleSyncOptions[]): MaybePromise<DynamicModule>[];
-  static forRoot(options?: MikroOrmModuleSyncOptions | MikroOrmModuleSyncOptions[]): MaybePromise<DynamicModule> | MaybePromise<DynamicModule>[] {
+  static forRoot(options: MikroOrmModuleSyncOptions): MaybePromise<DynamicModule>;
+  static forRoot(options: MikroOrmModuleSyncOptions[]): MaybePromise<DynamicModule>[];
+  static forRoot(options: MikroOrmModuleSyncOptions | MikroOrmModuleSyncOptions[]): MaybePromise<DynamicModule> | MaybePromise<DynamicModule>[] {
     if (Array.isArray(options)) {
       return options.map(o => MikroOrmCoreModule.forRoot(o));
     }

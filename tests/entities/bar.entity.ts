@@ -1,4 +1,4 @@
-import { PrimaryKey, Entity } from '@mikro-orm/core';
+import { PrimaryKey, Entity } from '@mikro-orm/decorators/legacy';
 
 @Entity()
 export class Bar {
