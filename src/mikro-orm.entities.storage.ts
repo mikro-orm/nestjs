@@ -1,5 +1,5 @@
 import type { AnyEntity } from '@mikro-orm/core';
-import type { EntityName } from './typings';
+import type { EntityName } from './typings.js';
 
 export class MikroOrmEntitiesStorage {
 

@@ -1,9 +1,8 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es2020",
-    "lib": ["es2020"],
-    "moduleResolution": "node",
+    "module": "Node20",
+    "target": "ES2023",
+    "lib": ["ES2023"],
     "declaration": true,
     "sourceMap": false,
     "strict": true,

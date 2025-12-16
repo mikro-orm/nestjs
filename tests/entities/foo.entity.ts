@@ -1,4 +1,4 @@
-import { PrimaryKey, Entity, Filter } from '@mikro-orm/core';
+import { PrimaryKey, Entity, Filter } from '@mikro-orm/decorators/legacy';
 
 @Entity()
 @Filter({ name: 'id', cond: args => ({ id: args.id }) })

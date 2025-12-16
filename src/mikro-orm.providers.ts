@@ -1,9 +1,9 @@
-import { ConfigurationLoader, EntityManager, MetadataStorage, MikroORM, type AnyEntity, type EntityClass, type EntityClassGroup, type EntitySchema, type ForkOptions } from '@mikro-orm/core';
-import { MIKRO_ORM_MODULE_OPTIONS, getEntityManagerToken, getMikroORMToken, getRepositoryToken, logger } from './mikro-orm.common';
-
+import { EntityManager, MetadataStorage, MikroORM, type AnyEntity, type ForkOptions } from '@mikro-orm/core';
 import { Scope, type InjectionToken, type Provider, type Type } from '@nestjs/common';
-import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage';
-import type { EntityName, MikroOrmModuleAsyncOptions, MikroOrmModuleOptions, MikroOrmOptionsFactory } from './typings';
+
+import { MIKRO_ORM_MODULE_OPTIONS, getEntityManagerToken, getMikroORMToken, getRepositoryToken, logger } from './mikro-orm.common.js';
+import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage.js';
+import type { EntityName, MikroOrmModuleAsyncOptions, MikroOrmModuleOptions, MikroOrmOptionsFactory } from './typings.js';
 
 export function createMikroOrmProvider(
   contextName?: string,
@@ -19,19 +19,13 @@ export function createMikroOrmProvider(
 
   return {
     provide: contextName ? getMikroORMToken(contextName) : type,
-    useFactory: async (options?: MikroOrmModuleOptions) => {
-      options = { ...options };
+    useFactory: async (options: MikroOrmModuleOptions) => {
+      options = { logger: logger.log.bind(logger), ...options };
 
-      if (options?.autoLoadEntities) {
-        options.entities = [...(options.entities || []), ...MikroOrmEntitiesStorage.getEntities(contextName)] as (string | EntityClass<AnyEntity> | EntityClassGroup<AnyEntity> | EntitySchema)[];
-        options.entitiesTs = [...(options.entitiesTs || []), ...MikroOrmEntitiesStorage.getEntities(contextName)] as (string | EntityClass<AnyEntity> | EntityClassGroup<AnyEntity> | EntitySchema)[];
+      if (options.autoLoadEntities) {
+        options.entities = [...(options.entities || []), ...MikroOrmEntitiesStorage.getEntities(contextName)] as string[];
+        options.entitiesTs = [...(options.entitiesTs || []), ...MikroOrmEntitiesStorage.getEntities(contextName)] as string[];
         delete options.autoLoadEntities;
-      }
-
-      if (!options || Object.keys(options).length === 0) {
-        const config = await ConfigurationLoader.getConfiguration();
-        config.set('logger', logger.log.bind(logger));
-        options = config.getAll();
       }
 
       return MikroORM.init(options);

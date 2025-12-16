@@ -1,18 +1,20 @@
+import { vi } from 'vitest';
 import { EntityRepository, Options, EntityManager, MikroORM } from '@mikro-orm/core';
-import { SqliteDriver } from '@mikro-orm/sqlite';
+import { defineConfig, SqliteDriver } from '@mikro-orm/sqlite';
+import { ReflectMetadataProvider } from '@mikro-orm/decorators/legacy';
 import { Inject, Logger, Module, Scope } from '@nestjs/common';
 import { ContextIdFactory } from '@nestjs/core';
 import { TestingModule, Test } from '@nestjs/testing';
-import { MikroOrmOptionsFactory, CONTEXT_NAMES, MikroOrmModule, getEntityManagerToken, getMikroORMToken, getRepositoryToken } from '../src';
-import { Bar } from './entities/bar.entity';
-import { Foo } from './entities/foo.entity';
+import { MikroOrmOptionsFactory, CONTEXT_NAMES, MikroOrmModule, getEntityManagerToken, getMikroORMToken, getRepositoryToken } from '../src/index.js';
+import { Bar } from './entities/bar.entity.js';
+import { Foo } from './entities/foo.entity.js';
 
-const testOptions: Options = {
+const testOptions = defineConfig({
   dbName: ':memory:',
-  driver: SqliteDriver,
   baseDir: __dirname,
   entities: ['entities'],
-};
+  metadataProvider: ReflectMetadataProvider,
+});
 
 const myLoggerProvider = { provide: 'my-logger', useValue: new Logger() };
 
@@ -43,8 +45,7 @@ const getEntityManagerLoop = async (module: TestingModule): Promise<Set<number |
 
   for (let i = 0; i < 5; i++) {
     const contextId = ContextIdFactory.create();
-    jest
-      .spyOn(ContextIdFactory, 'getByRequest')
+    vi.spyOn(ContextIdFactory, 'getByRequest')
       .mockImplementation(() => contextId);
 
     (await Promise.all([
@@ -215,8 +216,8 @@ describe('MikroORM Module', () => {
     });
 
     it('useFactory with injection prints a warning', async () => {
-      const warnSpy = jest.spyOn(console, 'warn');
-      warnSpy.mockImplementation();
+      const warnSpy = vi.spyOn(console, 'warn');
+      warnSpy.mockImplementation(() => ({}));
       const module = await Test.createTestingModule({
         imports: [MikroOrmModule.forRootAsync({
           useFactory: (logger: Logger) => ({
