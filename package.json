@@ -41,10 +41,9 @@
     "test": "vitest --run",
     "tsc-check-tests": "tsc --noEmit --project tests/tsconfig.json",
     "format": "oxfmt --write .",
+    "lint": "oxlint --type-aware",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 1",
-    "release": "yarn build && cd dist && npm publish && cd ..",
-    "coverage": "yarn test --coverage",
-    "lint": "eslint src/**/*.ts"
+    "coverage": "yarn test --coverage"
   },
   "commitlint": {
     "extends": [
@@ -52,9 +51,7 @@
     ]
   },
   "lint-staged": {
-    "*.ts": [
-      "eslint src/**/*.ts --fix"
-    ]
+    "*": "oxfmt --no-error-on-unmatched-pattern"
   },
   "devDependencies": {
     "@mikro-orm/core": "^7.0.0-dev.108",
@@ -64,21 +61,20 @@
     "@nestjs/core": "^11.1.9",
     "@nestjs/platform-express": "^11.1.9",
     "@nestjs/testing": "^11.1.9",
-    "@stylistic/eslint-plugin": "^5.6.1",
-    "@swc/core": "^1.15.4",
+    "@swc/core": "^1.15.5",
     "@types/node": "^25.0.1",
     "@types/supertest": "^6.0.3",
+    "@vitest/coverage-v8": "^4.0.16",
     "conventional-changelog": "^7.1.1",
     "conventional-changelog-cli": "^5.0.0",
-    "eslint": "^9.39.2",
-    "eslint-plugin-import": "^2.32.0",
     "oxfmt": "^0.18.0",
+    "oxlint": "^1.33.0",
+    "oxlint-tsgolint": "^0.9.1",
     "reflect-metadata": "^0.2.2",
     "rimraf": "^6.1.2",
     "rxjs": "^7.8.2",
     "supertest": "^7.1.4",
     "typescript": "5.9.3",
-    "typescript-eslint": "^8.49.0",
     "unplugin-swc": "^1.5.9",
     "vitest": "^4.0.16"
   },
