@@ -1,4 +1,4 @@
-import { Configuration, ConfigurationLoader, EntityManager, MikroORM, type Dictionary } from '@mikro-orm/core';
+import { Configuration, type Constructor, type DatabaseDriver, EntityManager, MikroORM } from '@mikro-orm/core';
 import {
   Global,
   Inject,
@@ -12,94 +12,44 @@ import {
 } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 
-import { forRoutesPath } from './middleware.helper';
-import { CONTEXT_NAMES, getEntityManagerToken, getMikroORMToken, MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common';
-import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage';
-import { MikroOrmMiddleware } from './mikro-orm.middleware';
-import { createAsyncProviders, createEntityManagerProvider, createMikroOrmProvider } from './mikro-orm.providers';
-import { MikroOrmModuleOptions, type MikroOrmModuleAsyncOptions, type MikroOrmModuleSyncOptions } from './typings';
-
-async function tryRequire(name: string): Promise<Dictionary | undefined> {
-  try {
-    return await import(name);
-  } catch {
-    return undefined; // ignore, optional dependency
-  }
-}
-
-// TODO: provide the package name via some platform method, prefer that over the static map when available
-const PACKAGES = {
-  MongoDriver: '@mikro-orm/mongodb',
-  MySqlDriver: '@mikro-orm/mysql',
-  MsSqlDriver: '@mikro-orm/mssql',
-  MariaDbDriver: '@mikro-orm/mariadb',
-  PostgreSqlDriver: '@mikro-orm/postgresql',
-  SqliteDriver: '@mikro-orm/sqlite',
-  LibSqlDriver: '@mikro-orm/libsql',
-  BetterSqliteDriver: '@mikro-orm/better-sqlite',
-} as const;
+import { forRoutesPath } from './middleware.helper.js';
+import { CONTEXT_NAMES, getEntityManagerToken, getMikroORMToken, MIKRO_ORM_MODULE_OPTIONS } from './mikro-orm.common.js';
+import { MikroOrmEntitiesStorage } from './mikro-orm.entities.storage.js';
+import { MikroOrmMiddleware } from './mikro-orm.middleware.js';
+import { createAsyncProviders, createEntityManagerProvider, createMikroOrmProvider } from './mikro-orm.providers.js';
+import type { MikroOrmModuleOptions, MikroOrmModuleAsyncOptions, MikroOrmModuleSyncOptions } from './typings.js';
 
 @Global()
 @Module({})
 export class MikroOrmCoreModule implements NestModule, OnApplicationShutdown {
 
-  constructor(@Inject(MIKRO_ORM_MODULE_OPTIONS)
-              private readonly options: MikroOrmModuleOptions,
-              private readonly moduleRef: ModuleRef) { }
+  constructor(
+    @Inject(MIKRO_ORM_MODULE_OPTIONS)
+    private readonly options: MikroOrmModuleOptions,
+    private readonly moduleRef: ModuleRef,
+  ) { }
 
-  static async forRoot(options?: MikroOrmModuleSyncOptions): Promise<DynamicModule> {
-    const contextName = this.setContextName(options?.contextName);
-
-    if (options?.driver && !contextName) {
-      const packageName = PACKAGES[options.driver.name as keyof typeof PACKAGES];
-      const driverPackage = await tryRequire(packageName);
-
-      if (driverPackage) {
-        return {
-          module: MikroOrmCoreModule,
-          providers: [
-            { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options || {} },
-            createMikroOrmProvider(contextName),
-            createMikroOrmProvider(contextName, driverPackage.MikroORM),
-            createEntityManagerProvider(options?.scope, EntityManager),
-            createEntityManagerProvider(options?.scope, driverPackage.EntityManager),
-          ],
-          exports: [
-            MikroORM,
-            EntityManager,
-            driverPackage.EntityManager,
-            driverPackage.MikroORM,
-          ],
-        };
-      }
-    }
-
-    const knex = await tryRequire('@mikro-orm/knex');
-    const mongo = await tryRequire('@mikro-orm/mongodb');
+  static async forRoot(options: MikroOrmModuleSyncOptions): Promise<DynamicModule> {
+    const contextName = this.setContextName(options.contextName);
     const em = await this.createEntityManager(options);
 
     if (em && !contextName) {
-      const packageName = PACKAGES[em.getDriver().constructor.name as keyof typeof PACKAGES];
-      const driverPackage = await tryRequire(packageName);
-
-      if (driverPackage) {
-        return {
-          module: MikroOrmCoreModule,
-          providers: [
-            { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options || {} },
-            createMikroOrmProvider(contextName),
-            createMikroOrmProvider(contextName, driverPackage.MikroORM),
-            createEntityManagerProvider(options?.scope, EntityManager),
-            createEntityManagerProvider(options?.scope, driverPackage.EntityManager),
-          ],
-          exports: [
-            MikroORM,
-            EntityManager,
-            driverPackage.EntityManager,
-            driverPackage.MikroORM,
-          ],
-        };
-      }
+      return {
+        module: MikroOrmCoreModule,
+        providers: [
+          { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options || {} },
+          createMikroOrmProvider(contextName),
+          createMikroOrmProvider(contextName, em.getDriver().getORMClass()),
+          createEntityManagerProvider(options.scope, EntityManager),
+          createEntityManagerProvider(options.scope, em.constructor as Constructor<EntityManager>),
+        ],
+        exports: [
+          MikroORM,
+          EntityManager,
+          em.constructor,
+          em.getDriver().getORMClass(),
+        ],
+      };
     }
 
     return {
@@ -107,79 +57,41 @@ export class MikroOrmCoreModule implements NestModule, OnApplicationShutdown {
       providers: [
         { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options || {} },
         createMikroOrmProvider(contextName),
-        ...(mongo ? [createMikroOrmProvider(contextName, mongo.MikroORM)] : []),
-        createEntityManagerProvider(options?.scope, EntityManager, contextName),
-        ...(em ? [createEntityManagerProvider(options?.scope, em.constructor as Type, contextName)] : []),
-        ...(knex ? [createEntityManagerProvider(options?.scope, knex.EntityManager, contextName)] : []),
-        ...(mongo ? [createEntityManagerProvider(options?.scope, mongo.EntityManager, contextName)] : []),
+        ...(em ? [createMikroOrmProvider(contextName, em.getDriver().getORMClass())] : []),
+        createEntityManagerProvider(options.scope, EntityManager, contextName),
+        ...(em ? [createEntityManagerProvider(options.scope, em.constructor as Type, contextName)] : []),
       ],
       exports: [
         contextName ? getMikroORMToken(contextName) : MikroORM,
         contextName ? getEntityManagerToken(contextName) : EntityManager,
-        ...(em && !contextName ? [em.constructor] : []),
-        ...(knex && !contextName ? [knex.EntityManager] : []),
-        ...(mongo && !contextName ? [mongo.EntityManager, mongo.MikroORM] : []),
+        ...(em && !contextName ? [em.constructor, em.getDriver().getORMClass()] : []),
       ],
     };
   }
 
   static async forRootAsync(options: MikroOrmModuleAsyncOptions): Promise<DynamicModule> {
-    const contextName = this.setContextName(options?.contextName);
-
-    if (options?.driver && !contextName) {
-      const packageName = PACKAGES[options.driver.name as keyof typeof PACKAGES];
-      const driverPackage = await tryRequire(packageName);
-
-      if (driverPackage) {
-        return {
-          module: MikroOrmCoreModule,
-          imports: options.imports || [],
-          providers: [
-            ...(options.providers || []),
-            ...createAsyncProviders({ ...options, contextName: options.contextName }),
-            createMikroOrmProvider(contextName),
-            createMikroOrmProvider(contextName, driverPackage.MikroORM),
-            createEntityManagerProvider(options?.scope, EntityManager),
-            createEntityManagerProvider(options?.scope, driverPackage.EntityManager),
-          ],
-          exports: [
-            MikroORM,
-            EntityManager,
-            driverPackage.EntityManager,
-            driverPackage.MikroORM,
-          ],
-        };
-      }
-    }
-
-    const knex = await tryRequire('@mikro-orm/knex');
-    const mongo = await tryRequire('@mikro-orm/mongodb');
+    const contextName = this.setContextName(options.contextName);
     const em = await this.createEntityManager(options);
 
     if (em && !contextName) {
-      const packageName = PACKAGES[em.getDriver().constructor.name as keyof typeof PACKAGES];
-      const driverPackage = await tryRequire(packageName);
-
-      if (driverPackage) {
-        return {
-          module: MikroOrmCoreModule,
-          imports: options.imports || [],
-          providers: [
-            ...(options.providers || []),
-            ...createAsyncProviders({ ...options, contextName: options.contextName }),
-            createMikroOrmProvider(contextName),
-            createMikroOrmProvider(contextName, driverPackage.MikroORM),
-            createEntityManagerProvider(options?.scope, EntityManager),
-            createEntityManagerProvider(options?.scope, driverPackage.EntityManager),
-          ],
-          exports: [
-            MikroORM,
-            EntityManager,
-            driverPackage.EntityManager,
-            driverPackage.MikroORM,
-          ],
-        };
-      }
+      return {
+        module: MikroOrmCoreModule,
+        imports: options.imports || [],
+        providers: [
+          ...(options.providers || []),
+          ...createAsyncProviders({ ...options, contextName: options.contextName }),
+          createMikroOrmProvider(contextName),
+          createMikroOrmProvider(contextName, em.getDriver().getORMClass()),
+          createEntityManagerProvider(options.scope, EntityManager),
+          createEntityManagerProvider(options.scope, em.constructor as Constructor<EntityManager>),
+        ],
+        exports: [
+          MikroORM,
+          EntityManager,
+          em.constructor,
+          em.getDriver().getORMClass(),
+        ],
+      };
     }
 
     return {
@@ -189,18 +101,14 @@ export class MikroOrmCoreModule implements NestModule, OnApplicationShutdown {
         ...(options.providers || []),
         ...createAsyncProviders({ ...options, contextName: options.contextName }),
         createMikroOrmProvider(contextName),
-        ...(mongo ? [createMikroOrmProvider(contextName, mongo.MikroORM)] : []),
+        ...(em ? [createMikroOrmProvider(contextName, em.getDriver().getORMClass())] : []),
         createEntityManagerProvider(options.scope, EntityManager, contextName),
-        ...(em ? [createEntityManagerProvider(options?.scope, em.constructor as Type, contextName)] : []),
-        ...(knex ? [createEntityManagerProvider(options?.scope, knex.EntityManager, contextName)] : []),
-        ...(mongo ? [createEntityManagerProvider(options?.scope, mongo.EntityManager, contextName)] : []),
+        ...(em ? [createEntityManagerProvider(options.scope, em.constructor as Type, contextName)] : []),
       ],
       exports: [
         contextName ? getMikroORMToken(contextName) : MikroORM,
         contextName ? getEntityManagerToken(contextName) : EntityManager,
-        ...(em && !contextName ? [em.constructor] : []),
-        ...(knex && !contextName ? [knex.EntityManager] : []),
-        ...(mongo && !contextName ? [mongo.EntityManager, mongo.MikroORM] : []),
+        ...(em && !contextName ? [em.constructor, em.getDriver().getORMClass()] : []),
       ],
     };
   }
@@ -209,19 +117,15 @@ export class MikroOrmCoreModule implements NestModule, OnApplicationShutdown {
    * Tries to create the driver instance to use the actual entity manager implementation for DI symbol.
    * This helps with dependency resolution issues when importing the EM from driver package (e.g. `SqlEntityManager`).
    */
-  private static async createEntityManager(options?: MikroOrmModuleSyncOptions | MikroOrmModuleAsyncOptions): Promise<any> {
-    if (options?.contextName) {
+  private static async createEntityManager(options: MikroOrmModuleSyncOptions | MikroOrmModuleAsyncOptions): Promise<EntityManager<DatabaseDriver<any>> | undefined> {
+    if (options.contextName) {
       return undefined;
     }
 
     try {
       let config;
 
-      if (!options || Object.keys(options).length === 0) {
-        config = await ConfigurationLoader.getConfiguration(false);
-      }
-
-      if (!config && 'useFactory' in options!) {
+      if ('useFactory' in options) {
         config = new Configuration(await options.useFactory!(), false);
       }
 
@@ -233,7 +137,7 @@ export class MikroOrmCoreModule implements NestModule, OnApplicationShutdown {
         config = new Configuration(options, false);
       }
 
-      return config?.getDriver().createEntityManager();
+      return config?.getDriver().createEntityManager() as EntityManager<DatabaseDriver<any>>;
     } catch {
       if (options && 'useFactory' in options && 'inject' in options && !options.driver && (options.inject as unknown[]).length > 0) {
         // eslint-disable-next-line no-console
