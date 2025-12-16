@@ -1,3 +1,4 @@
+// oxlint-disable-next-line consistent-type-imports
 import { MikroORM, RequestContext } from '@mikro-orm/core';
 import { Injectable, type NestMiddleware } from '@nestjs/common';
 

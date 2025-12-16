@@ -10,6 +10,7 @@ import {
   type OnApplicationShutdown,
   type Type,
 } from '@nestjs/common';
+// oxlint-disable-next-line consistent-type-imports
 import { ModuleRef } from '@nestjs/core';
 
 import { forRoutesPath } from './middleware.helper.js';
