@@ -54,9 +54,9 @@
     "*": "oxfmt --no-error-on-unmatched-pattern"
   },
   "devDependencies": {
-    "@mikro-orm/core": "^7.0.0-dev.108",
-    "@mikro-orm/decorators": "^7.0.0-dev.108",
-    "@mikro-orm/sqlite": "^7.0.0-dev.108",
+    "@mikro-orm/core": "^7.0.0-dev.109",
+    "@mikro-orm/decorators": "^7.0.0-dev.109",
+    "@mikro-orm/sqlite": "^7.0.0-dev.109",
     "@nestjs/common": "^11.1.9",
     "@nestjs/core": "^11.1.9",
     "@nestjs/platform-express": "^11.1.9",
@@ -79,7 +79,7 @@
     "vitest": "^4.0.16"
   },
   "peerDependencies": {
-    "@mikro-orm/core": "^7.0.0 || ^7.0.0-dev.108",
+    "@mikro-orm/core": "^7.0.0 || ^7.0.0-dev.0",
     "@nestjs/common": "^11.0.5",
     "@nestjs/core": "^11.0.5",
     "reflect-metadata": "^0.1.0 || ^0.2.0"

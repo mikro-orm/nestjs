@@ -11,8 +11,9 @@ import {
   type NestModule,
 } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { ReflectMetadataProvider } from '@mikro-orm/decorators/legacy';
 import request from 'supertest';
-import { MikroOrmModule } from '../src/mikro-orm.module.js';
+import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Foo } from './entities/foo.entity.js';
 
 const testOptions: Options = {
@@ -20,6 +21,8 @@ const testOptions: Options = {
   driver: SqliteDriver,
   baseDir: __dirname,
   entities: ['entities'],
+  metadataProvider: ReflectMetadataProvider,
+  dynamicImportProvider: id => import(id),
 };
 
 @Controller('/foo')
