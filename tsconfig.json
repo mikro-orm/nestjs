@@ -1,4 +1,9 @@
 {
   "extends": "./tsconfig.build.json",
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "compilerOptions": {
+    "paths": {
+      "@mikro-orm/nestjs": ["./src"]
+    },
+  }
 }

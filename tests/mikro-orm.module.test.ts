@@ -12,7 +12,7 @@ import {
   getEntityManagerToken,
   getMikroORMToken,
   getRepositoryToken,
-} from '../src/index.js';
+} from '@mikro-orm/nestjs';
 import { Bar } from './entities/bar.entity.js';
 import { Foo } from './entities/foo.entity.js';
 
@@ -21,6 +21,7 @@ const testOptions = defineConfig({
   baseDir: __dirname,
   entities: ['entities'],
   metadataProvider: ReflectMetadataProvider,
+  dynamicImportProvider: id => import(id),
 });
 
 const myLoggerProvider = { provide: 'my-logger', useValue: new Logger() };

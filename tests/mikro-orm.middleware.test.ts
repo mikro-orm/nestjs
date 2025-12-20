@@ -13,7 +13,7 @@ import {
 import { Test, type TestingModule } from '@nestjs/testing';
 import { ReflectMetadataProvider } from '@mikro-orm/decorators/legacy';
 import request from 'supertest';
-import { InjectEntityManager, InjectMikroORM, MikroOrmModule } from '../src/index.js';
+import { InjectEntityManager, InjectMikroORM, MikroOrmModule } from '@mikro-orm/nestjs';
 import { Bar } from './entities/bar.entity.js';
 import { Foo } from './entities/foo.entity.js';
 
@@ -23,6 +23,7 @@ const testOptions: Options = {
   baseDir: __dirname,
   entities: ['entities'],
   metadataProvider: ReflectMetadataProvider,
+  dynamicImportProvider: id => import(id),
 };
 
 @Controller('/foo')
