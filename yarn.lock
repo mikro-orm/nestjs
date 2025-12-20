@@ -365,28 +365,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mikro-orm/core@npm:^7.0.0-dev.108":
-  version: 7.0.0-dev.108
-  resolution: "@mikro-orm/core@npm:7.0.0-dev.108"
+"@mikro-orm/core@npm:^7.0.0-dev.109":
+  version: 7.0.0-dev.109
+  resolution: "@mikro-orm/core@npm:7.0.0-dev.109"
   peerDependencies:
     dataloader: 2.2.3
   peerDependenciesMeta:
     dataloader:
       optional: true
-  checksum: 10c0/347e44be7f6e77507bdcfbdabcbef1fc6d846d36a0506a0a50361ceb0616332d56f4f7f53b054914be73d6bcd0130cc1dc3a732097911410569714a7431c29b8
+  checksum: 10c0/c361e86b9c1cb03a2631021c52d144dddceb0c9f7e9702ebe2c0e61be92a15ff4e14c5e90cd3ccaff0ce8b1d5e01f48de95d51ad905e453f852a7928ba0ee64e
   languageName: node
   linkType: hard
 
-"@mikro-orm/decorators@npm:^7.0.0-dev.108":
-  version: 7.0.0-dev.108
-  resolution: "@mikro-orm/decorators@npm:7.0.0-dev.108"
+"@mikro-orm/decorators@npm:^7.0.0-dev.109":
+  version: 7.0.0-dev.109
+  resolution: "@mikro-orm/decorators@npm:7.0.0-dev.109"
   peerDependencies:
-    "@mikro-orm/core": 7.0.0-dev.108
+    "@mikro-orm/core": 7.0.0-dev.109
     reflect-metadata: ^0.1.0 || ^0.2.0
   peerDependenciesMeta:
     reflect-metadata:
       optional: true
-  checksum: 10c0/ce564435d8be7263e58edee42a705e87663d0e6e29b79987bbc2b3b765853c50b0721cebdada1dcae15ab70578aa76dc73a93d6de77ea2e76de4f964ba1311c9
+  checksum: 10c0/b1aded7846a74336df5e0939ee0ed3ca279b5fb642b07cd017fb5565b24e8978c8dcaf8e7988d5617fda1ef992684be0eba8466d8fb1bbd52ad63642908090c3
   languageName: node
   linkType: hard
 
@@ -394,9 +394,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@mikro-orm/nestjs@workspace:."
   dependencies:
-    "@mikro-orm/core": "npm:^7.0.0-dev.108"
-    "@mikro-orm/decorators": "npm:^7.0.0-dev.108"
-    "@mikro-orm/sqlite": "npm:^7.0.0-dev.108"
+    "@mikro-orm/core": "npm:^7.0.0-dev.109"
+    "@mikro-orm/decorators": "npm:^7.0.0-dev.109"
+    "@mikro-orm/sqlite": "npm:^7.0.0-dev.109"
     "@nestjs/common": "npm:^11.1.9"
     "@nestjs/core": "npm:^11.1.9"
     "@nestjs/platform-express": "npm:^11.1.9"
@@ -418,35 +418,35 @@ __metadata:
     unplugin-swc: "npm:^1.5.9"
     vitest: "npm:^4.0.16"
   peerDependencies:
-    "@mikro-orm/core": ^7.0.0 || ^7.0.0-dev.108
+    "@mikro-orm/core": ^7.0.0 || ^7.0.0-dev.0
     "@nestjs/common": ^11.0.5
     "@nestjs/core": ^11.0.5
     reflect-metadata: ^0.1.0 || ^0.2.0
   languageName: unknown
   linkType: soft
 
-"@mikro-orm/sql@npm:7.0.0-dev.108":
-  version: 7.0.0-dev.108
-  resolution: "@mikro-orm/sql@npm:7.0.0-dev.108"
+"@mikro-orm/sql@npm:7.0.0-dev.109":
+  version: 7.0.0-dev.109
+  resolution: "@mikro-orm/sql@npm:7.0.0-dev.109"
   dependencies:
     kysely: "npm:0.28.9"
   peerDependencies:
-    "@mikro-orm/core": 7.0.0-dev.108
-  checksum: 10c0/08571bf616eea8ce0f994e18ae0cc134de7bcabeeeb3449ae1c832a8975162339020d91a66f103b44064393470c0eddbcd19bf532c9ea6df99af47510acd38be
+    "@mikro-orm/core": 7.0.0-dev.109
+  checksum: 10c0/548719be5f48c54ea4d843bd3fb7c316ad2fc90527ff5eabe2fdaa35f65ad9b161a1c022d30579f366e3c9f61e0150982ad316397c0090dd7feaf1421b528af7
   languageName: node
   linkType: hard
 
-"@mikro-orm/sqlite@npm:^7.0.0-dev.108":
-  version: 7.0.0-dev.108
-  resolution: "@mikro-orm/sqlite@npm:7.0.0-dev.108"
+"@mikro-orm/sqlite@npm:^7.0.0-dev.109":
+  version: 7.0.0-dev.109
+  resolution: "@mikro-orm/sqlite@npm:7.0.0-dev.109"
   dependencies:
-    "@mikro-orm/sql": "npm:7.0.0-dev.108"
+    "@mikro-orm/sql": "npm:7.0.0-dev.109"
     better-sqlite3: "npm:12.5.0"
     kysely: "npm:0.28.9"
     sqlstring-sqlite: "npm:0.1.1"
   peerDependencies:
-    "@mikro-orm/core": 7.0.0-dev.108
-  checksum: 10c0/72704de0e3461289413a8dd92b7123174665e9ffd75d8a1449bf5d180d46f37415a63b7da9156cffed8debef406f9b14cd8d706aa8952882b4b3785b9b5424f4
+    "@mikro-orm/core": 7.0.0-dev.109
+  checksum: 10c0/75ae6fd628727c8259eff9bf865b482afa6ccb1e6a70d54aea4a2b9ad2c6b51ab5033cdb231cb7fedeb700448be5976fa395e4af025113add2b31f756937628f
   languageName: node
   linkType: hard
 
