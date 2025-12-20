@@ -1,0 +1,120 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version bump strategy
+        required: true
+        default: patch
+        type: choice
+        options: [patch, minor, major, custom]
+      custom_version:
+        description: Custom version (only when version=custom)
+        required: false
+        type: string
+      dist-tag:
+        description: NPM dist-tag (prod or next)
+        required: false
+        type: string
+        default: 'prod'
+      ref:
+        description: Git ref to publish (branch, tag, or commit SHA)
+        type: string
+        default: 'master'
+
+  workflow_call:
+    inputs:
+      ref:
+        description: Git ref to publish (branch, tag, or commit SHA)
+        required: true
+        type: string
+      dist-tag:
+        description: NPM dist-tag (prod or next)
+        type: string
+
+permissions:
+  contents: write
+  id-token: write
+  pull-requests: write
+
+concurrency:
+  group: release
+
+jobs:
+  manual-release:
+    if: github.event_name == 'workflow_dispatch' && inputs.dist-tag == 'prod'
+    name: Release ${{ inputs.custom_version || inputs.version }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.ref }}
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - run: |
+          corepack enable
+          corepack prepare yarn@stable --activate
+
+      - uses: actions/setup-node@v6
+        with:
+          cache: yarn
+          registry-url: 'https://registry.npmjs.org'
+          always-auth: false
+          provenance: true
+
+      - run: yarn
+      - run: yarn build
+
+      - name: Configure git
+        run: |
+          git config --global user.name 'MikroORM Release Bot'
+          git config --global user.email 'noreply@mikro-orm.io'
+
+      - run: |
+          yarn copy --bump=major
+          git commit -am 'chore: release new version [skip ci]'
+          cd dist
+          npm publish
+
+  canary-release:
+    if: inputs.dist-tag == 'next'
+    name: Release canary
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref }}
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - run: |
+          corepack enable
+          corepack prepare yarn@stable --activate
+
+      - uses: actions/setup-node@v6
+        with:
+          cache: yarn
+
+      - name: Configure git
+        run: |
+          git config --global user.name 'MikroORM Release Bot'
+          git config --global user.email 'noreply@mikro-orm.io'
+
+      - run: yarn
+      - run: yarn build
+      - run: |
+          yarn copy --canary=major
+          git commit -am 'chore: bump canary versions [skip ci]'
+          cd dist
+          npm publish --tag=next
