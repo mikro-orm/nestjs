@@ -122,16 +122,16 @@ export class MikroOrmCoreModule implements NestModule, OnApplicationShutdown {
     try {
       let config;
 
-      if ('useFactory' in options) {
+      if (typeof options === 'object' && options && 'driver' in options) {
+        config = new Configuration(options, false);
+      }
+
+      if (!config && 'useFactory' in options) {
         config = new Configuration(await options.useFactory!(), false);
       }
 
       if (!config && options instanceof Configuration) {
         config = options;
-      }
-
-      if (!config && typeof options === 'object' && options && 'driver' in options) {
-        config = new Configuration(options, false);
       }
 
       return config?.getDriver().createEntityManager() as EntityManager<DatabaseDriver<any>>;
