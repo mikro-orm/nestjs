@@ -15,6 +15,7 @@ import {
 } from '@mikro-orm/nestjs';
 import { Bar } from './entities/bar.entity.js';
 import { Foo } from './entities/foo.entity.js';
+import { Baz, BazRepository, Qux, QuxRepository } from './entities/baz.entity.js';
 
 const testOptions = defineConfig({
   dbName: ':memory:',
@@ -91,7 +92,7 @@ describe('MikroORM Module', () => {
         imports: [MikroOrmModule.forRoot(testOptions)],
       }).compile();
 
-      const orm = module.get<MikroORM>(MikroORM);
+      const orm = module.get(MikroORM);
       expect(orm).toBeDefined();
       expect(orm.config.get('contextName')).toBe('default');
       expect(module.get<EntityManager>(EntityManager)).toBeDefined();
@@ -109,7 +110,7 @@ describe('MikroORM Module', () => {
         ],
       }).compile();
 
-      const orm = module.get<MikroORM>(MikroORM);
+      const orm = module.get(MikroORM);
       expect(orm).toBeDefined();
       expect(orm.config.get('contextName')).toBe('default');
       expect(module.get<EntityManager>(EntityManager)).toBeDefined();
@@ -127,7 +128,7 @@ describe('MikroORM Module', () => {
         ],
       }).compile();
 
-      const orm = module.get<MikroORM>(MikroORM);
+      const orm = module.get(MikroORM);
       expect(orm).toBeDefined();
       expect(orm.config.get('contextName')).toBe('default');
       expect(module.get<EntityManager>(EntityManager)).toBeDefined();
@@ -149,7 +150,7 @@ describe('MikroORM Module', () => {
         ],
       }).compile();
 
-      const orm = module.get<MikroORM>(MikroORM);
+      const orm = module.get(MikroORM);
       expect(orm).toBeDefined();
       expect(orm.config.get('contextName')).toBe('default');
       expect(module.get<EntityManager>(EntityManager)).toBeDefined();
@@ -280,7 +281,7 @@ describe('MikroORM Module', () => {
         imports: [...MikroOrmModule.forRoot([testOptions]), MikroOrmModule.forFeature([Foo])],
       }).compile();
 
-      const orm = module.get<MikroORM>(MikroORM);
+      const orm = module.get(MikroORM);
       const entityManager = module.get<EntityManager>(EntityManager);
       const repository = module.get<EntityRepository<Foo>>(getRepositoryToken(Foo));
 
@@ -304,13 +305,57 @@ describe('MikroORM Module', () => {
         ],
       }).compile();
 
-      const orm = module.get<MikroORM>(MikroORM);
+      const orm = module.get(MikroORM);
       const entityManager = module.get<EntityManager>(EntityManager);
       const repository = module.get<EntityRepository<Foo>>(getRepositoryToken(Foo));
 
       expect(orm).toBeDefined();
       expect(entityManager).toBeDefined();
       expect(repository).toBeDefined();
+
+      await orm.close();
+    });
+
+    it('forFeature should return custom repository for EntitySchema (GH6701)', async () => {
+      const module = await Test.createTestingModule({
+        imports: [
+          MikroOrmModule.forRoot({
+            ...testOptions,
+            entities: [Baz],
+          }),
+          MikroOrmModule.forFeature([Baz]),
+        ],
+      }).compile();
+
+      const orm = module.get(MikroORM);
+      const repository = module.get(BazRepository);
+
+      expect(orm).toBeDefined();
+      expect(repository).toBeDefined();
+      expect(repository).toBeInstanceOf(BazRepository);
+      expect(repository.customMethod()).toBe('custom');
+
+      await orm.close();
+    });
+
+    it('forFeature should return custom repository for defineEntity (GH6701)', async () => {
+      const module = await Test.createTestingModule({
+        imports: [
+          MikroOrmModule.forRoot({
+            ...testOptions,
+            entities: [Qux],
+          }),
+          MikroOrmModule.forFeature([Qux]),
+        ],
+      }).compile();
+
+      const orm = module.get(MikroORM);
+      const repository = module.get(QuxRepository);
+
+      expect(orm).toBeDefined();
+      expect(repository).toBeDefined();
+      expect(repository).toBeInstanceOf(QuxRepository);
+      expect(repository.anotherCustomMethod()).toBe('another-custom');
 
       await orm.close();
     });
