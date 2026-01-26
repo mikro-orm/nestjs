@@ -1,4 +1,4 @@
-import { EntityManager, MetadataStorage, MikroORM, type AnyEntity, type ForkOptions } from '@mikro-orm/core';
+import { EntityManager, EntitySchema, MetadataStorage, MikroORM, type AnyEntity, type ForkOptions } from '@mikro-orm/core';
 import { Scope, type InjectionToken, type Provider, type Type } from '@nestjs/common';
 
 import {
@@ -117,7 +117,7 @@ export function createMikroOrmRepositoryProviders(entities: EntityName<AnyEntity
   const inject = contextName ? getEntityManagerToken(contextName) : EntityManager;
 
   (entities || []).forEach(entity => {
-    const meta = metadata.find(meta => meta.class === entity);
+    const meta = entity instanceof EntitySchema ? entity.meta : metadata.find(meta => meta.class === entity);
     const repository = meta?.repository as unknown as (() => InjectionToken) | undefined;
 
     if (repository) {
