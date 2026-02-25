@@ -54,7 +54,7 @@
     "@stylistic/eslint-plugin-ts": "^4.0.0",
     "@types/jest": "^29.5.12",
     "@types/node": "^24.0.0",
-    "@types/supertest": "^6.0.2",
+    "@types/supertest": "^7.0.0",
     "conventional-changelog": "^7.0.0",
     "conventional-changelog-cli": "^5.0.0",
     "eslint": "^9.19.0",
