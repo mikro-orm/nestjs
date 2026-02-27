@@ -1072,7 +1072,7 @@ __metadata:
     "@stylistic/eslint-plugin-ts": "npm:^4.0.0"
     "@types/jest": "npm:^29.5.12"
     "@types/node": "npm:^24.0.0"
-    "@types/supertest": "npm:^6.0.2"
+    "@types/supertest": "npm:^7.0.0"
     conventional-changelog: "npm:^7.0.0"
     conventional-changelog-cli: "npm:^5.0.0"
     eslint: "npm:^9.19.0"
@@ -1557,13 +1557,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/supertest@npm:^6.0.2":
-  version: 6.0.2
-  resolution: "@types/supertest@npm:6.0.2"
+"@types/supertest@npm:^7.0.0":
+  version: 7.2.0
+  resolution: "@types/supertest@npm:7.2.0"
   dependencies:
     "@types/methods": "npm:^1.1.4"
     "@types/superagent": "npm:^8.1.0"
-  checksum: 10c0/44a28f9b35b65800f4c7bcc23748e71c925098aa74ea504d14c98385c36d00de2a4f5aca15d7dc4514bc80533e0af21f985a4ab9f5f317c7266e9e75836aef39
+  checksum: 10c0/78c33e968acd45207acdd965ccbd5eb7a279813ff68fab1acc438937ed017698102cc077cef8aa60ec6caefff2fa61171e902eab40607fd7ce82ead3a82b766e
   languageName: node
   linkType: hard
 
