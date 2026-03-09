@@ -30,7 +30,7 @@ const myLoggerProvider = { provide: 'my-logger', useValue: new Logger() };
 class ConfigService implements MikroOrmOptionsFactory {
   constructor(@Inject('my-logger') private readonly logger: Logger) {}
 
-  createMikroOrmOptions(contextName?: string): Options {
+  createMikroOrmOptions(contextName?: string): Partial<Options> {
     const options = {
       ...testOptions,
       logger: this.logger.log.bind(this.logger),
