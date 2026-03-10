@@ -180,6 +180,25 @@ describe('MikroORM Module', () => {
       await module.get<MikroORM>(MikroORM).close();
     });
 
+    it('forRoot with request scope should fork em with useContext: true by default', async () => {
+      const module = await Test.createTestingModule({
+        imports: [MikroOrmModule.forRoot({
+          ...testOptions,
+          scope: Scope.REQUEST,
+        })],
+      }).compile();
+
+      const orm = module.get(MikroORM);
+      const forkSpy = jest.spyOn(orm.em, 'fork');
+      const contextId = ContextIdFactory.create();
+      jest.spyOn(ContextIdFactory, 'getByRequest').mockImplementation(() => contextId);
+      await module.resolve(EntityManager, contextId);
+
+      expect(forkSpy).toHaveBeenCalledWith(expect.objectContaining({ useContext: true }));
+
+      await orm.close();
+    });
+
     it('forRoot should return the same em each request with default scope', async () => {
       const module = await Test.createTestingModule({
         imports: [MikroOrmModule.forRoot({

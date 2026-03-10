@@ -58,7 +58,7 @@ export function createEntityManagerProvider(
   return {
     provide: contextName ? getEntityManagerToken(contextName) : entityManager,
     scope,
-    useFactory: (orm: MikroORM) => scope === Scope.DEFAULT ? orm.em : orm.em.fork(forkOptions),
+    useFactory: (orm: MikroORM) => scope === Scope.DEFAULT ? orm.em : orm.em.fork({ useContext: true, ...forkOptions }),
     inject: [contextName ? getMikroORMToken(contextName) : MikroORM],
   };
 }
