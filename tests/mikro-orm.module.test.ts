@@ -197,6 +197,71 @@ describe('MikroORM Module', () => {
       await module.get<MikroORM>(MikroORM).close();
     });
 
+    it('forRoot with request scope should fork em with useContext: true by default', async () => {
+      const module = await Test.createTestingModule({
+        imports: [
+          MikroOrmModule.forRoot({
+            ...testOptions,
+            scope: Scope.REQUEST,
+          }),
+        ],
+      }).compile();
+
+      const contextId = ContextIdFactory.create();
+      vi.spyOn(ContextIdFactory, 'getByRequest').mockImplementation(() => contextId);
+      const em = await module.resolve(EntityManager, contextId);
+
+      // useContext is protected, so we access it indirectly
+      expect((em as any).useContext).toBe(true);
+
+      await module.get<MikroORM>(MikroORM).close();
+    });
+
+    it('forRootAsync with request scope should fork em with useContext: true by default', async () => {
+      const module = await Test.createTestingModule({
+        imports: [
+          MikroOrmModule.forRootAsync({
+            useFactory: (logger: Logger) => ({
+              ...testOptions,
+              logger: logger.log.bind(logger),
+            }),
+            driver: testOptions.driver,
+            inject: ['my-logger'],
+            providers: [myLoggerProvider],
+            scope: Scope.REQUEST,
+          }),
+        ],
+      }).compile();
+
+      const contextId = ContextIdFactory.create();
+      vi.spyOn(ContextIdFactory, 'getByRequest').mockImplementation(() => contextId);
+      const em = await module.resolve(EntityManager, contextId);
+
+      expect((em as any).useContext).toBe(true);
+
+      await module.get<MikroORM>(MikroORM).close();
+    });
+
+    it('forRoot with request scope should allow overriding useContext via forkOptions', async () => {
+      const module = await Test.createTestingModule({
+        imports: [
+          MikroOrmModule.forRoot({
+            ...testOptions,
+            scope: Scope.REQUEST,
+            forkOptions: { useContext: false },
+          }),
+        ],
+      }).compile();
+
+      const contextId = ContextIdFactory.create();
+      vi.spyOn(ContextIdFactory, 'getByRequest').mockImplementation(() => contextId);
+      const em = await module.resolve(EntityManager, contextId);
+
+      expect((em as any).useContext).toBe(false);
+
+      await module.get<MikroORM>(MikroORM).close();
+    });
+
     it('forRoot should return the same em each request with default scope', async () => {
       const module = await Test.createTestingModule({
         imports: [
