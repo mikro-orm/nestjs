@@ -207,14 +207,15 @@ describe('MikroORM Module', () => {
         ],
       }).compile();
 
+      const orm = module.get(MikroORM);
+      const forkSpy = vi.spyOn(orm.em, 'fork');
       const contextId = ContextIdFactory.create();
       vi.spyOn(ContextIdFactory, 'getByRequest').mockImplementation(() => contextId);
-      const em = await module.resolve(EntityManager, contextId);
+      await module.resolve(EntityManager, contextId);
 
-      // useContext is protected, so we access it indirectly
-      expect((em as any).useContext).toBe(true);
+      expect(forkSpy).toHaveBeenCalledWith(expect.objectContaining({ useContext: true }));
 
-      await module.get<MikroORM>(MikroORM).close();
+      await orm.close();
     });
 
     it('forRootAsync with request scope should fork em with useContext: true by default', async () => {
@@ -233,13 +234,15 @@ describe('MikroORM Module', () => {
         ],
       }).compile();
 
+      const orm = module.get(MikroORM);
+      const forkSpy = vi.spyOn(orm.em, 'fork');
       const contextId = ContextIdFactory.create();
       vi.spyOn(ContextIdFactory, 'getByRequest').mockImplementation(() => contextId);
-      const em = await module.resolve(EntityManager, contextId);
+      await module.resolve(EntityManager, contextId);
 
-      expect((em as any).useContext).toBe(true);
+      expect(forkSpy).toHaveBeenCalledWith(expect.objectContaining({ useContext: true }));
 
-      await module.get<MikroORM>(MikroORM).close();
+      await orm.close();
     });
 
     it('forRoot with request scope should allow overriding useContext via forkOptions', async () => {
@@ -253,13 +256,15 @@ describe('MikroORM Module', () => {
         ],
       }).compile();
 
+      const orm = module.get(MikroORM);
+      const forkSpy = vi.spyOn(orm.em, 'fork');
       const contextId = ContextIdFactory.create();
       vi.spyOn(ContextIdFactory, 'getByRequest').mockImplementation(() => contextId);
-      const em = await module.resolve(EntityManager, contextId);
+      await module.resolve(EntityManager, contextId);
 
-      expect((em as any).useContext).toBe(false);
+      expect(forkSpy).toHaveBeenCalledWith(expect.objectContaining({ useContext: false }));
 
-      await module.get<MikroORM>(MikroORM).close();
+      await orm.close();
     });
 
     it('forRoot should return the same em each request with default scope', async () => {

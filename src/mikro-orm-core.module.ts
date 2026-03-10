@@ -8,6 +8,7 @@ import {
   type MiddlewareConsumer,
   type NestModule,
   type OnApplicationShutdown,
+  type Provider,
   type Type,
 } from '@nestjs/common';
 // oxlint-disable-next-line consistent-type-imports
@@ -37,49 +38,36 @@ export class MikroOrmCoreModule implements NestModule, OnApplicationShutdown {
   static async forRoot(options: MikroOrmModuleSyncOptions): Promise<DynamicModule> {
     const contextName = this.setContextName(options.contextName);
     const em = await this.createEntityManager(options);
-
-    if (em && !contextName) {
-      return {
-        module: MikroOrmCoreModule,
-        providers: [
-          { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options || {} },
-          createMikroOrmProvider(contextName),
-          createMikroOrmProvider(contextName, em.getDriver().getORMClass()),
-          createEntityManagerProvider(options.scope, EntityManager, undefined, options.forkOptions),
-          createEntityManagerProvider(options.scope, em.constructor as Constructor<EntityManager>, undefined, options.forkOptions),
-        ],
-        exports: [MikroORM, EntityManager, em.constructor, em.getDriver().getORMClass()],
-      };
-    }
-
-    return {
-      module: MikroOrmCoreModule,
-      providers: [
-        { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options || {} },
-        createMikroOrmProvider(contextName),
-        ...(em ? [createMikroOrmProvider(contextName, em.getDriver().getORMClass())] : []),
-        createEntityManagerProvider(options.scope, EntityManager, contextName, options.forkOptions),
-        ...(em ? [createEntityManagerProvider(options.scope, em.constructor as Type, contextName, options.forkOptions)] : []),
-      ],
-      exports: [
-        contextName ? getMikroORMToken(contextName) : MikroORM,
-        contextName ? getEntityManagerToken(contextName) : EntityManager,
-        ...(em && !contextName ? [em.constructor, em.getDriver().getORMClass()] : []),
-      ],
-    };
+    return this.buildDynamicModule(em, contextName, options, [
+      { provide: MIKRO_ORM_MODULE_OPTIONS, useValue: options },
+    ]);
   }
 
   static async forRootAsync(options: MikroOrmModuleAsyncOptions): Promise<DynamicModule> {
     const contextName = this.setContextName(options.contextName);
     const em = await this.createEntityManager(options);
+    return this.buildDynamicModule(
+      em,
+      contextName,
+      options,
+      [...(options.providers || []), ...createAsyncProviders({ ...options, contextName: options.contextName })],
+      options.imports || [],
+    );
+  }
 
+  private static buildDynamicModule(
+    em: EntityManager<DatabaseDriver<any>> | undefined,
+    contextName: string | undefined,
+    options: MikroOrmModuleSyncOptions | MikroOrmModuleAsyncOptions,
+    baseProviders: Provider[],
+    imports: any[] = [],
+  ): DynamicModule {
     if (em && !contextName) {
       return {
         module: MikroOrmCoreModule,
-        imports: options.imports || [],
+        imports,
         providers: [
-          ...(options.providers || []),
-          ...createAsyncProviders({ ...options, contextName: options.contextName }),
+          ...baseProviders,
           createMikroOrmProvider(contextName),
           createMikroOrmProvider(contextName, em.getDriver().getORMClass()),
           createEntityManagerProvider(options.scope, EntityManager, undefined, options.forkOptions),
@@ -91,10 +79,9 @@ export class MikroOrmCoreModule implements NestModule, OnApplicationShutdown {
 
     return {
       module: MikroOrmCoreModule,
-      imports: options.imports || [],
+      imports,
       providers: [
-        ...(options.providers || []),
-        ...createAsyncProviders({ ...options, contextName: options.contextName }),
+        ...baseProviders,
         createMikroOrmProvider(contextName),
         ...(em ? [createMikroOrmProvider(contextName, em.getDriver().getORMClass())] : []),
         createEntityManagerProvider(options.scope, EntityManager, contextName, options.forkOptions),
@@ -122,7 +109,7 @@ export class MikroOrmCoreModule implements NestModule, OnApplicationShutdown {
     try {
       let config;
 
-      if (typeof options === 'object' && options && 'driver' in options) {
+      if (typeof options === 'object' && options && 'driver' in options && !('useFactory' in options)) {
         config = new Configuration(options, false);
       }
 
@@ -143,7 +130,7 @@ export class MikroOrmCoreModule implements NestModule, OnApplicationShutdown {
         !options.driver &&
         (options.inject as unknown[]).length > 0
       ) {
-        // eslint-disable-next-line no-console
+        // oxlint-disable-next-line no-console
         console.warn(
           'Support for driver specific imports in modules defined with `useFactory` and `inject` requires an explicit `driver` option. See https://github.com/mikro-orm/nestjs/pull/204',
         );
