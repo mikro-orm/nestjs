@@ -199,19 +199,70 @@ describe('MikroORM Module', () => {
 
     it('forRoot with request scope should fork em with useContext: true by default', async () => {
       const module = await Test.createTestingModule({
-        imports: [MikroOrmModule.forRoot({
-          ...testOptions,
-          scope: Scope.REQUEST,
-        })],
+        imports: [
+          MikroOrmModule.forRoot({
+            ...testOptions,
+            scope: Scope.REQUEST,
+          }),
+        ],
       }).compile();
 
       const orm = module.get(MikroORM);
-      const forkSpy = jest.spyOn(orm.em, 'fork');
+      const forkSpy = vi.spyOn(orm.em, 'fork');
       const contextId = ContextIdFactory.create();
-      jest.spyOn(ContextIdFactory, 'getByRequest').mockImplementation(() => contextId);
+      vi.spyOn(ContextIdFactory, 'getByRequest').mockImplementation(() => contextId);
       await module.resolve(EntityManager, contextId);
 
       expect(forkSpy).toHaveBeenCalledWith(expect.objectContaining({ useContext: true }));
+
+      await orm.close();
+    });
+
+    it('forRootAsync with request scope should fork em with useContext: true by default', async () => {
+      const module = await Test.createTestingModule({
+        imports: [
+          MikroOrmModule.forRootAsync({
+            useFactory: (logger: Logger) => ({
+              ...testOptions,
+              logger: logger.log.bind(logger),
+            }),
+            driver: testOptions.driver,
+            inject: ['my-logger'],
+            providers: [myLoggerProvider],
+            scope: Scope.REQUEST,
+          }),
+        ],
+      }).compile();
+
+      const orm = module.get(MikroORM);
+      const forkSpy = vi.spyOn(orm.em, 'fork');
+      const contextId = ContextIdFactory.create();
+      vi.spyOn(ContextIdFactory, 'getByRequest').mockImplementation(() => contextId);
+      await module.resolve(EntityManager, contextId);
+
+      expect(forkSpy).toHaveBeenCalledWith(expect.objectContaining({ useContext: true }));
+
+      await orm.close();
+    });
+
+    it('forRoot with request scope should allow overriding useContext via forkOptions', async () => {
+      const module = await Test.createTestingModule({
+        imports: [
+          MikroOrmModule.forRoot({
+            ...testOptions,
+            scope: Scope.REQUEST,
+            forkOptions: { useContext: false },
+          }),
+        ],
+      }).compile();
+
+      const orm = module.get(MikroORM);
+      const forkSpy = vi.spyOn(orm.em, 'fork');
+      const contextId = ContextIdFactory.create();
+      vi.spyOn(ContextIdFactory, 'getByRequest').mockImplementation(() => contextId);
+      await module.resolve(EntityManager, contextId);
+
+      expect(forkSpy).toHaveBeenCalledWith(expect.objectContaining({ useContext: false }));
 
       await orm.close();
     });
