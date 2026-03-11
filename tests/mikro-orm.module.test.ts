@@ -15,7 +15,7 @@ import {
 } from '@mikro-orm/nestjs';
 import { Bar } from './entities/bar.entity.js';
 import { Foo } from './entities/foo.entity.js';
-import { Baz, BazRepository, Qux, QuxRepository } from './entities/baz.entity.js';
+import { Baz, BazRepository, Qux, QuxRepository, Corge, CorgeSchema, CorgeRepository } from './entities/baz.entity.js';
 
 const testOptions = defineConfig({
   dbName: ':memory:',
@@ -428,6 +428,28 @@ describe('MikroORM Module', () => {
       expect(repository).toBeDefined();
       expect(repository).toBeInstanceOf(QuxRepository);
       expect(repository.anotherCustomMethod()).toBe('another-custom');
+
+      await orm.close();
+    });
+
+    it('forFeature should return custom repository when class from defineEntity+setClass is passed', async () => {
+      const module = await Test.createTestingModule({
+        imports: [
+          MikroOrmModule.forRoot({
+            ...testOptions,
+            entities: [CorgeSchema],
+          }),
+          MikroOrmModule.forFeature([Corge]),
+        ],
+      }).compile();
+
+      const orm = module.get(MikroORM);
+      const repository = module.get(CorgeRepository);
+
+      expect(orm).toBeDefined();
+      expect(repository).toBeDefined();
+      expect(repository).toBeInstanceOf(CorgeRepository);
+      expect(repository.corgeMethod()).toBe('corge');
 
       await orm.close();
     });
