@@ -1,0 +1,117 @@
+{
+  "name": "@mikro-orm/nestjs",
+  "version": "7.0.0",
+  "description": "NestJS module for MikroORM",
+  "keywords": [
+    "data-mapper",
+    "ddd",
+    "entity",
+    "identity-map",
+    "mikro-orm",
+    "mongo",
+    "mongodb",
+    "mysql",
+    "nestjs",
+    "orm",
+    "postgresql",
+    "sqlite",
+    "unit-of-work"
+  ],
+  "homepage": "https://github.com/mikro-orm/nestjs#readme",
+  "bugs": "https://github.com/mikro-orm/nestjs/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mikro-orm/nestjs"
+  },
+  "author": {
+    "name": "Martin Adamek",
+    "email": "banan23@gmail.com"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "yarn clean && yarn compile && yarn copy",
+    "clean": "rimraf ./dist",
+    "compile": "tsc -p tsconfig.build.json",
+    "copy": "node ./scripts/copy.mjs",
+    "test": "vitest run",
+    "tsc-check-tests": "tsc --noEmit --project tests/tsconfig.json",
+    "format": "oxfmt --write .",
+    "lint": "oxlint --type-aware",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 1",
+    "coverage": "yarn test --coverage"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "lint-staged": {
+    "*": "oxfmt --no-error-on-unmatched-pattern"
+  },
+  "devDependencies": {
+    "@mikro-orm/core": "^7.0.0-dev.109",
+    "@mikro-orm/decorators": "^7.0.0-dev.109",
+    "@mikro-orm/sqlite": "^7.0.0-dev.109",
+    "@nestjs/common": "^11.1.9",
+    "@nestjs/core": "^11.1.9",
+    "@nestjs/platform-express": "^11.1.9",
+    "@nestjs/testing": "^11.1.9",
+    "@swc/core": "^1.15.5",
+    "@types/node": "^25.0.1",
+    "@types/supertest": "^7.0.0",
+    "@vitest/coverage-v8": "^4.0.16",
+    "conventional-changelog": "^7.1.1",
+    "conventional-changelog-cli": "^5.0.0",
+    "oxfmt": "^0.38.0",
+    "oxlint": "^1.33.0",
+    "oxlint-tsgolint": "^0.16.0",
+    "reflect-metadata": "^0.2.2",
+    "rimraf": "^6.1.2",
+    "rxjs": "^7.8.2",
+    "supertest": "^7.1.4",
+    "typescript": "5.9.3",
+    "unplugin-swc": "^1.5.9",
+    "vitest": "^4.0.16"
+  },
+  "peerDependencies": {
+    "@mikro-orm/core": "^7.0.0 || ^7.0.0-dev.0",
+    "@nestjs/common": "^11.0.5",
+    "@nestjs/core": "^11.0.5",
+    "reflect-metadata": "^0.1.0 || ^0.2.0"
+  },
+  "packageManager": "yarn@4.12.0",
+  "engines": {
+    "node": ">= 22.17.0"
+  },
+  "readme": "./README.md",
+  "renovate": {
+    "extends": [
+      "config:base",
+      ":preserveSemverRanges",
+      ":semanticCommitTypeAll(chore)"
+    ],
+    "semanticCommits": "enabled",
+    "separateMajorMinor": false,
+    "dependencyDashboard": false,
+    "packageRules": [
+      {
+        "matchUpdateTypes": [
+          "patch",
+          "minor"
+        ],
+        "groupName": "patch/minor dependencies",
+        "groupSlug": "all-non-major",
+        "automerge": true,
+        "automergeType": "branch"
+      }
+    ],
+    "schedule": [
+      "every weekday"
+    ]
+  }
+}
