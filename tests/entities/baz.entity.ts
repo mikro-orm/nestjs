@@ -45,3 +45,34 @@ export const Qux = defineEntity({
     title: p.string(),
   },
 });
+
+// defineEntity + setClass test (entity class passed to forFeature instead of schema)
+export interface ICorge {
+  id: number;
+  label: string;
+}
+
+export class CorgeRepository extends EntityRepository<ICorge> {
+
+  corgeMethod(): string {
+    return 'corge';
+  }
+
+}
+
+export class Corge {
+
+  id!: number;
+  label!: string;
+
+}
+
+export const CorgeSchema = defineEntity({
+  name: 'Corge',
+  repository: () => CorgeRepository,
+  properties: {
+    id: p.integer().primary(),
+    label: p.string(),
+  },
+});
+CorgeSchema.setClass(Corge);

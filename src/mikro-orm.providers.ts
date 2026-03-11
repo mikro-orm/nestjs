@@ -117,7 +117,9 @@ export function createMikroOrmRepositoryProviders(entities: EntityName<AnyEntity
   const inject = contextName ? getEntityManagerToken(contextName) : EntityManager;
 
   (entities || []).forEach(entity => {
-    const meta = entity instanceof EntitySchema ? entity.meta : metadata.find(meta => meta.class === entity);
+    const meta = entity instanceof EntitySchema
+      ? entity.meta
+      : (typeof entity === 'function' ? EntitySchema.REGISTRY.get(entity)?.meta : undefined) ?? metadata.find(meta => meta.class === entity);
     const repository = meta?.repository as unknown as (() => InjectionToken) | undefined;
 
     if (repository) {
