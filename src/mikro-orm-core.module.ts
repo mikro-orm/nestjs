@@ -113,6 +113,11 @@ export class MikroOrmCoreModule implements NestModule, OnApplicationShutdown {
         config = new Configuration(options, false);
       }
 
+      // For async options with explicit driver hint, create a minimal config for EM type detection
+      if (!config && 'driver' in options && options.driver) {
+        config = new Configuration({ driver: options.driver } as any, false);
+      }
+
       if (!config && 'useFactory' in options) {
         config = new Configuration(await options.useFactory!(), false);
       }
