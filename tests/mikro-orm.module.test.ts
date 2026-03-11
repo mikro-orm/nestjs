@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
 import { EntityRepository, Options, EntityManager, MikroORM } from '@mikro-orm/core';
-import { defineConfig, SqliteDriver } from '@mikro-orm/sqlite';
+import { defineConfig, SqliteDriver, SqlEntityManager } from '@mikro-orm/sqlite';
 import { ReflectMetadataProvider } from '@mikro-orm/decorators/legacy';
 import { Inject, Logger, Module, Scope } from '@nestjs/common';
 import { ContextIdFactory } from '@nestjs/core';
@@ -154,6 +154,27 @@ describe('MikroORM Module', () => {
       expect(orm).toBeDefined();
       expect(orm.config.get('contextName')).toBe('default');
       expect(module.get<EntityManager>(EntityManager)).toBeDefined();
+      await orm.close();
+    });
+
+    it('forRootAsync :useFactory with driver should register driver-specific EntityManager', async () => {
+      const module = await Test.createTestingModule({
+        imports: [
+          MikroOrmModule.forRootAsync({
+            useFactory: (logger: Logger) => ({
+              ...testOptions,
+              logger: logger.log.bind(logger),
+            }),
+            driver: testOptions.driver,
+            inject: ['my-logger'],
+            providers: [myLoggerProvider],
+          }),
+        ],
+      }).compile();
+
+      const orm = module.get(MikroORM);
+      expect(orm).toBeDefined();
+      expect(module.get<SqlEntityManager>(SqlEntityManager)).toBeDefined();
       await orm.close();
     });
 
