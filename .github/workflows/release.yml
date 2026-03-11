@@ -85,6 +85,7 @@ jobs:
             yarn copy --bump=${{ inputs.version }}
           fi
           git commit -am 'chore: release new version [skip ci]'
+          git push
           cd dist
           npm publish
 
