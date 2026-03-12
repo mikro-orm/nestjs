@@ -67,7 +67,7 @@
     "@vitest/coverage-v8": "^4.0.16",
     "conventional-changelog": "^7.1.1",
     "conventional-changelog-cli": "^5.0.0",
-    "oxfmt": "^0.39.0",
+    "oxfmt": "^0.40.0",
     "oxlint": "^1.33.0",
     "oxlint-tsgolint": "^0.16.0",
     "reflect-metadata": "^0.2.2",
