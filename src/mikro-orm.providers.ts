@@ -77,7 +77,11 @@ export function createMikroOrmAsyncOptionsProvider(options: MikroOrmModuleAsyncO
       provide: MIKRO_ORM_MODULE_OPTIONS,
       useFactory: async (...args: any[]) => {
         const factoryOptions = await options.useFactory!(...args);
-        return options.contextName ? { contextName: options.contextName, ...factoryOptions } : factoryOptions;
+        return {
+          ...options.contextName ? { contextName: options.contextName } : {},
+          ...options.driver ? { driver: options.driver } : {},
+          ...factoryOptions,
+        };
       },
       inject: options.inject || [],
     };
@@ -91,8 +95,13 @@ export function createMikroOrmAsyncOptionsProvider(options: MikroOrmModuleAsyncO
 
   return {
     provide: MIKRO_ORM_MODULE_OPTIONS,
-    useFactory: async (optionsFactory: MikroOrmOptionsFactory) =>
-      await optionsFactory.createMikroOrmOptions(options.contextName),
+    useFactory: async (optionsFactory: MikroOrmOptionsFactory) => {
+      const factoryOptions = await optionsFactory.createMikroOrmOptions(options.contextName);
+      return {
+        ...options.driver ? { driver: options.driver } : {},
+        ...factoryOptions,
+      };
+    },
     inject,
   };
 }

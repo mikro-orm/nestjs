@@ -178,6 +178,28 @@ describe('MikroORM Module', () => {
       await orm.close();
     });
 
+    it('forRootAsync :useFactory should propagate top-level driver into options', async () => {
+      const { driver, ...optionsWithoutDriver } = testOptions;
+      const module = await Test.createTestingModule({
+        imports: [
+          MikroOrmModule.forRootAsync({
+            useFactory: (logger: Logger) => ({
+              ...optionsWithoutDriver,
+              logger: logger.log.bind(logger),
+            }),
+            driver,
+            inject: ['my-logger'],
+            providers: [myLoggerProvider],
+          }),
+        ],
+      }).compile();
+
+      const orm = module.get(MikroORM);
+      expect(orm).toBeDefined();
+      expect(orm.config.get('driver')).toBe(SqliteDriver);
+      await orm.close();
+    });
+
     it('forRoot should return a new em each request with request scope', async () => {
       const module = await Test.createTestingModule({
         imports: [
