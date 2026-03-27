@@ -69,7 +69,7 @@
     "conventional-changelog-cli": "^5.0.0",
     "oxfmt": "^0.42.0",
     "oxlint": "^1.33.0",
-    "oxlint-tsgolint": "^0.17.0",
+    "oxlint-tsgolint": "^0.18.0",
     "reflect-metadata": "^0.2.2",
     "rimraf": "^6.1.2",
     "rxjs": "^7.8.2",
