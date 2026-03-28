@@ -19,15 +19,15 @@
   ],
   "homepage": "https://github.com/mikro-orm/nestjs#readme",
   "bugs": "https://github.com/mikro-orm/nestjs/issues",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/mikro-orm/nestjs"
-  },
+  "license": "MIT",
   "author": {
     "name": "Martin Adamek",
     "email": "banan23@gmail.com"
   },
-  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mikro-orm/nestjs"
+  },
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
@@ -43,15 +43,8 @@
     "format": "oxfmt --write .",
     "lint": "oxlint --type-aware",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 1",
-    "coverage": "yarn test --coverage"
-  },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
-  },
-  "lint-staged": {
-    "*": "oxfmt --no-error-on-unmatched-pattern"
+    "coverage": "yarn test --coverage",
+    "publish:jsr": "jsr publish"
   },
   "devDependencies": {
     "@mikro-orm/core": "^7.0.0-dev.109",
@@ -67,6 +60,7 @@
     "@vitest/coverage-v8": "^4.0.16",
     "conventional-changelog": "^7.1.1",
     "conventional-changelog-cli": "^5.0.0",
+    "jsr": "0.14.3",
     "oxfmt": "^0.42.0",
     "oxlint": "^1.33.0",
     "oxlint-tsgolint": "^0.18.0",
@@ -84,10 +78,18 @@
     "@nestjs/core": "^11.0.5",
     "reflect-metadata": "^0.1.0 || ^0.2.0"
   },
-  "packageManager": "yarn@4.13.0",
+  "lint-staged": {
+    "*": "oxfmt --no-error-on-unmatched-pattern"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
   "engines": {
     "node": ">= 22.17.0"
   },
+  "packageManager": "yarn@4.13.0",
   "readme": "./README.md",
   "renovate": {
     "extends": [

@@ -7,11 +7,9 @@ export interface IBaz {
 }
 
 export class BazRepository extends EntityRepository<IBaz> {
-
   customMethod(): string {
     return 'custom';
   }
-
 }
 
 export const Baz = new EntitySchema<IBaz>({
@@ -30,11 +28,9 @@ export interface IQux {
 }
 
 export class QuxRepository extends EntityRepository<IQux> {
-
   anotherCustomMethod(): string {
     return 'another-custom';
   }
-
 }
 
 export const Qux = defineEntity({
@@ -53,18 +49,14 @@ export interface ICorge {
 }
 
 export class CorgeRepository extends EntityRepository<ICorge> {
-
   corgeMethod(): string {
     return 'corge';
   }
-
 }
 
 export class Corge {
-
   id!: number;
   label!: string;
-
 }
 
 export const CorgeSchema = defineEntity({

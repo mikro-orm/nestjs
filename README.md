@@ -62,10 +62,10 @@ Afterward, the `EntityManager` will be available to inject across entire project
 ```ts
 @Injectable()
 export class MyService {
-
-  constructor(private readonly orm: MikroORM,
-              private readonly em: EntityManager) { }
-
+  constructor(
+    private readonly orm: MikroORM,
+    private readonly em: EntityManager,
+  ) {}
 }
 ```
 
@@ -103,11 +103,10 @@ In this way we can inject the `PhotoRepository` to the `PhotoService` using the 
 export class PhotoService {
   constructor(
     @InjectRepository(Photo)
-    private readonly photoRepository: EntityRepository<Photo>
+    private readonly photoRepository: EntityRepository<Photo>,
   ) {}
 
   // ...
-
 }
 ```
 
@@ -186,14 +185,12 @@ method and execute it inside the context.
 ```ts
 @Injectable()
 export class MyService {
-
-  constructor(private readonly orm: MikroORM) { }
+  constructor(private readonly orm: MikroORM) {}
 
   @CreateRequestContext()
   async doSomething() {
     // this will be executed in a separate context
   }
-
 }
 ```
 
@@ -206,18 +203,15 @@ Luckily, MikroORM provides a [serialization API](https://mikro-orm.io/docs/seria
 ```typescript
 @Entity()
 export class Book {
-
-  @Property({ hidden: true })   // --> Equivalent of class-transformer's `@Exclude`
+  @Property({ hidden: true }) // --> Equivalent of class-transformer's `@Exclude`
   hiddenField: number = Date.now();
 
   @Property({ persist: false }) // --> Will only exist in memory (and will be serialized). Similar to class-transformer's `@Expose()`
   count?: number;
 
-  @ManyToOne({ serializer: value => value.name, serializedName: 'authorName' })   // Equivalent of class-transformer's `@Transform()`
+  @ManyToOne({ serializer: value => value.name, serializedName: 'authorName' }) // Equivalent of class-transformer's `@Transform()`
   author: Author;
-
 }
-
 ```
 
 ## Using `AsyncLocalStorage` for request context
@@ -264,11 +258,11 @@ import { Scope } from '@nestjs/common';
     MikroOrmModule.forRoot({
       // ...
       registerRequestContext: false, // disable automatatic middleware
-      scope: Scope.REQUEST
+      scope: Scope.REQUEST,
     }),
   ],
   controllers: [AppController],
-  providers: [AppService]
+  providers: [AppService],
 })
 export class AppModule {}
 ```
@@ -287,11 +281,11 @@ import { PostgreSqlDriver } from '@mikro-orm/postgresql';
         // ...
         registerRequestContext: false, // disable automatatic middleware
       }),
-      scope: Scope.REQUEST
-    })
+      scope: Scope.REQUEST,
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService]
+  providers: [AppService],
 })
 export class AppModule {}
 ```
@@ -305,7 +299,7 @@ When using custom repositories, we can get around the need for `@InjectRepositor
 decorator by naming our repositories the same way as `getRepositoryToken()` method do:
 
 ```ts
-export const getRepositoryToken = <T> (entity: EntityName<T>) => `${Utils.className(entity)}Repository`;
+export const getRepositoryToken = <T>(entity: EntityName<T>) => `${Utils.className(entity)}Repository`;
 ```
 
 In other words, as long as we name the repository same was as the entity is called,
@@ -317,10 +311,8 @@ the Nest.js DI container.
 ```ts
 @Entity({ customRepository: () => AuthorRepository })
 export class Author {
-
   // to allow inference in `em.getRepository()`
   [EntityRepositoryType]?: AuthorRepository;
-
 }
 ```
 
@@ -328,9 +320,7 @@ export class Author {
 
 ```ts
 export class AuthorRepository extends EntityRepository<Author> {
-
   // your custom methods...
-
 }
 ```
 
@@ -340,9 +330,7 @@ return, we do not need the `@InjectRepository()` decorator anymore:
 ```ts
 @Injectable()
 export class MyService {
-
-  constructor(private readonly repo: AuthorRepository) { }
-
+  constructor(private readonly repo: AuthorRepository) {}
 }
 ```
 
@@ -395,7 +383,7 @@ Since MikroORM v6.4, you can also define [multiple configurations](https://mikro
   imports: [
     // `config` exports an array of configs
     ...MikroOrmModule.forRoot(config),
-    MikroOrmModule.forMiddleware()
+    MikroOrmModule.forMiddleware(),
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -408,12 +396,12 @@ To access different `MikroORM`/`EntityManager` connections you have to use the n
 ```ts
 @Injectable()
 export class MyService {
-
-  constructor(@InjectMikroORM('db1') private readonly orm1: MikroORM,
-              @InjectMikroORM('db2') private readonly orm2: MikroORM,
-              @InjectEntityManager('db1') private readonly em1: EntityManager,
-              @InjectEntityManager('db2') private readonly em2: EntityManager) { }
-
+  constructor(
+    @InjectMikroORM('db1') private readonly orm1: MikroORM,
+    @InjectMikroORM('db2') private readonly orm2: MikroORM,
+    @InjectEntityManager('db1') private readonly em1: EntityManager,
+    @InjectEntityManager('db2') private readonly em2: EntityManager,
+  ) {}
 }
 ```
 
@@ -437,11 +425,10 @@ When using the `@InjectRepository` decorator you will also need to pass the `con
 export class PhotoService {
   constructor(
     @InjectRepository(Photo, 'db1')
-    private readonly photoRepository: EntityRepository<Photo>
+    private readonly photoRepository: EntityRepository<Photo>,
   ) {}
 
   // ...
-
 }
 ```
 
@@ -450,9 +437,7 @@ You can use the `@InjectMikroORMs` decorator to get all registered MikroORM inst
 ```typescript
 @Injectable()
 export class MyService {
-
-  constructor(@InjectMikroORMs() private readonly orms: MikroORM[]) { }
-
+  constructor(@InjectMikroORMs() private readonly orms: MikroORM[]) {}
 }
 ```
 

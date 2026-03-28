@@ -4,42 +4,43 @@ import type { EntityName } from './typings.js';
 
 export const MIKRO_ORM_MODULE_OPTIONS = Symbol('mikro-orm-module-options');
 export const CONTEXT_NAMES: string[] = [];
-export const logger = new Logger(MikroORM.name);
+export const logger: Logger = new Logger(MikroORM.name);
 
 /**
  * Gets the injection token based on context name for the relevant MikroORM provider.
  * @param name The context name of the database connection.
  * @returns The MikroORM provider injection token for the supplied context name.
  */
-export const getMikroORMToken = (name: string) => `${name}_MikroORM`;
+export const getMikroORMToken = (name: string): string => `${name}_MikroORM`;
 /**
  * Injects a MikroORM provider based on the supplied context name.
  *
  * @param name The context name of the database connection.
  * @returns A parameter decorator which will cause NestJS to inject the relevant MikroORM provider.
  */
-export const InjectMikroORM = (name: string) => Inject(getMikroORMToken(name));
+export const InjectMikroORM = (name: string): PropertyDecorator & ParameterDecorator => Inject(getMikroORMToken(name));
 
 /**
  * Injects the MikroORMs provider.
  *
  * @returns A decorator which will cause NestJS to inject the MikroORMs provider.
  */
-export const InjectMikroORMs = () => Inject('MikroORMs');
+export const InjectMikroORMs = (): PropertyDecorator & ParameterDecorator => Inject('MikroORMs');
 
 /**
  * Gets the injection token based on context name for the relevant EntityManager provider.
  * @param name The context name of the database connection.
  * @returns The EntityManager provider injection token for the supplied context name.
  */
-export const getEntityManagerToken = (name: string) => `${name}_EntityManager`;
+export const getEntityManagerToken = (name: string): string => `${name}_EntityManager`;
 /**
  * Injects an EntityManager provider based on the supplied context name.
  *
  * @param name The context name of the database connection.
  * @returns A parameter decorator which will cause NestJS to inject the relevant EntityManager provider.
  */
-export const InjectEntityManager = (name: string) => Inject(getEntityManagerToken(name));
+export const InjectEntityManager = (name: string): PropertyDecorator & ParameterDecorator =>
+  Inject(getEntityManagerToken(name));
 
 /**
  * Gets the injection token based on class and optionally based on context name.
@@ -47,7 +48,7 @@ export const InjectEntityManager = (name: string) => Inject(getEntityManagerToke
  * @param name An optional context name - required for multiple database connections. See: [Multiple Database Connections](https://mikro-orm.io/docs/usage-with-nestjs#multiple-database-connections)
  * @returns The EntityRepository provider injection token based on the supplied entity and context name.
  */
-export const getRepositoryToken = <T extends object>(entity: EntityName<T>, name?: string) => {
+export const getRepositoryToken = <T extends object>(entity: EntityName<T>, name?: string): string => {
   const suffix = name ? `_${name}` : '';
   return `${Utils.className(entity)}Repository${suffix}`;
 };
@@ -58,5 +59,7 @@ export const getRepositoryToken = <T extends object>(entity: EntityName<T>, name
  * @param name An optional context name - required for multiple database connections. See: [Multiple Database Connections](https://mikro-orm.io/docs/usage-with-nestjs#multiple-database-connections)
  * @returns A parameter decorator which will cause NestJS to inject the relevant EntityRepository provider.
  */
-export const InjectRepository = <T extends object>(entity: EntityName<T>, name?: string) =>
-  Inject(getRepositoryToken(entity, name));
+export const InjectRepository = <T extends object>(
+  entity: EntityName<T>,
+  name?: string,
+): PropertyDecorator & ParameterDecorator => Inject(getRepositoryToken(entity, name));
