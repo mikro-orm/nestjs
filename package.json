@@ -68,7 +68,7 @@
     "rimraf": "^6.1.2",
     "rxjs": "^7.8.2",
     "supertest": "^7.1.4",
-    "typescript": "5.9.3",
+    "typescript": "6.0.2",
     "unplugin-swc": "^1.5.9",
     "vitest": "^4.0.16"
   },

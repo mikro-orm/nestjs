@@ -9,7 +9,9 @@
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "outDir": "./dist"
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "types": ["node"]
   },
   "include": ["src/**/*"],
   "exclude": ["**/node_modules", "**/dist"]
