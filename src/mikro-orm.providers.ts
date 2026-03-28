@@ -1,4 +1,11 @@
-import { EntityManager, EntitySchema, MetadataStorage, MikroORM, type AnyEntity, type ForkOptions } from '@mikro-orm/core';
+import {
+  EntityManager,
+  EntitySchema,
+  MetadataStorage,
+  MikroORM,
+  type AnyEntity,
+  type ForkOptions,
+} from '@mikro-orm/core';
 import { Scope, type InjectionToken, type Provider, type Type } from '@nestjs/common';
 
 import {
@@ -66,7 +73,8 @@ export function createEntityManagerProvider(
   return {
     provide: contextName ? getEntityManagerToken(contextName) : entityManager,
     scope,
-    useFactory: (orm: MikroORM) => (scope === Scope.DEFAULT ? orm.em : orm.em.fork({ useContext: true, ...forkOptions })),
+    useFactory: (orm: MikroORM) =>
+      scope === Scope.DEFAULT ? orm.em : orm.em.fork({ useContext: true, ...forkOptions }),
     inject: [contextName ? getMikroORMToken(contextName) : MikroORM],
   };
 }
@@ -78,8 +86,8 @@ export function createMikroOrmAsyncOptionsProvider(options: MikroOrmModuleAsyncO
       useFactory: async (...args: any[]) => {
         const factoryOptions = await options.useFactory!(...args);
         return {
-          ...options.contextName ? { contextName: options.contextName } : {},
-          ...options.driver ? { driver: options.driver } : {},
+          ...(options.contextName ? { contextName: options.contextName } : {}),
+          ...(options.driver ? { driver: options.driver } : {}),
           ...factoryOptions,
         };
       },
@@ -98,7 +106,7 @@ export function createMikroOrmAsyncOptionsProvider(options: MikroOrmModuleAsyncO
     useFactory: async (optionsFactory: MikroOrmOptionsFactory) => {
       const factoryOptions = await optionsFactory.createMikroOrmOptions(options.contextName);
       return {
-        ...options.driver ? { driver: options.driver } : {},
+        ...(options.driver ? { driver: options.driver } : {}),
         ...factoryOptions,
       };
     },
@@ -126,9 +134,11 @@ export function createMikroOrmRepositoryProviders(entities: EntityName<AnyEntity
   const inject = contextName ? getEntityManagerToken(contextName) : EntityManager;
 
   (entities || []).forEach(entity => {
-    const meta = entity instanceof EntitySchema
-      ? entity.meta
-      : (typeof entity === 'function' ? EntitySchema.REGISTRY.get(entity)?.meta : undefined) ?? metadata.find(meta => meta.class === entity);
+    const meta =
+      entity instanceof EntitySchema
+        ? entity.meta
+        : ((typeof entity === 'function' ? EntitySchema.REGISTRY.get(entity)?.meta : undefined) ??
+          metadata.find(meta => meta.class === entity));
     const repository = meta?.repository as unknown as (() => InjectionToken) | undefined;
 
     if (repository) {

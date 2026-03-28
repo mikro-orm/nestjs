@@ -34,6 +34,9 @@ jobs:
       - name: Lint
         run: yarn lint
 
+      - name: Check JSR publishing
+        run: yarn publish:jsr --dry-run
+
       - name: Test
         run: |
           yarn coverage > COVERAGE_RESULT

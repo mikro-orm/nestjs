@@ -89,6 +89,8 @@ jobs:
           cd dist
           npm publish
 
+      - run: yarn publish:jsr
+
   canary-release:
     if: inputs.dist-tag == 'next'
     name: Release canary

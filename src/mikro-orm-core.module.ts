@@ -71,7 +71,12 @@ export class MikroOrmCoreModule implements NestModule, OnApplicationShutdown {
           createMikroOrmProvider(contextName),
           createMikroOrmProvider(contextName, em.getDriver().getORMClass()),
           createEntityManagerProvider(options.scope, EntityManager, undefined, options.forkOptions),
-          createEntityManagerProvider(options.scope, em.constructor as Constructor<EntityManager>, undefined, options.forkOptions),
+          createEntityManagerProvider(
+            options.scope,
+            em.constructor as Constructor<EntityManager>,
+            undefined,
+            options.forkOptions,
+          ),
         ],
         exports: [MikroORM, EntityManager, em.constructor, em.getDriver().getORMClass()],
       };
@@ -85,7 +90,9 @@ export class MikroOrmCoreModule implements NestModule, OnApplicationShutdown {
         createMikroOrmProvider(contextName),
         ...(em ? [createMikroOrmProvider(contextName, em.getDriver().getORMClass())] : []),
         createEntityManagerProvider(options.scope, EntityManager, contextName, options.forkOptions),
-        ...(em ? [createEntityManagerProvider(options.scope, em.constructor as Type, contextName, options.forkOptions)] : []),
+        ...(em
+          ? [createEntityManagerProvider(options.scope, em.constructor as Type, contextName, options.forkOptions)]
+          : []),
       ],
       exports: [
         contextName ? getMikroORMToken(contextName) : MikroORM,

@@ -1,0 +1,20 @@
+{
+  "name": "@mikro-orm/nestjs",
+  "version": "7.0.1",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "publish": {
+    "exclude": [
+      "dist/",
+      "node_modules/",
+      "tests/"
+    ]
+  },
+  "imports": {
+    "@mikro-orm/core": "jsr:@mikro-orm/core@^7.0.0",
+    "@nestjs/common": "npm:@nestjs/common@^11.0.5",
+    "@nestjs/core": "npm:@nestjs/core@^11.0.5",
+    "reflect-metadata": "npm:reflect-metadata@^0.2.0"
+  }
+}
