@@ -61,7 +61,7 @@
     "conventional-changelog": "^7.1.1",
     "conventional-changelog-cli": "^5.0.0",
     "jsr": "0.14.3",
-    "oxfmt": "^0.44.0",
+    "oxfmt": "^0.45.0",
     "oxlint": "^1.33.0",
     "oxlint-tsgolint": "^0.20.0",
     "reflect-metadata": "^0.2.2",
