@@ -68,7 +68,7 @@
     "rimraf": "^6.1.2",
     "rxjs": "^7.8.2",
     "supertest": "^7.1.4",
-    "typescript": "6.0.2",
+    "typescript": "6.0.3",
     "unplugin-swc": "^1.5.9",
     "vitest": "^4.0.16"
   },
@@ -89,7 +89,7 @@
   "engines": {
     "node": ">= 22.17.0"
   },
-  "packageManager": "yarn@4.14.0",
+  "packageManager": "yarn@4.14.1",
   "readme": "./README.md",
   "renovate": {
     "extends": [
