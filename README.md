@@ -55,7 +55,18 @@ export class AppModule {}
 ```
 
 The `forRoot()` method accepts the same configuration object as `init()` from the MikroORM package.
-You can also omit the parameter to use the CLI config.
+Since v7, the configuration must be provided explicitly — passing the options is required
+(see the [v6 to v7 upgrading guide](https://mikro-orm.io/docs/upgrading-v6-to-v7#mikroorminit-requires-options-parameter)).
+If you keep your config in a separate file (e.g. `mikro-orm.config.ts`), import it and pass it in:
+
+```typescript
+import config from './mikro-orm.config';
+
+@Module({
+  imports: [MikroOrmModule.forRoot(config)],
+})
+export class AppModule {}
+```
 
 Afterward, the `EntityManager` will be available to inject across entire project (without importing any module elsewhere).
 
