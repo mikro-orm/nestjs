@@ -56,7 +56,7 @@ export type MikroOrmModuleOptions<D extends IDatabaseDriver = IDatabaseDriver> =
    * @default false
    */
   autoLoadEntities?: boolean;
-} & Partial<Options<D, any, any>> &
+} & Partial<Options<any, any, any>> &
   MikroOrmMiddlewareModuleOptions;
 
 export interface MikroOrmModuleFeatureOptions {
