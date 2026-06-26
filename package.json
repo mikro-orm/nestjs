@@ -58,7 +58,7 @@
     "@types/node": "^25.0.1",
     "@types/supertest": "^7.0.0",
     "@vitest/coverage-v8": "^4.0.16",
-    "conventional-changelog": "^7.1.1",
+    "conventional-changelog": "^8.0.0",
     "conventional-changelog-cli": "^5.0.0",
     "jsr": "0.14.3",
     "oxfmt": "^0.55.0",
