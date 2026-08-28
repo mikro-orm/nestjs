@@ -19,7 +19,7 @@ import { Foo } from './entities/foo.entity.js';
 const testOptions: Options = {
   dbName: ':memory:',
   driver: SqliteDriver,
-  baseDir: __dirname,
+  baseDir: import.meta.dirname,
   entities: ['entities'],
   metadataProvider: ReflectMetadataProvider,
   dynamicImportProvider: id => import(id),

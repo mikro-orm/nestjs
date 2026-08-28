@@ -42,4 +42,4 @@ Multi-database support uses a `contextName` string to namespace tokens and provi
 
 ## Peer Dependencies
 
-The package requires users to install `@mikro-orm/core` (^7.0.0), `@nestjs/common` + `@nestjs/core` (^11.0.5), and `reflect-metadata`.
+The package requires users to install `@mikro-orm/core` (^7.0.0), `@nestjs/common` + `@nestjs/core` (^11.0.5 or ^12.0.0), and `reflect-metadata`.

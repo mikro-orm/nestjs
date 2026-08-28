@@ -6,7 +6,7 @@ export function forRoutesPath(options: MikroOrmMiddlewareModuleOptions, consumer
     return options.forRoutesPath;
   }
 
-  // detect nest v11 based on a newly added enum value
+  // detect NestJS v11+ based on a newly added enum value
   if (HttpStatus.MULTI_STATUS) {
     return '{*all}';
   }

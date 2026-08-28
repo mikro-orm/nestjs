@@ -19,7 +19,7 @@ import { Baz, BazRepository, Qux, QuxRepository, Corge, CorgeSchema, CorgeReposi
 
 const testOptions = defineConfig({
   dbName: ':memory:',
-  baseDir: __dirname,
+  baseDir: import.meta.dirname,
   entities: ['entities'],
   metadataProvider: ReflectMetadataProvider,
   dynamicImportProvider: id => import(id),

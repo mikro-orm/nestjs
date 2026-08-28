@@ -50,10 +50,10 @@
     "@mikro-orm/core": "^7.0.0-dev.109",
     "@mikro-orm/decorators": "^7.0.0-dev.109",
     "@mikro-orm/sqlite": "^7.0.0-dev.109",
-    "@nestjs/common": "^11.1.9",
-    "@nestjs/core": "^11.1.9",
-    "@nestjs/platform-express": "^11.1.9",
-    "@nestjs/testing": "^11.1.9",
+    "@nestjs/common": "^12.0.1",
+    "@nestjs/core": "^12.0.1",
+    "@nestjs/platform-express": "^12.0.1",
+    "@nestjs/testing": "^12.0.1",
     "@swc/core": "^1.15.5",
     "@types/node": "^25.0.1",
     "@types/supertest": "^7.0.0",
@@ -74,8 +74,8 @@
   },
   "peerDependencies": {
     "@mikro-orm/core": "^7.0.0 || ^7.0.0-dev.0",
-    "@nestjs/common": "^11.0.5",
-    "@nestjs/core": "^11.0.5",
+    "@nestjs/common": "^11.0.5 || ^12.0.0",
+    "@nestjs/core": "^11.0.5 || ^12.0.0",
     "reflect-metadata": "^0.1.0 || ^0.2.0"
   },
   "lint-staged": {
