@@ -6,6 +6,7 @@
     "declaration": true,
     "sourceMap": false,
     "strict": true,
+    "skipLibCheck": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
