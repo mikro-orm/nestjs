@@ -18,7 +18,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: EditorConfig Lint
-        uses: docker://mstruebing/editorconfig-checker:v3.11.2
+        uses: docker://mstruebing/editorconfig-checker:4.0.1
 
       - name: Enable corepack
         run: |
