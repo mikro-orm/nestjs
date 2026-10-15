@@ -101,7 +101,7 @@
     "semanticCommits": "enabled",
     "separateMajorMinor": false,
     "dependencyDashboard": false,
-    "minimumReleaseAge": "3 days",
+    "minimumReleaseAge": "1 day",
     "packageRules": [
       {
         "matchUpdateTypes": [
