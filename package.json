@@ -55,7 +55,7 @@
     "@nestjs/platform-express": "^12.0.1",
     "@nestjs/testing": "^12.0.1",
     "@swc/core": "^1.15.5",
-    "@types/node": "^25.0.1",
+    "@types/node": "^26.0.0",
     "@types/supertest": "^7.0.0",
     "@vitest/coverage-v8": "^5.0.0",
     "conventional-changelog": "^8.0.0",
